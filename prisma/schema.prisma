@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Contact {
+  id              String   @id @default(uuid())
+  firstName       String
+  lastName        String
+  organization    String?
+  email           String
+  phone           String?
+  subject         String
+  message         String
+  privacyAccepted Boolean
+  targetRecipient String?
+  createdAt       DateTime @default(now())
+}
+
+model Mandant {
+  id            String        @id @default(uuid())
+  name          String
+  einrichtungen Einrichtung[]
+  createdAt     DateTime      @default(now())
+}
+
+model Einrichtung {
+  id            String          @id @default(uuid())
+  name          String
+  mandantId     String
+  mandant       Mandant         @relation(fields: [mandantId], references: [id], onDelete: Cascade)
+  abteilungen   Fachabteilung[]
+  createdAt     DateTime        @default(now())
+}
+
+model Fachabteilung {
+  id            String      @id @default(uuid())
+  name          String
+  email         String
+  einrichtungId String
+  einrichtung   Einrichtung @relation(fields: [einrichtungId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+}

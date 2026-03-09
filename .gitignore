@@ -1,0 +1,39 @@
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Database files
+*.db
+*.db-journal
+
+# SSH keys / secrets
+id_rsa_deploy
+*.ppk
+*.pem
+
+# Local agent/IDE
+.agent
+.claude
+
+# Lock files (keep bun.lock, ignore npm)
+package-lock.json

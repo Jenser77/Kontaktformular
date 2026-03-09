@@ -1,0 +1,26 @@
+# Caddyfile für das Kontaktformular-System
+# Dies konfiguriert einen Reverse Proxy mit automatischer HTTPS-Bereitstellung durch Let's Encrypt.
+# Ersetzen Sie "portal.diakoniestiftung-sachsen.de" durch die tatsächliche Domain.
+
+portal.diakoniestiftung-sachsen.de {
+    # 1. Optionale Sicherheitsheader (Ergänzend zu Helmet in Express)
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    }
+
+    # 2. Alle Anfragen an den internen Node.js/Express Server weiterleiten
+    # Standardmäßig horcht Express auf Port 3000
+    reverse_proxy localhost:3000 {
+        # Optional: Timeout-Einstellungen für langsame Clients
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+# Weiterleitung von www auf non-www (Optional, je nach DNS-Setup)
+www.portal.diakoniestiftung-sachsen.de {
+    redir https://portal.diakoniestiftung-sachsen.de{uri}
+}
