@@ -10,7 +10,7 @@ export const prisma: PrismaClient = globalForPrisma.prisma ?? new Proxy({} as Pr
             const adapter = new PrismaPg({ connectionString });
             globalForPrisma.prisma = new PrismaClient({ adapter });
         }
-        const val = (globalForPrisma.prisma as Record<string | symbol, unknown>)[prop];
+        const val = (globalForPrisma.prisma as unknown as Record<string | symbol, unknown>)[prop];
         return typeof val === 'function' ? val.bind(globalForPrisma.prisma) : val;
     }
 });
