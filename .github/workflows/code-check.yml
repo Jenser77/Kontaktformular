@@ -1,0 +1,40 @@
+name: Code Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  code-check:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Create CI env file
+        run: |
+          echo "DATABASE_URL=postgresql://localhost:5432/postgres" >> .env
+          echo "SMTP_HOST=localhost" >> .env
+          echo "SMTP_PORT=587" >> .env
+          echo "SMTP_USER=ci@example.com" >> .env
+          echo "SMTP_PASS=dummy" >> .env
+          echo "ADMIN_USER=admin" >> .env
+          echo "ADMIN_PASS=dummy" >> .env
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Type check
+        run: bun run check
