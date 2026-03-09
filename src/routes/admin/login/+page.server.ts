@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import type { Actions, RequestEvent } from './$types';
+import type { Actions } from './$types';
 import { createSession } from '../../../hooks.server';
 import { isRateLimited } from '$lib/server/rateLimit';
 
@@ -7,7 +7,7 @@ function getAdminUsers(): Array<{ user: string; pass: string }> {
     try {
         const raw = process.env.ADMIN_USERS;
         if (raw) return JSON.parse(raw);
-    } catch {}
+    } catch { /* JSON.parse failed, use fallback */ }
     // Fallback to legacy single-user env vars
     return [{ user: process.env.ADMIN_USER ?? 'admin', pass: process.env.ADMIN_PASS ?? '' }];
 }

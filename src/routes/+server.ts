@@ -15,7 +15,7 @@ export async function GET() {
         return new Response(content, {
             headers: { 'Content-Type': 'text/html' }
         });
-    } catch (e) {
+    } catch {
         // Fallback for production build environments
         const fallbackPath = join(process.cwd(), 'client', 'index.html');
         try {
@@ -23,7 +23,7 @@ export async function GET() {
             return new Response(content, {
                 headers: { 'Content-Type': 'text/html' }
             });
-        } catch (e2) {
+        } catch {
             return new Response("Home Page (index.html not found)", { status: 404 });
         }
     }

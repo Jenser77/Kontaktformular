@@ -62,7 +62,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
     }
 
     // 5. Validate recipient via DB
-    let targetEmail: string | null = null;
+    let targetEmail: string;
     try {
         const fachabteilung = await prisma.fachabteilung.findUnique({
             where: { id: recipientId! }

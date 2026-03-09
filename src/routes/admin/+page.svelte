@@ -41,10 +41,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let contacts = $state<ContactView[]>([]);
-	$effect(() => {
-		contacts = data.contacts as ContactView[];
-	});
+	let contacts = $state<ContactView[]>(data.contacts as ContactView[]);
 	let mandanten = $derived(data.mandanten as MandantView[]);
 
 	let selectedContact = $state<ContactView | null>(null);

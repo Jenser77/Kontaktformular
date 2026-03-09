@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 selMandant.innerHTML = '<option value="" disabled selected>Fehler beim Laden</option>';
             }
-        } catch (err) {
+        } catch {
             selMandant.innerHTML = '<option value="" disabled selected>Fehler beim Laden</option>';
         }
     };
@@ -147,7 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (element.id === 'privacyAccepted') {
                     const err = document.getElementById('err-privacyAccepted');
-                    if (err) isValid ? err.classList.remove('visible') : err.classList.add('visible');
+                    if (err) {
+                        if (isValid) {
+                            err.classList.remove('visible');
+                        } else {
+                            err.classList.add('visible');
+                        }
+                    }
                 } else {
                     toggleError(element.id, isValid);
                 }
