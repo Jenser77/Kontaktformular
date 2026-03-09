@@ -1,42 +1,40 @@
-# sv
+# Kontaktformular
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+[![CI](https://github.com/Jenser77/Kontaktformular/actions/workflows/ci.yml/badge.svg)](https://github.com/Jenser77/Kontaktformular/actions/workflows/ci.yml)
 
-## Creating a project
+Kontaktformular-Anwendung mit Admin-Dashboard, gebaut mit SvelteKit, Prisma und PostgreSQL.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Stack
 
-```sh
-# create a new project
-npx sv create my-app
-```
+- **SvelteKit 2** + Svelte 5 (adapter-node)
+- **Prisma 7** mit PostgreSQL
+- **Nodemailer** für E-Mail-Versand
+- **PM2** für Prozessverwaltung auf dem Server
 
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@0.12.5 create --template minimal --types jsdoc --no-install c:/temp/Kontaktformular/v2
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Entwicklung
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun install
+bun run dev
 ```
 
-## Building
-
-To create a production version of your app:
+## Code-Qualität
 
 ```sh
-npm run build
+bun run lint      # ESLint
+bun run check     # TypeScript + svelte-check
+bun run build     # Produktions-Build
 ```
 
-You can preview the production build with `npm run preview`.
+## CI/CD
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Bei jedem Push zu `main` läuft automatisch:
+
+1. **Lint** — ESLint mit Svelte- und TypeScript-Regeln
+2. **Type Check** — svelte-check + TypeScript
+3. **Build** — Produktions-Build
+4. **Deploy** — rsync zum Server, npm install, PM2 restart
+
+## Umgebungsvariablen
+
+Siehe `.env.example` für alle benötigten Variablen.
