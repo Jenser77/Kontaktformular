@@ -62,4 +62,4 @@ bunx prisma migrate dev      # lokal (entwickelt neue Migration)
 bun run create-admin <benutzername> <passwort> ["Anzeigename"]
 ```
 
-Solange kein passender Eintrag in `AdminUser` existiert, gelten weiterhin `ADMIN_USER` / `ADMIN_PASS` bzw. `ADMIN_USERS` in der `.env` (Klartext — für Migration/Notfall). Nach Anlegen eines DB-Users mit gleichem Namen wie in der `.env` hat der **DB-Eintrag Vorrang**.
+Anmelde-Priorität ist: `ADMIN_USER`/`ADMIN_PASS` (höchste Priorität), danach `ADMIN_USERS`, danach `AdminUser` aus der Datenbank. Dadurch funktionieren Notfall-Zugänge aus `.env` immer.
