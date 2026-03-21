@@ -5,9 +5,15 @@ import { createSession } from '$lib/server/adminSession';
 import { isRateLimited } from '$lib/server/rateLimit';
 import { prisma } from '$lib/server/prisma';
 
+function normalizeEnvSecret(value: string | undefined): string | null {
+    if (typeof value !== 'string') return null;
+    // tolerate CRLF and accidental surrounding quotes
+    return value.trim().replace(/\r/g, '').replace(/^['"]|['"]$/g, '');
+}
+
 function getSingleAdminUser(): { user: string; pass: string } | null {
-    const user = process.env.ADMIN_USER;
-    const pass = process.env.ADMIN_PASS;
+    const user = normalizeEnvSecret(process.env.ADMIN_USER);
+    const pass = normalizeEnvSecret(process.env.ADMIN_PASS);
     if (!user || !pass) return null;
     return { user, pass };
 }
@@ -20,7 +26,10 @@ function getAdminUsersFromList(): Array<{ user: string; pass: string }> {
         if (Array.isArray(parsed)) {
             return parsed.filter((u): u is { user: string; pass: string } =>
                 typeof u?.user === 'string' && typeof u?.pass === 'string'
-            );
+            ).map((u) => ({
+                user: normalizeEnvSecret(u.user) ?? '',
+                pass: normalizeEnvSecret(u.pass) ?? ''
+            }));
         }
     } catch { /* JSON.parse failed */ }
     return [];
@@ -36,7 +45,7 @@ export const actions: Actions = {
         const data = await request.formData();
         const username = data.get('username')?.toString() ?? '';
         const password = data.get('password')?.toString() ?? '';
-        const usernameTrimmed = username.trim();
+        const usernameTrimmed = username.trim().replace(/\r/g, '');
 
         // Priority 1: ADMIN_USER / ADMIN_PASS
         const singleAdmin = getSingleAdminUser();
