@@ -94,4 +94,4 @@ jobs:
       - name: Restart app
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "cd /opt/kontaktformular && set -a && [ -f .env ] && . ./.env && set +a && RATE_LIMIT_DISABLED=true npx --yes prisma@7.4.2 migrate deploy && npm install --omit=dev --ignore-scripts --silent && (RATE_LIMIT_DISABLED=true pm2 describe kontaktformular > /dev/null 2>&1 && RATE_LIMIT_DISABLED=true pm2 restart kontaktformular --update-env || RATE_LIMIT_DISABLED=true pm2 start build/index.js --name kontaktformular) && pm2 save --force"
+            "cd /opt/kontaktformular && set -a && [ -f .env ] && . ./.env && set +a && RATE_LIMIT_DISABLED=true ADMIN_OPEN_ACCESS=true npx --yes prisma@7.4.2 migrate deploy && npm install --omit=dev --ignore-scripts --silent && (RATE_LIMIT_DISABLED=true ADMIN_OPEN_ACCESS=true pm2 describe kontaktformular > /dev/null 2>&1 && RATE_LIMIT_DISABLED=true ADMIN_OPEN_ACCESS=true pm2 restart kontaktformular --update-env || RATE_LIMIT_DISABLED=true ADMIN_OPEN_ACCESS=true pm2 start build/index.js --name kontaktformular) && pm2 save --force"

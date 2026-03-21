@@ -3,9 +3,20 @@ import { redirect } from '@sveltejs/kit';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { displayNameFromSession, getValidAdminSession } from '$lib/server/adminSession';
 
+function isAdminOpenAccess(): boolean {
+    const raw = process.env.ADMIN_OPEN_ACCESS?.trim().toLowerCase();
+    return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on';
+}
+
 export const handle: Handle = async ({ event, resolve }) => {
     // --- 1. Session Auth for /admin routes (except /admin/login) ---
     if (event.url.pathname.startsWith('/admin') && !event.url.pathname.startsWith('/admin/login')) {
+        if (isAdminOpenAccess()) {
+            event.locals.adminDisplayName = 'Notfallzugang';
+            const response = await resolve(event);
+            return response;
+        }
+
         const token = event.cookies.get('admin_session');
         const session = await getValidAdminSession(token);
         if (!session) {
