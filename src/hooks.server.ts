@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { redirect } from '@sveltejs/kit';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { displayNameFromSession, getValidAdminSession } from '$lib/server/adminSession';

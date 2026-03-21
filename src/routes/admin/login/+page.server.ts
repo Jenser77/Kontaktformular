@@ -15,7 +15,7 @@ function getSingleAdminUser(): { user: string; pass: string } | null {
     const user = normalizeEnvSecret(process.env.ADMIN_USER);
     const pass = normalizeEnvSecret(process.env.ADMIN_PASS);
     if (!user || !pass) return null;
-    return { user, pass };
+    return { user: user.toLowerCase(), pass };
 }
 
 function getAdminUsersFromList(): Array<{ user: string; pass: string }> {
@@ -46,10 +46,11 @@ export const actions: Actions = {
         const username = data.get('username')?.toString() ?? '';
         const password = data.get('password')?.toString() ?? '';
         const usernameTrimmed = username.trim().replace(/\r/g, '');
+        const usernameLower = usernameTrimmed.toLowerCase();
 
         // Priority 1: ADMIN_USER / ADMIN_PASS
         const singleAdmin = getSingleAdminUser();
-        if (singleAdmin && singleAdmin.user === usernameTrimmed && singleAdmin.pass === password) {
+        if (singleAdmin && singleAdmin.user === usernameLower && singleAdmin.pass === password) {
             const token = await createSession({ loginLabel: usernameTrimmed || null });
             cookies.set('admin_session', token, {
                 path: '/',
