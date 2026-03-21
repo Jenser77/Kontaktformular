@@ -45,3 +45,11 @@ model Fachabteilung {
   einrichtung   Einrichtung @relation(fields: [einrichtungId], references: [id], onDelete: Cascade)
   createdAt     DateTime    @default(now())
 }
+
+model AdminSession {
+  id        String   @id
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+}

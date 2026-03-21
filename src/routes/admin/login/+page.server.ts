@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createSession } from '../../../hooks.server';
+import { createSession } from '$lib/server/adminSession';
 import { isRateLimited } from '$lib/server/rateLimit';
 
 function getAdminUsers(): Array<{ user: string; pass: string }> {
@@ -29,7 +29,7 @@ export const actions: Actions = {
             return fail(401, { error: 'Benutzername oder Passwort falsch.' });
         }
 
-        const token = createSession();
+        const token = await createSession();
         cookies.set('admin_session', token, {
             path: '/',
             httpOnly: true,

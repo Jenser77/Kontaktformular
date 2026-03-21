@@ -82,7 +82,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
         return json({ success: false, error: 'Die angegebene E-Mail-Adresse ist ungültig.' }, { status: 400 });
     }
 
-    // 7. Send email
+    // 7. Send email, then persist contact (same order: mail first)
     try {
         const contactData: ContactData = {
             firstName: firstName!,
@@ -96,12 +96,26 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
         await sendContactEmail(contactData, targetEmail);
 
+        await prisma.contact.create({
+            data: {
+                firstName: firstName!.trim(),
+                lastName: lastName!.trim(),
+                organization: body.organization?.trim() || null,
+                email: email!.trim(),
+                phone: body.phone?.trim() || null,
+                subject: subject!.trim(),
+                message: message!.trim(),
+                privacyAccepted: true,
+                targetRecipient: recipientId!
+            }
+        });
+
         return json({
             success: true,
             message: 'Ihre Nachricht wurde erfolgreich gesendet. Wir melden uns in Kürze.'
         });
     } catch (error) {
-        console.error('[Contact API] Fehler beim Mailversand:', error);
+        console.error('[Contact API] Fehler beim Mailversand oder Speichern:', error);
         return json(
             { success: false, error: 'Fehler beim Versuch die Nachricht zu versenden. Versuchen Sie es später nochmal.' },
             { status: 500 }

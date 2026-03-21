@@ -54,7 +54,8 @@ export const ModelName = {
   Contact: 'Contact',
   Mandant: 'Mandant',
   Einrichtung: 'Einrichtung',
-  Fachabteilung: 'Fachabteilung'
+  Fachabteilung: 'Fachabteilung',
+  AdminSession: 'AdminSession'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -118,6 +119,15 @@ export const FachabteilungScalarFieldEnum = {
 } as const
 
 export type FachabteilungScalarFieldEnum = (typeof FachabteilungScalarFieldEnum)[keyof typeof FachabteilungScalarFieldEnum]
+
+
+export const AdminSessionScalarFieldEnum = {
+  id: 'id',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminSessionScalarFieldEnum = (typeof AdminSessionScalarFieldEnum)[keyof typeof AdminSessionScalarFieldEnum]
 
 
 export const SortOrder = {

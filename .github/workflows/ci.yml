@@ -33,6 +33,12 @@ jobs:
           echo "ADMIN_USER=admin" >> .env
           echo "ADMIN_PASS=dummy" >> .env
 
+      - name: Lint
+        run: bun run lint
+
+      - name: Type check
+        run: bun run check
+
       - name: Build
         run: bun run build
         env:
@@ -81,9 +87,11 @@ jobs:
       - name: Upload build
         run: |
           rsync -az --delete build/ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/build/
+          rsync -az --delete prisma/ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/prisma/
           scp package.json ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/package.json
+          scp prisma.config.ts ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/prisma.config.ts
 
       - name: Restart app
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "cd /opt/kontaktformular && npm install --omit=dev --silent && pm2 restart kontaktformular --update-env && pm2 save --force"
+            "cd /opt/kontaktformular && npx --yes prisma@7.4.2 migrate deploy && npm install --omit=dev --silent && pm2 restart kontaktformular --update-env && pm2 save --force"

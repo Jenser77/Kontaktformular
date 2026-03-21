@@ -12,6 +12,15 @@ export interface ContactData {
     message: string;
 }
 
+function escapeHtml(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function createTransporter(): Transporter {
     return nodemailer.createTransport({
         host: SMTP_HOST,
@@ -28,24 +37,24 @@ export async function sendContactEmail(contactData: ContactData, targetEmail: st
     const transporter = createTransporter();
 
     const organizationLine = contactData.organization
-        ? `<strong>Einrichtung/Organisation:</strong> ${contactData.organization}<br>`
+        ? `<strong>Einrichtung/Organisation:</strong> ${escapeHtml(contactData.organization)}<br>`
         : '';
     const phoneLine = contactData.phone
-        ? `<strong>Telefonnummer:</strong> ${contactData.phone}<br>`
+        ? `<strong>Telefonnummer:</strong> ${escapeHtml(contactData.phone)}<br>`
         : '';
 
     const htmlBody = `
 		<h2>Neue Kontaktanfrage über das Diakoniestiftung Portal</h2>
 		<p>
-			<strong>Name:</strong> ${contactData.firstName} ${contactData.lastName}<br>
-			<strong>E-Mail:</strong> ${contactData.email}<br>
+			<strong>Name:</strong> ${escapeHtml(contactData.firstName)} ${escapeHtml(contactData.lastName)}<br>
+			<strong>E-Mail:</strong> ${escapeHtml(contactData.email)}<br>
 			${organizationLine}
 			${phoneLine}
-			<strong>Betreff:</strong> ${contactData.subject}
+			<strong>Betreff:</strong> ${escapeHtml(contactData.subject)}
 		</p>
 		<hr>
 		<h3>Nachricht:</h3>
-		<p>${contactData.message.replace(/\n/g, '<br>')}</p>
+		<p>${escapeHtml(contactData.message).replace(/\n/g, '<br>')}</p>
 		<hr>
 		<p><small>Der Benutzer hat die Datenschutzbestimmungen akzeptiert.</small></p>
 	`;

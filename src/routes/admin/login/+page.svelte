@@ -36,7 +36,6 @@
 					type="text"
 					autocomplete="username"
 					required
-					autofocus
 				/>
 			</div>
 

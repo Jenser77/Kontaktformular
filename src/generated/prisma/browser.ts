@@ -37,3 +37,8 @@ export type Einrichtung = Prisma.EinrichtungModel
  * 
  */
 export type Fachabteilung = Prisma.FachabteilungModel
+/**
+ * Model AdminSession
+ * 
+ */
+export type AdminSession = Prisma.AdminSessionModel

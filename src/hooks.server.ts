@@ -1,34 +1,12 @@
 import { redirect } from '@sveltejs/kit';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
-
-// In-memory sessions: token -> expiry
-const sessions = new Map<string, number>();
-
-export function createSession(): string {
-    const token = crypto.randomUUID();
-    sessions.set(token, Date.now() + 8 * 60 * 60 * 1000); // 8h
-    return token;
-}
-
-export function isValidSession(token: string | undefined): boolean {
-    if (!token) return false;
-    const expiry = sessions.get(token);
-    if (!expiry || Date.now() > expiry) {
-        sessions.delete(token ?? '');
-        return false;
-    }
-    return true;
-}
-
-export function deleteSession(token: string) {
-    sessions.delete(token);
-}
+import { isValidSession } from '$lib/server/adminSession';
 
 export const handle: Handle = async ({ event, resolve }) => {
     // --- 1. Session Auth for /admin routes (except /admin/login) ---
     if (event.url.pathname.startsWith('/admin') && !event.url.pathname.startsWith('/admin/login')) {
         const token = event.cookies.get('admin_session');
-        if (!isValidSession(token)) {
+        if (!(await isValidSession(token))) {
             redirect(303, '/admin/login');
         }
     }

@@ -1,7 +1,7 @@
 import { prisma } from '$lib/server/prisma';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { deleteSession } from '../../hooks.server';
+import { deleteSession } from '$lib/server/adminSession';
 
 interface ContactRecord {
     id: string;
@@ -17,11 +17,50 @@ interface ContactRecord {
     createdAt: Date;
 }
 
+function recipientLabel(
+    dept:
+        | {
+              name: string;
+              einrichtung: { name: string; mandant: { name: string } };
+          }
+        | undefined,
+    fallbackId: string | null
+): string | null {
+    if (dept) {
+        return `${dept.einrichtung.mandant.name} → ${dept.einrichtung.name} → ${dept.name}`;
+    }
+    if (fallbackId) {
+        return `Nicht zuordenbar (ID: ${fallbackId})`;
+    }
+    return null;
+}
+
 export const load: PageServerLoad = async () => {
     // 1. Fetch Contact Requests
-    const contacts: ContactRecord[] = await prisma.contact.findMany({
+    const rows: ContactRecord[] = await prisma.contact.findMany({
         orderBy: { createdAt: 'desc' }
     });
+
+    const recipientIds = [...new Set(rows.map((c) => c.targetRecipient).filter(Boolean))] as string[];
+
+    const depts =
+        recipientIds.length > 0
+            ? await prisma.fachabteilung.findMany({
+                  where: { id: { in: recipientIds } },
+                  include: { einrichtung: { include: { mandant: true } } }
+              })
+            : [];
+
+    const deptById = new Map(depts.map((d) => [d.id, d]));
+
+    const contacts = rows.map((c) => ({
+        ...c,
+        createdAt: c.createdAt.toISOString(),
+        recipientLabel: recipientLabel(
+            c.targetRecipient ? deptById.get(c.targetRecipient) : undefined,
+            c.targetRecipient
+        )
+    }));
 
     // 2. Fetch Recipient Structure
     const mandanten = await prisma.mandant.findMany({
@@ -39,10 +78,7 @@ export const load: PageServerLoad = async () => {
     });
 
     return {
-        contacts: contacts.map((c) => ({
-            ...c,
-            createdAt: c.createdAt.toISOString()
-        })),
+        contacts,
         mandanten: mandanten.map((m) => ({
             ...m,
             createdAt: m.createdAt.toISOString(),
@@ -62,7 +98,7 @@ export const actions: Actions = {
     // --- Auth ---
     logout: async ({ cookies }) => {
         const token = cookies.get('admin_session');
-        if (token) deleteSession(token);
+        if (token) await deleteSession(token);
         cookies.delete('admin_session', { path: '/' });
         redirect(303, '/admin/login');
     },

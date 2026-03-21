@@ -13,6 +13,7 @@
 		message: string;
 		privacyAccepted: boolean;
 		targetRecipient: string | null;
+		recipientLabel: string | null;
 		createdAt: string;
 	}
 
@@ -41,7 +42,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let contacts = $state<ContactView[]>(data.contacts as ContactView[]);
+	let contacts = $derived(data.contacts as ContactView[]);
 	let mandanten = $derived(data.mandanten as MandantView[]);
 
 	let selectedContact = $state<ContactView | null>(null);
@@ -64,9 +65,15 @@
 	}
 
 	function handleDeleteContact(id: string) {
-		return ({ result }: { result: { type: string } }) => {
+		return async ({
+			result,
+			update,
+		}: {
+			result: { type: string };
+			update: (opts?: { reset?: boolean }) => Promise<void>;
+		}) => {
 			if (result.type === "success") {
-				contacts = contacts.filter((c) => c.id !== id);
+				await update();
 				if (selectedContact?.id === id) selectedContact = null;
 			}
 		};
@@ -106,6 +113,9 @@
 				>
 					Empfänger-Struktur
 				</button>
+				<a class="sidebar-link sidebar-export" href="/admin/export">
+					Kontakte als CSV
+				</a>
 			</nav>
 			<div class="sidebar-footer">
 				<form method="POST" action="?/logout">
@@ -124,6 +134,7 @@
 						<tr>
 							<th>Datum</th>
 							<th>Name</th>
+							<th>Empfänger</th>
 							<th>Betreff</th>
 							<th class="actions-col">Aktionen</th>
 						</tr>
@@ -131,7 +142,7 @@
 					<tbody>
 						{#if contacts.length === 0}
 							<tr
-								><td colspan="4" class="empty-state"
+								><td colspan="5" class="empty-state"
 									>Keine Anfragen vorhanden.</td
 								></tr
 							>
@@ -142,6 +153,9 @@
 									<td
 										>{contact.firstName}
 										{contact.lastName}</td
+									>
+									<td class="cell-recipient"
+										>{contact.recipientLabel ?? "—"}</td
 									>
 									<td>{contact.subject}</td>
 									<td class="actions-col">
@@ -154,13 +168,15 @@
 										<form
 											method="POST"
 											action="?/deleteContact"
-											use:enhance={() => {
+											use:enhance={({ cancel }) => {
 												if (
 													!confirm(
 														"Soll dieser Kontakt wirklich gelöscht werden?",
 													)
-												)
+												) {
+													cancel();
 													return;
+												}
 												return handleDeleteContact(
 													contact.id,
 												);
@@ -212,8 +228,11 @@
 							<span>{selectedContact.phone || "-"}</span>
 							<strong>Betreff:</strong>
 							<span>{selectedContact.subject}</span>
-							<strong>Empfänger-ID:</strong>
-							<span>{selectedContact.targetRecipient || "-"}</span
+							<strong>Empfänger:</strong>
+							<span
+								>{selectedContact.recipientLabel ??
+									selectedContact.targetRecipient ??
+									"—"}</span
 							>
 							<strong>Nachricht:</strong>
 							<p class="message-text">
@@ -411,7 +430,7 @@
 													use:enhance={() => {
 														if (
 															!confirm(
-																`Einrichtung "${e.name}" löschen?`,
+																`Einrichtung "${e.name}" und alle zugehörigen Fachabteilungen endgültig löschen?`,
 															)
 														)
 															return;
@@ -763,6 +782,12 @@
 	}
 	.admin-table tbody tr:hover {
 		background: #faf7fd;
+	}
+	.cell-recipient {
+		max-width: 18rem;
+		font-size: 0.9em;
+		line-height: 1.35;
+		vertical-align: top;
 	}
 	.actions-col {
 		text-align: right !important;
