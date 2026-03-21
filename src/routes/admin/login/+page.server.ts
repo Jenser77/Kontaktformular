@@ -1,6 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import bcrypt from 'bcryptjs';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { createSession } from '$lib/server/adminSession';
 import { isRateLimited } from '$lib/server/rateLimit';
 import { prisma } from '$lib/server/prisma';
@@ -11,16 +13,36 @@ function normalizeEnvSecret(value: string | undefined): string | null {
     return value.trim().replace(/\r/g, '').replace(/^['"]|['"]$/g, '');
 }
 
+function readEnvFileValue(key: string): string | null {
+    try {
+        const raw = readFileSync(join(process.cwd(), '.env'), 'utf8');
+        const lines = raw.split('\n');
+        for (const lineRaw of lines) {
+            const line = lineRaw.replace(/\r/g, '').trim();
+            if (!line || line.startsWith('#')) continue;
+            const idx = line.indexOf('=');
+            if (idx <= 0) continue;
+            const k = line.slice(0, idx).trim();
+            if (k !== key) continue;
+            const v = line.slice(idx + 1).trim();
+            return normalizeEnvSecret(v);
+        }
+    } catch {
+        // ignore missing/unreadable .env
+    }
+    return null;
+}
+
 function getSingleAdminUser(): { user: string; pass: string } | null {
-    const user = normalizeEnvSecret(process.env.ADMIN_USER);
-    const pass = normalizeEnvSecret(process.env.ADMIN_PASS);
+    const user = normalizeEnvSecret(process.env.ADMIN_USER) ?? readEnvFileValue('ADMIN_USER');
+    const pass = normalizeEnvSecret(process.env.ADMIN_PASS) ?? readEnvFileValue('ADMIN_PASS');
     if (!user || !pass) return null;
     return { user: user.toLowerCase(), pass };
 }
 
 function getAdminUsersFromList(): Array<{ user: string; pass: string }> {
     try {
-        const raw = process.env.ADMIN_USERS;
+        const raw = process.env.ADMIN_USERS ?? readEnvFileValue('ADMIN_USERS');
         if (!raw) return [];
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
