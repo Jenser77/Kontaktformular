@@ -33,7 +33,7 @@ Bei jedem Push zu `main` läuft automatisch:
 1. **Lint** — ESLint mit Svelte- und TypeScript-Regeln
 2. **Type Check** — svelte-check + TypeScript
 3. **Build** — Produktions-Build
-4. **Deploy** — `build/` und `prisma/` per rsync, `prisma migrate deploy`, `npm install`, PM2 restart (`DATABASE_URL` muss auf dem Server in `.env` o. Ä. stehen)
+4. **Deploy** — `build/` und `prisma/` per rsync, `prisma migrate deploy`, `npm install --omit=dev --ignore-scripts` (ohne `prepare`/svelte-kit auf dem Server), PM2 **restart** oder beim ersten Mal **start** `build/index.js` als `kontaktformular` (`DATABASE_URL` in `/opt/kontaktformular/.env`)
 
 ## Umgebungsvariablen
 
