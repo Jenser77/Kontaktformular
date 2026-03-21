@@ -1,7 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
+import bcrypt from 'bcryptjs';
 import { createSession } from '$lib/server/adminSession';
 import { isRateLimited } from '$lib/server/rateLimit';
+import { prisma } from '$lib/server/prisma';
 
 function getAdminUsers(): Array<{ user: string; pass: string }> {
     try {
@@ -23,13 +25,29 @@ export const actions: Actions = {
         const username = data.get('username')?.toString() ?? '';
         const password = data.get('password')?.toString() ?? '';
 
-        const users = getAdminUsers();
-        const valid = users.some(u => u.user === username && u.pass === password);
-        if (!valid) {
-            return fail(401, { error: 'Benutzername oder Passwort falsch.' });
+        const usernameNorm = username.trim().toLowerCase();
+
+        const dbUser = usernameNorm
+            ? await prisma.adminUser.findUnique({ where: { username: usernameNorm } })
+            : null;
+
+        let token: string;
+
+        if (dbUser) {
+            const ok = await bcrypt.compare(password, dbUser.passwordHash);
+            if (!ok) {
+                return fail(401, { error: 'Benutzername oder Passwort falsch.' });
+            }
+            token = await createSession({ adminUserId: dbUser.id });
+        } else {
+            const users = getAdminUsers();
+            const valid = users.some((u) => u.user === username && u.pass === password);
+            if (!valid) {
+                return fail(401, { error: 'Benutzername oder Passwort falsch.' });
+            }
+            token = await createSession({ loginLabel: username.trim() || null });
         }
 
-        const token = await createSession();
         cookies.set('admin_session', token, {
             path: '/',
             httpOnly: true,

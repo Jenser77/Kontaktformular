@@ -2,12 +2,61 @@ import { prisma } from '$lib/server/prisma';
 
 const SESSION_MS = 8 * 60 * 60 * 1000;
 
-export async function createSession(): Promise<string> {
+export type ValidAdminSession = {
+    adminUser: { username: string; displayName: string | null } | null;
+    loginLabel: string | null;
+};
+
+export async function getValidAdminSession(token: string | undefined): Promise<ValidAdminSession | null> {
+    if (!token) return null;
+
+    const row = await prisma.adminSession.findUnique({
+        where: { id: token },
+        include: { adminUser: { select: { username: true, displayName: true } } }
+    });
+
+    if (!row) return null;
+
+    if (row.expiresAt < new Date()) {
+        await prisma.adminSession.delete({ where: { id: token } }).catch(() => {});
+        return null;
+    }
+
+    return {
+        adminUser: row.adminUser,
+        loginLabel: row.loginLabel
+    };
+}
+
+export function displayNameFromSession(s: ValidAdminSession): string {
+    if (s.adminUser) {
+        const d = s.adminUser.displayName?.trim();
+        return d || s.adminUser.username;
+    }
+    const label = s.loginLabel?.trim();
+    return label || 'Administrator';
+}
+
+export async function isValidSession(token: string | undefined): Promise<boolean> {
+    return (await getValidAdminSession(token)) !== null;
+}
+
+export type CreateSessionOptions = {
+    adminUserId?: string | null;
+    loginLabel?: string | null;
+};
+
+export async function createSession(opts: CreateSessionOptions = {}): Promise<string> {
     const token = crypto.randomUUID();
     const expiresAt = new Date(Date.now() + SESSION_MS);
 
     await prisma.adminSession.create({
-        data: { id: token, expiresAt }
+        data: {
+            id: token,
+            expiresAt,
+            adminUserId: opts.adminUserId ?? null,
+            loginLabel: opts.loginLabel ?? null
+        }
     });
 
     await prisma.adminSession.deleteMany({
@@ -15,20 +64,6 @@ export async function createSession(): Promise<string> {
     });
 
     return token;
-}
-
-export async function isValidSession(token: string | undefined): Promise<boolean> {
-    if (!token) return false;
-
-    const row = await prisma.adminSession.findUnique({ where: { id: token } });
-    if (!row) return false;
-
-    if (row.expiresAt < new Date()) {
-        await prisma.adminSession.delete({ where: { id: token } }).catch(() => {});
-        return false;
-    }
-
-    return true;
 }
 
 export async function deleteSession(token: string): Promise<void> {

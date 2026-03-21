@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { isValidSession } from '$lib/server/adminSession';
+import { getValidAdminSession } from '$lib/server/adminSession';
 import { prisma } from '$lib/server/prisma';
 
 function csvCell(value: string | number | boolean | null | undefined): string {
@@ -13,7 +13,7 @@ function csvCell(value: string | number | boolean | null | undefined): string {
 
 export const GET: RequestHandler = async ({ cookies }) => {
     const token = cookies.get('admin_session');
-    if (!(await isValidSession(token))) {
+    if (!(await getValidAdminSession(token))) {
         error(401, 'Nicht angemeldet');
     }
 

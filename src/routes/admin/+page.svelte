@@ -118,6 +118,9 @@
 				</a>
 			</nav>
 			<div class="sidebar-footer">
+				{#if data.adminDisplayName}
+					<p class="sidebar-user">{data.adminDisplayName}</p>
+				{/if}
 				<form method="POST" action="?/logout">
 					<button type="submit" class="btn-logout">Abmelden</button>
 				</form>
@@ -651,6 +654,13 @@
 		margin-top: auto;
 		padding-top: 16px;
 		border-top: 1px solid #ddd;
+	}
+
+	.sidebar-user {
+		margin: 0 0 10px;
+		font-size: 0.875rem;
+		color: #555;
+		line-height: 1.35;
 	}
 
 	.btn-logout {

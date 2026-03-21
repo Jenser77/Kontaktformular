@@ -28,18 +28,24 @@ export type AdminSessionMinAggregateOutputType = {
   id: string | null
   expiresAt: Date | null
   createdAt: Date | null
+  adminUserId: string | null
+  loginLabel: string | null
 }
 
 export type AdminSessionMaxAggregateOutputType = {
   id: string | null
   expiresAt: Date | null
   createdAt: Date | null
+  adminUserId: string | null
+  loginLabel: string | null
 }
 
 export type AdminSessionCountAggregateOutputType = {
   id: number
   expiresAt: number
   createdAt: number
+  adminUserId: number
+  loginLabel: number
   _all: number
 }
 
@@ -48,18 +54,24 @@ export type AdminSessionMinAggregateInputType = {
   id?: true
   expiresAt?: true
   createdAt?: true
+  adminUserId?: true
+  loginLabel?: true
 }
 
 export type AdminSessionMaxAggregateInputType = {
   id?: true
   expiresAt?: true
   createdAt?: true
+  adminUserId?: true
+  loginLabel?: true
 }
 
 export type AdminSessionCountAggregateInputType = {
   id?: true
   expiresAt?: true
   createdAt?: true
+  adminUserId?: true
+  loginLabel?: true
   _all?: true
 }
 
@@ -139,6 +151,8 @@ export type AdminSessionGroupByOutputType = {
   id: string
   expiresAt: Date
   createdAt: Date
+  adminUserId: string | null
+  loginLabel: string | null
   _count: AdminSessionCountAggregateOutputType | null
   _min: AdminSessionMinAggregateOutputType | null
   _max: AdminSessionMaxAggregateOutputType | null
@@ -166,12 +180,18 @@ export type AdminSessionWhereInput = {
   id?: Prisma.StringFilter<"AdminSession"> | string
   expiresAt?: Prisma.DateTimeFilter<"AdminSession"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"AdminSession"> | Date | string
+  adminUserId?: Prisma.StringNullableFilter<"AdminSession"> | string | null
+  loginLabel?: Prisma.StringNullableFilter<"AdminSession"> | string | null
+  adminUser?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
 }
 
 export type AdminSessionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  adminUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  loginLabel?: Prisma.SortOrderInput | Prisma.SortOrder
+  adminUser?: Prisma.AdminUserOrderByWithRelationInput
 }
 
 export type AdminSessionWhereUniqueInput = Prisma.AtLeast<{
@@ -181,12 +201,17 @@ export type AdminSessionWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AdminSessionWhereInput | Prisma.AdminSessionWhereInput[]
   expiresAt?: Prisma.DateTimeFilter<"AdminSession"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"AdminSession"> | Date | string
+  adminUserId?: Prisma.StringNullableFilter<"AdminSession"> | string | null
+  loginLabel?: Prisma.StringNullableFilter<"AdminSession"> | string | null
+  adminUser?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
 }, "id">
 
 export type AdminSessionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  adminUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  loginLabel?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AdminSessionCountOrderByAggregateInput
   _max?: Prisma.AdminSessionMaxOrderByAggregateInput
   _min?: Prisma.AdminSessionMinOrderByAggregateInput
@@ -199,66 +224,218 @@ export type AdminSessionScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"AdminSession"> | string
   expiresAt?: Prisma.DateTimeWithAggregatesFilter<"AdminSession"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AdminSession"> | Date | string
+  adminUserId?: Prisma.StringNullableWithAggregatesFilter<"AdminSession"> | string | null
+  loginLabel?: Prisma.StringNullableWithAggregatesFilter<"AdminSession"> | string | null
 }
 
 export type AdminSessionCreateInput = {
   id: string
   expiresAt: Date | string
   createdAt?: Date | string
+  loginLabel?: string | null
+  adminUser?: Prisma.AdminUserCreateNestedOneWithoutSessionsInput
 }
 
 export type AdminSessionUncheckedCreateInput = {
   id: string
   expiresAt: Date | string
   createdAt?: Date | string
+  adminUserId?: string | null
+  loginLabel?: string | null
 }
 
 export type AdminSessionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  loginLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  adminUser?: Prisma.AdminUserUpdateOneWithoutSessionsNestedInput
 }
 
 export type AdminSessionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  adminUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  loginLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AdminSessionCreateManyInput = {
   id: string
   expiresAt: Date | string
   createdAt?: Date | string
+  adminUserId?: string | null
+  loginLabel?: string | null
 }
 
 export type AdminSessionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  loginLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AdminSessionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  adminUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  loginLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AdminSessionListRelationFilter = {
+  every?: Prisma.AdminSessionWhereInput
+  some?: Prisma.AdminSessionWhereInput
+  none?: Prisma.AdminSessionWhereInput
+}
+
+export type AdminSessionOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type AdminSessionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  adminUserId?: Prisma.SortOrder
+  loginLabel?: Prisma.SortOrder
 }
 
 export type AdminSessionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  adminUserId?: Prisma.SortOrder
+  loginLabel?: Prisma.SortOrder
 }
 
 export type AdminSessionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  adminUserId?: Prisma.SortOrder
+  loginLabel?: Prisma.SortOrder
+}
+
+export type AdminSessionCreateNestedManyWithoutAdminUserInput = {
+  create?: Prisma.XOR<Prisma.AdminSessionCreateWithoutAdminUserInput, Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput> | Prisma.AdminSessionCreateWithoutAdminUserInput[] | Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput[]
+  connectOrCreate?: Prisma.AdminSessionCreateOrConnectWithoutAdminUserInput | Prisma.AdminSessionCreateOrConnectWithoutAdminUserInput[]
+  createMany?: Prisma.AdminSessionCreateManyAdminUserInputEnvelope
+  connect?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+}
+
+export type AdminSessionUncheckedCreateNestedManyWithoutAdminUserInput = {
+  create?: Prisma.XOR<Prisma.AdminSessionCreateWithoutAdminUserInput, Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput> | Prisma.AdminSessionCreateWithoutAdminUserInput[] | Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput[]
+  connectOrCreate?: Prisma.AdminSessionCreateOrConnectWithoutAdminUserInput | Prisma.AdminSessionCreateOrConnectWithoutAdminUserInput[]
+  createMany?: Prisma.AdminSessionCreateManyAdminUserInputEnvelope
+  connect?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+}
+
+export type AdminSessionUpdateManyWithoutAdminUserNestedInput = {
+  create?: Prisma.XOR<Prisma.AdminSessionCreateWithoutAdminUserInput, Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput> | Prisma.AdminSessionCreateWithoutAdminUserInput[] | Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput[]
+  connectOrCreate?: Prisma.AdminSessionCreateOrConnectWithoutAdminUserInput | Prisma.AdminSessionCreateOrConnectWithoutAdminUserInput[]
+  upsert?: Prisma.AdminSessionUpsertWithWhereUniqueWithoutAdminUserInput | Prisma.AdminSessionUpsertWithWhereUniqueWithoutAdminUserInput[]
+  createMany?: Prisma.AdminSessionCreateManyAdminUserInputEnvelope
+  set?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+  disconnect?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+  delete?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+  connect?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+  update?: Prisma.AdminSessionUpdateWithWhereUniqueWithoutAdminUserInput | Prisma.AdminSessionUpdateWithWhereUniqueWithoutAdminUserInput[]
+  updateMany?: Prisma.AdminSessionUpdateManyWithWhereWithoutAdminUserInput | Prisma.AdminSessionUpdateManyWithWhereWithoutAdminUserInput[]
+  deleteMany?: Prisma.AdminSessionScalarWhereInput | Prisma.AdminSessionScalarWhereInput[]
+}
+
+export type AdminSessionUncheckedUpdateManyWithoutAdminUserNestedInput = {
+  create?: Prisma.XOR<Prisma.AdminSessionCreateWithoutAdminUserInput, Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput> | Prisma.AdminSessionCreateWithoutAdminUserInput[] | Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput[]
+  connectOrCreate?: Prisma.AdminSessionCreateOrConnectWithoutAdminUserInput | Prisma.AdminSessionCreateOrConnectWithoutAdminUserInput[]
+  upsert?: Prisma.AdminSessionUpsertWithWhereUniqueWithoutAdminUserInput | Prisma.AdminSessionUpsertWithWhereUniqueWithoutAdminUserInput[]
+  createMany?: Prisma.AdminSessionCreateManyAdminUserInputEnvelope
+  set?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+  disconnect?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+  delete?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+  connect?: Prisma.AdminSessionWhereUniqueInput | Prisma.AdminSessionWhereUniqueInput[]
+  update?: Prisma.AdminSessionUpdateWithWhereUniqueWithoutAdminUserInput | Prisma.AdminSessionUpdateWithWhereUniqueWithoutAdminUserInput[]
+  updateMany?: Prisma.AdminSessionUpdateManyWithWhereWithoutAdminUserInput | Prisma.AdminSessionUpdateManyWithWhereWithoutAdminUserInput[]
+  deleteMany?: Prisma.AdminSessionScalarWhereInput | Prisma.AdminSessionScalarWhereInput[]
+}
+
+export type AdminSessionCreateWithoutAdminUserInput = {
+  id: string
+  expiresAt: Date | string
+  createdAt?: Date | string
+  loginLabel?: string | null
+}
+
+export type AdminSessionUncheckedCreateWithoutAdminUserInput = {
+  id: string
+  expiresAt: Date | string
+  createdAt?: Date | string
+  loginLabel?: string | null
+}
+
+export type AdminSessionCreateOrConnectWithoutAdminUserInput = {
+  where: Prisma.AdminSessionWhereUniqueInput
+  create: Prisma.XOR<Prisma.AdminSessionCreateWithoutAdminUserInput, Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput>
+}
+
+export type AdminSessionCreateManyAdminUserInputEnvelope = {
+  data: Prisma.AdminSessionCreateManyAdminUserInput | Prisma.AdminSessionCreateManyAdminUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type AdminSessionUpsertWithWhereUniqueWithoutAdminUserInput = {
+  where: Prisma.AdminSessionWhereUniqueInput
+  update: Prisma.XOR<Prisma.AdminSessionUpdateWithoutAdminUserInput, Prisma.AdminSessionUncheckedUpdateWithoutAdminUserInput>
+  create: Prisma.XOR<Prisma.AdminSessionCreateWithoutAdminUserInput, Prisma.AdminSessionUncheckedCreateWithoutAdminUserInput>
+}
+
+export type AdminSessionUpdateWithWhereUniqueWithoutAdminUserInput = {
+  where: Prisma.AdminSessionWhereUniqueInput
+  data: Prisma.XOR<Prisma.AdminSessionUpdateWithoutAdminUserInput, Prisma.AdminSessionUncheckedUpdateWithoutAdminUserInput>
+}
+
+export type AdminSessionUpdateManyWithWhereWithoutAdminUserInput = {
+  where: Prisma.AdminSessionScalarWhereInput
+  data: Prisma.XOR<Prisma.AdminSessionUpdateManyMutationInput, Prisma.AdminSessionUncheckedUpdateManyWithoutAdminUserInput>
+}
+
+export type AdminSessionScalarWhereInput = {
+  AND?: Prisma.AdminSessionScalarWhereInput | Prisma.AdminSessionScalarWhereInput[]
+  OR?: Prisma.AdminSessionScalarWhereInput[]
+  NOT?: Prisma.AdminSessionScalarWhereInput | Prisma.AdminSessionScalarWhereInput[]
+  id?: Prisma.StringFilter<"AdminSession"> | string
+  expiresAt?: Prisma.DateTimeFilter<"AdminSession"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"AdminSession"> | Date | string
+  adminUserId?: Prisma.StringNullableFilter<"AdminSession"> | string | null
+  loginLabel?: Prisma.StringNullableFilter<"AdminSession"> | string | null
+}
+
+export type AdminSessionCreateManyAdminUserInput = {
+  id: string
+  expiresAt: Date | string
+  createdAt?: Date | string
+  loginLabel?: string | null
+}
+
+export type AdminSessionUpdateWithoutAdminUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  loginLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AdminSessionUncheckedUpdateWithoutAdminUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  loginLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AdminSessionUncheckedUpdateManyWithoutAdminUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  loginLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -267,35 +444,59 @@ export type AdminSessionSelect<ExtArgs extends runtime.Types.Extensions.Internal
   id?: boolean
   expiresAt?: boolean
   createdAt?: boolean
+  adminUserId?: boolean
+  loginLabel?: boolean
+  adminUser?: boolean | Prisma.AdminSession$adminUserArgs<ExtArgs>
 }, ExtArgs["result"]["adminSession"]>
 
 export type AdminSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   expiresAt?: boolean
   createdAt?: boolean
+  adminUserId?: boolean
+  loginLabel?: boolean
+  adminUser?: boolean | Prisma.AdminSession$adminUserArgs<ExtArgs>
 }, ExtArgs["result"]["adminSession"]>
 
 export type AdminSessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   expiresAt?: boolean
   createdAt?: boolean
+  adminUserId?: boolean
+  loginLabel?: boolean
+  adminUser?: boolean | Prisma.AdminSession$adminUserArgs<ExtArgs>
 }, ExtArgs["result"]["adminSession"]>
 
 export type AdminSessionSelectScalar = {
   id?: boolean
   expiresAt?: boolean
   createdAt?: boolean
+  adminUserId?: boolean
+  loginLabel?: boolean
 }
 
-export type AdminSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "expiresAt" | "createdAt", ExtArgs["result"]["adminSession"]>
+export type AdminSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "expiresAt" | "createdAt" | "adminUserId" | "loginLabel", ExtArgs["result"]["adminSession"]>
+export type AdminSessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  adminUser?: boolean | Prisma.AdminSession$adminUserArgs<ExtArgs>
+}
+export type AdminSessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  adminUser?: boolean | Prisma.AdminSession$adminUserArgs<ExtArgs>
+}
+export type AdminSessionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  adminUser?: boolean | Prisma.AdminSession$adminUserArgs<ExtArgs>
+}
 
 export type $AdminSessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AdminSession"
-  objects: {}
+  objects: {
+    adminUser: Prisma.$AdminUserPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     expiresAt: Date
     createdAt: Date
+    adminUserId: string | null
+    loginLabel: string | null
   }, ExtArgs["result"]["adminSession"]>
   composites: {}
 }
@@ -690,6 +891,7 @@ readonly fields: AdminSessionFieldRefs;
  */
 export interface Prisma__AdminSessionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  adminUser<T extends Prisma.AdminSession$adminUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminSession$adminUserArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -722,6 +924,8 @@ export interface AdminSessionFieldRefs {
   readonly id: Prisma.FieldRef<"AdminSession", 'String'>
   readonly expiresAt: Prisma.FieldRef<"AdminSession", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"AdminSession", 'DateTime'>
+  readonly adminUserId: Prisma.FieldRef<"AdminSession", 'String'>
+  readonly loginLabel: Prisma.FieldRef<"AdminSession", 'String'>
 }
     
 
@@ -738,6 +942,10 @@ export type AdminSessionFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the AdminSession
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
   /**
    * Filter, which AdminSession to fetch.
    */
@@ -757,6 +965,10 @@ export type AdminSessionFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
+  /**
    * Filter, which AdminSession to fetch.
    */
   where: Prisma.AdminSessionWhereUniqueInput
@@ -774,6 +986,10 @@ export type AdminSessionFindFirstArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the AdminSession
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
   /**
    * Filter, which AdminSession to fetch.
    */
@@ -823,6 +1039,10 @@ export type AdminSessionFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
+  /**
    * Filter, which AdminSession to fetch.
    */
   where?: Prisma.AdminSessionWhereInput
@@ -871,6 +1091,10 @@ export type AdminSessionFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
+  /**
    * Filter, which AdminSessions to fetch.
    */
   where?: Prisma.AdminSessionWhereInput
@@ -914,6 +1138,10 @@ export type AdminSessionCreateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
+  /**
    * The data needed to create a AdminSession.
    */
   data: Prisma.XOR<Prisma.AdminSessionCreateInput, Prisma.AdminSessionUncheckedCreateInput>
@@ -947,6 +1175,10 @@ export type AdminSessionCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.AdminSessionCreateManyInput | Prisma.AdminSessionCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -961,6 +1193,10 @@ export type AdminSessionUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the AdminSession
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
   /**
    * The data needed to update a AdminSession.
    */
@@ -1013,6 +1249,10 @@ export type AdminSessionUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many AdminSessions to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1027,6 +1267,10 @@ export type AdminSessionUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the AdminSession
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
   /**
    * The filter to search for the AdminSession to update in case it exists.
    */
@@ -1054,6 +1298,10 @@ export type AdminSessionDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
+  /**
    * Filter which AdminSession to delete.
    */
   where: Prisma.AdminSessionWhereUniqueInput
@@ -1074,6 +1322,25 @@ export type AdminSessionDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * AdminSession.adminUser
+ */
+export type AdminSession$adminUserArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AdminUser
+   */
+  select?: Prisma.AdminUserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AdminUser
+   */
+  omit?: Prisma.AdminUserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminUserInclude<ExtArgs> | null
+  where?: Prisma.AdminUserWhereInput
+}
+
+/**
  * AdminSession without action
  */
 export type AdminSessionDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1085,4 +1352,8 @@ export type AdminSessionDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the AdminSession
    */
   omit?: Prisma.AdminSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminSessionInclude<ExtArgs> | null
 }

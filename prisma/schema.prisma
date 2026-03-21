@@ -46,10 +46,24 @@ model Fachabteilung {
   createdAt     DateTime    @default(now())
 }
 
+model AdminUser {
+  id           String         @id @default(uuid())
+  username     String         @unique
+  displayName  String?
+  passwordHash String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  sessions     AdminSession[]
+}
+
 model AdminSession {
-  id        String   @id
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  id          String     @id
+  expiresAt   DateTime
+  createdAt   DateTime   @default(now())
+  adminUserId String?
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  loginLabel  String?
 
   @@index([expiresAt])
+  @@index([adminUserId])
 }

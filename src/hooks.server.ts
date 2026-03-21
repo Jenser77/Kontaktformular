@@ -1,14 +1,16 @@
 import { redirect } from '@sveltejs/kit';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
-import { isValidSession } from '$lib/server/adminSession';
+import { displayNameFromSession, getValidAdminSession } from '$lib/server/adminSession';
 
 export const handle: Handle = async ({ event, resolve }) => {
     // --- 1. Session Auth for /admin routes (except /admin/login) ---
     if (event.url.pathname.startsWith('/admin') && !event.url.pathname.startsWith('/admin/login')) {
         const token = event.cookies.get('admin_session');
-        if (!(await isValidSession(token))) {
+        const session = await getValidAdminSession(token);
+        if (!session) {
             redirect(303, '/admin/login');
         }
+        event.locals.adminDisplayName = displayNameFromSession(session);
     }
 
     // --- 2. Resolve the request ---

@@ -55,3 +55,11 @@ bunx prisma migrate dev      # lokal (entwickelt neue Migration)
 3. Migrationen ausführen (Abschnitt oben).
 
 **Admin-Login:** Sitzungen liegen in der Tabelle `AdminSession` — sie **überleben PM2-Neustarts** und können von mehreren App-Instanzen genutzt werden. Nach DB-Wechsel oder frischer Migration: neu anmelden.
+
+**Admin-Benutzer in der Datenbank:** Zugänge mit gehashtem Passwort in `AdminUser` (Benutzername eindeutig, kleingeschrieben; optional `displayName` für die Sidebar). Anlegen/Aktualisieren:
+
+```sh
+bun run create-admin <benutzername> <passwort> ["Anzeigename"]
+```
+
+Solange kein passender Eintrag in `AdminUser` existiert, gelten weiterhin `ADMIN_USER` / `ADMIN_PASS` bzw. `ADMIN_USERS` in der `.env` (Klartext — für Migration/Notfall). Nach Anlegen eines DB-Users mit gleichem Namen wie in der `.env` hat der **DB-Eintrag Vorrang**.
