@@ -10,11 +10,20 @@ interface RateLimitOptions {
 
 const store = new Map<string, RateLimitEntry>();
 
+function isRateLimitDisabled(): boolean {
+    const raw = process.env.RATE_LIMIT_DISABLED?.trim().toLowerCase();
+    return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on';
+}
+
 /**
  * Check if a given IP has exceeded the rate limit.
  * Returns `true` if the request should be blocked.
  */
 export function isRateLimited(ip: string, options: RateLimitOptions = { windowMs: 15 * 60 * 1000, max: 5 }): boolean {
+    if (isRateLimitDisabled()) {
+        return false;
+    }
+
     const now = Date.now();
     const entry = store.get(ip);
 
