@@ -1,30 +1,40 @@
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
+import { existsSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+/**
+ * Kontaktseite: statische `index.html` ausliefern.
+ * Pfade müssen in Dev (vite), lokal `preview` und adapter-node (build/server/chunks → build/client)
+ * sowie verschiedene PM2-`cwd` funktionieren.
+ */
+function readContactHtml(): string | null {
+	const cwd = process.cwd();
+	const candidates = [
+		join(cwd, 'static', 'index.html'),
+		join(__dirname, '..', '..', 'client', 'index.html'),
+		join(cwd, 'build', 'client', 'index.html'),
+		join(cwd, 'client', 'index.html'),
+		join(__dirname, '..', '..', 'static', 'index.html')
+	];
+
+	for (const filePath of candidates) {
+		if (existsSync(filePath)) {
+			return readFileSync(filePath, 'utf-8');
+		}
+	}
+
+	return null;
+}
 
 export async function GET() {
-    try {
-        // Resolve static index.html path. Depending on build environment this path might vary. 
-        // For development it's mostly root/static/index.html
-        const filePath = join(__dirname, '../../static/index.html');
-        const content = readFileSync(filePath, 'utf-8');
+	const content = readContactHtml();
+	if (!content) {
+		return new Response('Home Page (index.html not found)', { status: 404 });
+	}
 
-        return new Response(content, {
-            headers: { 'Content-Type': 'text/html' }
-        });
-    } catch {
-        // Fallback for production build environments
-        const fallbackPath = join(process.cwd(), 'client', 'index.html');
-        try {
-            const content = readFileSync(fallbackPath, 'utf-8');
-            return new Response(content, {
-                headers: { 'Content-Type': 'text/html' }
-            });
-        } catch {
-            return new Response("Home Page (index.html not found)", { status: 404 });
-        }
-    }
+	return new Response(content, {
+		headers: { 'Content-Type': 'text/html; charset=utf-8' }
+	});
 }

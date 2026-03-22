@@ -68,6 +68,14 @@ Der Workflow baut in GitHub Actions, kopiert per **rsync** nach **`/opt/kontaktf
 
 **Ohne GitHub:** lokal **`bun run build`**, dann `build/`, `prisma/`, `package.json`, `prisma.config.ts` manuell auf den Server legen und auf dem Server dieselben Befehle wie im Workflow ausführen (migrate, npm install, pm2).
 
+### Startseite wirkt „ungestyled“ (nur HTML)
+
+Die Seite lädt **`/design-new.css`**, **`/script.js`** usw. aus **`build/client/`** über dieselbe Node-App. Wenn **Caddy/Nginx** die Startseite aus einem **statischen Verzeichnis** ausliefert, die Anfragen für **CSS/JS** aber **nicht** an den Node-Prozess weiterreichen, fehlen die Styles.
+
+**Lösung:** Alle Pfade (mindestens `/`, `/_app/*`, `/*.css`, `/*.js`, Bilder) per **`reverse_proxy`** an die App (z. B. `127.0.0.1:3000`) — oder statische Assets identisch unter dem Webroot bereitstellen.
+
+**PM2:** App mit **`cwd /opt/kontaktformular`** und **`node build/index.js`** (oder `build/index.js` als Skript) starten; der Code findet `build/client/index.html` auch ohne `static/` auf dem Server.
+
 ---
 
 ## Supabase (PostgreSQL in der Cloud)
