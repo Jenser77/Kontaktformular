@@ -214,6 +214,116 @@ Kein Extra-Paket auf dem Server — nur **`DATABASE_URL`** auf die gehostete DB.
 
 ---
 
+## Server-Umzug (auf neuen VPS)
+
+Domain bleibt gleich, nur die IP ändert sich. Im Repo ändert sich **nichts** — nur GitHub Secrets und Server-Setup.
+
+### Phase 1: Neuen VPS vorbereiten (als `root`)
+
+```sh
+# 1. Basis
+apt update && apt install -y curl git
+curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+apt install -y nodejs docker.io docker-compose-plugin
+npm install -g pm2
+
+# 2. deploy-User
+useradd --create-home --shell /bin/bash deploy
+mkdir -p /home/deploy/.ssh
+# Eigenen öffentlichen Key eintragen (oder vom alten Server kopieren):
+cp /root/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys
+chown -R deploy:deploy /home/deploy/.ssh
+chmod 700 /home/deploy/.ssh
+chmod 600 /home/deploy/.ssh/authorized_keys
+mkdir -p /opt/kontaktformular
+chown -R deploy:deploy /opt/kontaktformular
+usermod -aG docker deploy
+
+# 3. PM2 Autostart
+su - deploy -c "pm2 startup" 2>&1 | grep "sudo" | bash
+
+# 4. Firewall (ufw-Beispiel)
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw enable
+```
+
+### Phase 2: Secrets + Postgres
+
+```sh
+# Env-Datei (als root)
+touch /etc/kontaktformular.env
+chmod 600 /etc/kontaktformular.env
+chown deploy:deploy /etc/kontaktformular.env
+nano /etc/kontaktformular.env
+```
+
+Inhalt — **echte Werte**, neues starkes DB-Passwort:
+
+```env
+PORT=3000
+DATABASE_URL=postgresql://postgres:NEUES_STARKES_PASSWORT@127.0.0.1:5432/postgres
+SMTP_HOST=smtp.dein-anbieter.de
+SMTP_PORT=587
+SMTP_USER=kontakt@firma.de
+SMTP_PASS=APP_PASSWORT
+ALLOWED_ORIGIN=https://www.firma.de
+```
+
+Postgres starten (vorab `docker-compose.yml` nach `/opt/kontaktformular/` kopieren, **Passwort** dort ebenfalls anpassen):
+
+```sh
+cd /opt/kontaktformular && docker compose up -d
+```
+
+### Phase 3: Daten migrieren
+
+Einzige zustandsbehaftete Komponente ist **Postgres**. Alles andere kommt per CI.
+
+```sh
+# Alter Server:
+docker exec kontaktformular-db-1 pg_dump -U postgres -d postgres -F c > /tmp/kontaktformular.dump
+scp /tmp/kontaktformular.dump root@NEUE_IP:/tmp/
+
+# Neuer Server:
+docker cp /tmp/kontaktformular.dump kontaktformular-db-1:/tmp/
+docker exec kontaktformular-db-1 pg_restore -U postgres -d postgres --clean --if-exists /tmp/kontaktformular.dump
+```
+
+Prüfen: `prisma migrate status` auf dem neuen Server — sollte keine offenen Migrationen zeigen.
+
+### Phase 4: GitHub Secrets umstellen + Deploy
+
+In **GitHub → Settings → Secrets → Actions**:
+
+| Secret | Aktion |
+|--------|--------|
+| **`DEPLOY_HOST`** | Auf **neue IP** ändern |
+| **`DEPLOY_USER`** | **`deploy`** (bleibt gleich) |
+| **`DEPLOY_SSH_KEY`** | Neuen Key eintragen, falls anderer Key; sonst bleibt er gleich |
+
+Dann **`git push origin main`** — CI deployt auf den neuen Server. Test: `curl http://NEUE_IP:3000/api/health`.
+
+### Phase 5: DNS + TLS
+
+1. **TTL** beim DNS-Provider vorher auf **300 s** (5 Min) senken.
+2. **A-Record** der Domain auf die **neue IP** ändern.
+3. **TLS** einrichten (z. B. Caddy mit Auto-HTTPS oder Certbot + Nginx) — erst möglich, wenn DNS auf die neue IP zeigt.
+4. **Reverse Proxy** konfigurieren: HTTPS → `127.0.0.1:3000`.
+
+### Phase 6: Alten Server abschalten
+
+1. Seite auf neuem Server prüfen: Formular absenden, Admin-Login, E-Mail-Versand.
+2. Auf dem alten Server: `pm2 kill`, `docker compose down`. Optional: letzten Dump für Archiv sichern.
+3. Alten VPS kündigen (wenn nichts anderes darauf läuft).
+
+**Achtung Daten-Drift:** Zwischen Dump und DNS-Switch können noch Anfragen auf dem alten Server eingehen — kurz vor der Umstellung nochmal dumpen oder den alten Server vorher offline nehmen.
+
+**Achtung SMTP:** Prüfen ob der neue Hoster ausgehend Port 587 erlaubt (manche blockieren SMTP standardmäßig).
+
+---
+
 ## Admin & Sitzungen
 
 - **`bun run create-admin <user> <pass> ["Anzeigename"]`** — legt `AdminUser` an (bcrypt-Hash in der DB). **Empfohlen für Produktion** — kein Klartext-Passwort in Umgebungsvariablen nötig.
