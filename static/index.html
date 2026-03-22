@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 
 <head>
@@ -7,10 +7,8 @@
     <title>Kontakt - Diakoniestiftung in Sachsen</title>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap"
         rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
     <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap"
         rel="stylesheet" />
 
     <!-- Link to the standard CSS -->
@@ -139,7 +137,7 @@
     </header>
 
     <!-- Breadcrumb -->
-    <div id="Container_Breadcrumb" data-id="Container_Breadcrumb" role="navigation" aria-label="">
+    <div id="Container_Breadcrumb" data-id="Container_Breadcrumb">
         <div id="row-breadcrumb" class="ix-grid-row ">
             <div id="col-breadcrumb" class="ix-grid-column ix-small-pLNone ix-small-pRNone ">
                 <div id="Action_Breadcrumbtrail" role="navigation">
@@ -170,161 +168,289 @@
     </section>
 
     <!-- Main Content / Form Section -->
-    <main class="main-content-new">
-        <div class="form-wrapper">
-            <form id="contactForm" class="contact-form-new" novalidate>
-
-                <!-- Honeypot: Für Menschen unsichtbar, für Bots verführerisch -->
-                <div style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
-                    <label for="phone_alt">Bitte lassen Sie dieses Feld leer</label>
-                    <input type="text" name="phone_alt" id="phone_alt" tabindex="-1" autocomplete="off">
+    <main class="main-content-new" id="kontakt-main">
+        <div class="form-wrapper form-wrapper--premium">
+            <form id="contactForm" class="contact-form-new contact-form-wizard" novalidate>
+                <div class="wizard-intro">
+                    <p class="wizard-intro-text">In vier kurzen Schritten — Ihre Anfrage erreicht genau die richtige
+                        Fachabteilung.</p>
                 </div>
 
-                <!-- Section 1: Receiver -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <span class="material-symbols-outlined section-icon">apartment</span>
-                        <h3 class="section-title">Empfänger</h3>
+                <!-- Honeypot (name phone_alt für API); ein Feld, eine ID -->
+                <div class="honeypot-trap" aria-hidden="true">
+                    <label for="contact_hp_website">Website</label>
+                    <input type="text" name="phone_alt" id="contact_hp_website" tabindex="-1" autocomplete="off">
+                </div>
+
+                <nav class="wizard-progress" aria-label="Formularschritte">
+                    <ol class="wizard-progress-track">
+                        <li class="wizard-progress-item is-active" data-step-indicator="1">
+                            <button type="button" class="wizard-progress-btn" data-go-step="1" aria-current="step">
+                                <span class="wizard-progress-num">1</span>
+                                <span class="wizard-progress-label">Empfänger</span>
+                            </button>
+                        </li>
+                        <li class="wizard-progress-item" data-step-indicator="2">
+                            <button type="button" class="wizard-progress-btn" data-go-step="2" disabled>
+                                <span class="wizard-progress-num">2</span>
+                                <span class="wizard-progress-label">Kontakt</span>
+                            </button>
+                        </li>
+                        <li class="wizard-progress-item" data-step-indicator="3">
+                            <button type="button" class="wizard-progress-btn" data-go-step="3" disabled>
+                                <span class="wizard-progress-num">3</span>
+                                <span class="wizard-progress-label">Nachricht</span>
+                            </button>
+                        </li>
+                        <li class="wizard-progress-item" data-step-indicator="4">
+                            <button type="button" class="wizard-progress-btn" data-go-step="4" disabled>
+                                <span class="wizard-progress-num">4</span>
+                                <span class="wizard-progress-label">Prüfen</span>
+                            </button>
+                        </li>
+                    </ol>
+                    <div class="wizard-progress-bar-wrap">
+                        <p class="wizard-step-counter" id="wizardStepCounter" aria-live="polite">Schritt 1 von 4</p>
+                        <div class="wizard-progress-bar" aria-hidden="true">
+                            <div class="wizard-progress-fill" id="wizardProgressFill"></div>
+                        </div>
                     </div>
-                    <div class="form-grid">
-                        <div class="input-group">
-                            <label class="input-label" for="mandant">Mandant <span
-                                    class="required-star">*</span></label>
-                            <select class="form-select" id="mandant" name="mandant" required>
-                                <option value="" disabled selected>Bitte wählen...</option>
-                            </select>
-                            <span class="error-msg" id="err-mandant">Bitte wählen Sie einen Mandanten
-                                aus.</span>
+                </nav>
+
+                <p class="wizard-step-hint sr-only" id="wizardLive" aria-live="polite"></p>
+
+                <!-- Schritt 1 -->
+                <div class="form-step is-active" data-step="1" id="step-panel-1" role="region"
+                    aria-labelledby="step-title-1">
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span class="material-symbols-outlined section-icon" aria-hidden="true">apartment</span>
+                            <div>
+                                <h3 class="section-title" id="step-title-1">Wohin soll Ihre Nachricht?</h3>
+                                <p class="section-lead">Wählen Sie den rechtlichen Träger, die Einrichtung und die
+                                    zuständige Abteilung.</p>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label class="input-label" for="mandant">Organisationsträger (Mandant) <span
+                                        class="required-star">*</span></label>
+                                <p class="field-hint" id="hint-mandant">Der übergeordnete Träger Ihrer gewünschten
+                                    Einrichtung — so wird Ihre Anfrage intern korrekt zugeordnet.</p>
+                                <select class="form-select" id="mandant" name="mandant" required
+                                    aria-describedby="hint-mandant">
+                                    <option value="" disabled selected>Bitte wählen...</option>
+                                </select>
+                                <span class="error-msg" id="err-mandant">Bitte wählen Sie einen Mandanten aus.</span>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="input-group">
+                                    <label class="input-label" for="einrichtung">Einrichtung <span
+                                            class="required-star">*</span></label>
+                                    <select class="form-select" id="einrichtung" name="einrichtung" required disabled>
+                                        <option value="" disabled selected>Bitte zuerst Mandant wählen...</option>
+                                    </select>
+                                    <span class="error-msg" id="err-einrichtung">Bitte wählen Sie eine Einrichtung
+                                        aus.</span>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label" for="recipientId">Fachabteilung <span
+                                            class="required-star">*</span></label>
+                                    <select class="form-select" id="recipientId" name="recipientId" required disabled>
+                                        <option value="" disabled selected>Bitte zuerst Einrichtung wählen...</option>
+                                    </select>
+                                    <span class="error-msg" id="err-recipientId">Bitte wählen Sie eine Fachabteilung
+                                        aus.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wizard-nav">
+                        <span class="wizard-nav-spacer" aria-hidden="true"></span>
+                        <button type="button" class="btn-wizard btn-wizard-primary" data-wizard-next>
+                            Weiter zu Kontaktdaten
+                            <span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Schritt 2 -->
+                <div class="form-step" data-step="2" id="step-panel-2" role="region" aria-labelledby="step-title-2"
+                    hidden>
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span class="material-symbols-outlined section-icon" aria-hidden="true">person</span>
+                            <div>
+                                <h3 class="section-title" id="step-title-2">Wie können wir Sie erreichen?</h3>
+                                <p class="section-lead">Ihre Daten nutzen wir nur zur Bearbeitung dieser Anfrage.</p>
+                            </div>
                         </div>
                         <div class="form-grid-2">
                             <div class="input-group">
-                                <label class="input-label" for="einrichtung">Einrichtung <span
+                                <label class="input-label" for="firstName">Vorname <span
                                         class="required-star">*</span></label>
-                                <select class="form-select" id="einrichtung" name="einrichtung" required disabled>
-                                    <option value="" disabled selected>Bitte zuerst Mandant wählen...
-                                    </option>
-                                </select>
-                                <span class="error-msg" id="err-einrichtung">Bitte wählen Sie eine
-                                    Einrichtung
-                                    aus.</span>
+                                <input class="form-input" id="firstName" name="firstName" placeholder="Max" type="text"
+                                    required autocomplete="given-name" />
+                                <span class="error-msg" id="err-firstName">Bitte geben Sie Ihren Vornamen an.</span>
                             </div>
                             <div class="input-group">
-                                <label class="input-label" for="recipientId">Fachabteilung <span
+                                <label class="input-label" for="lastName">Nachname <span
                                         class="required-star">*</span></label>
-                                <select class="form-select" id="recipientId" name="recipientId" required disabled>
-                                    <option value="" disabled selected>Bitte zuerst Einrichtung
-                                        wählen...</option>
-                                </select>
-                                <span class="error-msg" id="err-recipientId">Bitte wählen Sie eine
-                                    Fachabteilung
-                                    aus.</span>
+                                <input class="form-input" id="lastName" name="lastName" placeholder="Mustermann"
+                                    type="text" required autocomplete="family-name" />
+                                <span class="error-msg" id="err-lastName">Bitte geben Sie Ihren Nachnamen an.</span>
+                            </div>
+                            <div class="input-group col-span-2">
+                                <label class="input-label" for="organization">Organisation oder Arbeitgeber
+                                    (optional)</label>
+                                <input class="form-input" id="organization" name="organization"
+                                    placeholder="z. B. Firma oder Verein" type="text" autocomplete="organization" />
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label" for="email">E-Mail-Adresse <span
+                                        class="required-star">*</span></label>
+                                <input class="form-input" id="email" name="email"
+                                    placeholder="max.mustermann@beispiel.de" type="email" required
+                                    autocomplete="email" />
+                                <span class="error-msg" id="err-email">Bitte geben Sie eine gültige E-Mail-Adresse
+                                    an.</span>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label" for="phone">Telefonnummer (optional)</label>
+                                <input class="form-input" id="phone" name="phone" placeholder="+49 123 456789"
+                                    type="tel" autocomplete="tel" />
                             </div>
                         </div>
                     </div>
+                    <div class="wizard-nav">
+                        <button type="button" class="btn-wizard btn-wizard-secondary" data-wizard-prev>
+                            <span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">arrow_back</span>
+                            Zurück
+                        </button>
+                        <button type="button" class="btn-wizard btn-wizard-primary" data-wizard-next>
+                            Weiter zur Nachricht
+                            <span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">arrow_forward</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Section 2: Contact Data -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <span class="material-symbols-outlined section-icon">person</span>
-                        <h3 class="section-title">Kontaktdaten</h3>
-                    </div>
-                    <div class="form-grid-2">
+                <!-- Schritt 3 -->
+                <div class="form-step" data-step="3" id="step-panel-3" role="region" aria-labelledby="step-title-3"
+                    hidden>
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span class="material-symbols-outlined section-icon" aria-hidden="true">chat_bubble</span>
+                            <div>
+                                <h3 class="section-title" id="step-title-3">Ihr Anliegen</h3>
+                                <p class="section-lead">Je konkreter Ihre Nachricht, desto schneller können wir helfen.
+                                </p>
+                            </div>
+                        </div>
                         <div class="input-group">
-                            <label class="input-label" for="firstName">Vorname <span
-                                    class="required-star">*</span></label>
-                            <input class="form-input" id="firstName" name="firstName" placeholder="Max" type="text"
+                            <label class="input-label" for="subject">Betreff <span class="required-star">*</span></label>
+                            <input class="form-input" id="subject" name="subject" placeholder="Wie können wir helfen?"
+                                type="text" required />
+                            <span class="error-msg" id="err-subject">Bitte geben Sie einen Betreff an.</span>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label" for="message">Nachricht <span class="required-star">*</span></label>
+                            <textarea class="form-textarea" id="message" name="message"
+                                placeholder="Beschreiben Sie Ihr Anliegen..." rows="7" required></textarea>
+                            <span class="error-msg" id="err-message">Bitte geben Sie eine Nachricht ein.</span>
+                        </div>
+                    </div>
+                    <div class="wizard-nav">
+                        <button type="button" class="btn-wizard btn-wizard-secondary" data-wizard-prev>
+                            <span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">arrow_back</span>
+                            Zurück
+                        </button>
+                        <button type="button" class="btn-wizard btn-wizard-primary" data-wizard-next>
+                            Zur Übersicht
+                            <span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">fact_check</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Schritt 4: Review -->
+                <div class="form-step" data-step="4" id="step-panel-4" role="region" aria-labelledby="step-title-4"
+                    hidden>
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span class="material-symbols-outlined section-icon" aria-hidden="true">task_alt</span>
+                            <div>
+                                <h3 class="section-title" id="step-title-4">Bitte prüfen Sie Ihre Angaben</h3>
+                                <p class="section-lead">Stimmt alles? Dann senden Sie die Nachricht mit einem Klick ab.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-block">
+                                <h4 class="review-block-title">Empfänger</h4>
+                                <dl class="review-dl">
+                                    <dt>Organisationsträger</dt>
+                                    <dd id="review-mandant">—</dd>
+                                    <dt>Einrichtung</dt>
+                                    <dd id="review-einrichtung">—</dd>
+                                    <dt>Fachabteilung</dt>
+                                    <dd id="review-abteilung">—</dd>
+                                </dl>
+                            </div>
+                            <div class="review-block">
+                                <h4 class="review-block-title">Kontakt</h4>
+                                <dl class="review-dl">
+                                    <dt>Name</dt>
+                                    <dd id="review-name">—</dd>
+                                    <dt>E-Mail</dt>
+                                    <dd id="review-email">—</dd>
+                                    <dt>Telefon</dt>
+                                    <dd id="review-phone">—</dd>
+                                    <dt>Organisation</dt>
+                                    <dd id="review-org">—</dd>
+                                </dl>
+                            </div>
+                            <div class="review-block review-block--full">
+                                <h4 class="review-block-title">Nachricht</h4>
+                                <p class="review-subject" id="review-subject">—</p>
+                                <div class="review-message" id="review-message">—</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="submit-section submit-section--wizard">
+                        <label class="privacy-label">
+                            <input class="privacy-checkbox" id="privacyAccepted" name="privacyAccepted" type="checkbox"
                                 required />
-                            <span class="error-msg" id="err-firstName">Bitte geben Sie Ihren Vornamen
-                                an.</span>
-                        </div>
-                        <div class="input-group">
-                            <label class="input-label" for="lastName">Nachname <span
-                                    class="required-star">*</span></label>
-                            <input class="form-input" id="lastName" name="lastName" placeholder="Mustermann" type="text"
-                                required />
-                            <span class="error-msg" id="err-lastName">Bitte geben Sie Ihren Nachnamen
-                                an.</span>
-                        </div>
-                        <div class="input-group col-span-2">
-                            <label class="input-label" for="organization">Einrichtung /
-                                Organisation</label>
-                            <input class="form-input" id="organization" name="organization" placeholder="Optional"
-                                type="text" />
-                        </div>
-                        <div class="input-group">
-                            <label class="input-label" for="email">E-Mail-Adresse <span
-                                    class="required-star">*</span></label>
-                            <input class="form-input" id="email" name="email" placeholder="max.mustermann@beispiel.de"
-                                type="email" required />
-                            <span class="error-msg" id="err-email">Bitte geben Sie eine gültige
-                                E-Mail-Adresse
-                                an.</span>
-                        </div>
-                        <div class="input-group">
-                            <label class="input-label" for="phone">Telefonnummer (optional)</label>
-                            <input class="form-input" id="phone" name="phone" placeholder="+49 123 456789" type="tel" />
-                        </div>
-                    </div>
-                </div>
+                            <span class="privacy-text">Ich stimme zu, dass meine Angaben zur Kontaktaufnahme und für
+                                Rückfragen dauerhaft gespeichert werden. Weitere Informationen finden Sie in unserer <a
+                                    href="https://www.diakoniestiftung-sachsen.de/info/datenschutz" target="_blank"
+                                    rel="noopener noreferrer">Datenschutzerklärung</a>. <span
+                                    class="required-star">*</span></span>
+                        </label>
+                        <span class="error-msg" id="err-privacyAccepted">Bitte stimmen Sie der Datenschutzerklärung
+                            zu.</span>
 
-                <!-- Section 3: Message -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <span class="material-symbols-outlined section-icon">chat_bubble</span>
-                        <h3 class="section-title">Ihre Nachricht</h3>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label" for="subject">Betreff <span class="required-star">*</span></label>
-                        <input class="form-input" id="subject" name="subject" placeholder="Wie können wir helfen?"
-                            type="text" required />
-                        <span class="error-msg" id="err-subject">Bitte geben Sie einen Betreff
-                            an.</span>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label" for="message">Nachricht <span class="required-star">*</span></label>
-                        <textarea class="form-textarea" id="message" name="message"
-                            placeholder="Beschreiben Sie Ihr Anliegen..." rows="6" required></textarea>
-                        <span class="error-msg" id="err-message">Bitte geben Sie eine Nachricht
-                            ein.</span>
-                    </div>
-                </div>
-
-                <!-- Honeypot -->
-                <div class="hidden">
-                    <label>Nicht ausfüllen:</label>
-                    <input id="phone_alt" name="phone_alt" type="text" tabindex="-1" />
-                </div>
-
-                <!-- Privacy & Submit -->
-                <div class="submit-section">
-                    <label class="privacy-label">
-                        <input class="privacy-checkbox" id="privacyAccepted" name="privacyAccepted" type="checkbox"
-                            required />
-                        <span class="privacy-text">Ich stimme zu, dass meine Angaben zur Kontaktaufnahme
-                            und für
-                            Rückfragen dauerhaft gespeichert werden. Weitere Informationen finden Sie in
-                            unserer <a href="#">Datenschutzerklärung</a>. <span class="required-star">*</span></span>
-                    </label>
-                    <span class="error-msg" id="err-privacyAccepted">Bitte stimmen Sie der
-                        Datenschutzerklärung
-                        zu.</span>
-
-                    <button class="btn-submit" id="submitBtn" type="submit">
-                        <span class="btn-text">Nachricht absenden</span>
-                        <div class="spinner hidden">
-                            <svg class="animate-spin" style="height: 1.5rem; width: 1.5rem; color: #fff;"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle style="opacity: 0.25;" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path style="opacity: 0.75;" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
+                        <div class="wizard-nav wizard-nav--final">
+                            <button type="button" class="btn-wizard btn-wizard-secondary" data-wizard-prev>
+                                <span class="material-symbols-outlined btn-wizard-icon"
+                                    aria-hidden="true">edit</span>
+                                Noch anpassen
+                            </button>
+                            <button class="btn-submit" id="submitBtn" type="submit">
+                                <span class="btn-text">Nachricht absenden</span>
+                                <div class="spinner hidden" aria-hidden="true">
+                                    <svg class="animate-spin" style="height: 1.5rem; width: 1.5rem; color: #fff;"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle style="opacity: 0.25;" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path style="opacity: 0.75;" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </button>
                         </div>
-                    </button>
-                    <!-- Form Feedback -->
-                    <div id="form-feedback" class="hidden"></div>
+                        <div id="form-feedback" class="hidden"></div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -387,7 +513,7 @@
                     </li>
                 </ul>
                 <div class="footer-text" style="font-size: 0.75rem; margin-top: 3rem;">
-                    @2025 Diakoniestiftung in Sachsen
+                    © <span id="currentYear">2025</span> Diakoniestiftung in Sachsen
                 </div>
             </div>
         </div>

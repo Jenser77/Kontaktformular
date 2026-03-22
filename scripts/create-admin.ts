@@ -2,7 +2,8 @@
  * Legt einen Admin-Benutzer in der Datenbank an oder aktualisiert Passwort/Anzeigenamen.
  *
  * Usage:
- *   bun scripts/create-admin.ts <username> <password> [displayName]
+ *   bun run create-admin <username> <password> [displayName]
+ *   (oder: npx tsx scripts/create-admin.ts …)
  *
  * Der Benutzername wird kleingeschrieben gespeichert.
  */
@@ -10,10 +11,10 @@ import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../src/lib/server/prisma.ts';
 
-const [, , u, p, d] = Bun.argv;
+const [, , u, p, d] = process.argv;
 
 if (!u || !p) {
-    console.error('Usage: bun scripts/create-admin.ts <username> <password> [displayName]');
+    console.error('Usage: bun run create-admin <username> <password> [displayName]');
     process.exit(1);
 }
 
