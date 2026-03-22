@@ -1,3 +1,4 @@
+import { adminSessionDeleteOptions } from '$lib/server/adminCookie';
 import { prisma } from '$lib/server/prisma';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
@@ -99,7 +100,7 @@ export const actions: Actions = {
     logout: async ({ cookies }) => {
         const token = cookies.get('admin_session');
         if (token) await deleteSession(token);
-        cookies.delete('admin_session', { path: '/' });
+        cookies.delete('admin_session', adminSessionDeleteOptions);
         redirect(303, '/admin/login');
     },
 

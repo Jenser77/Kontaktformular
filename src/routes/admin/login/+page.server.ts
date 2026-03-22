@@ -3,6 +3,7 @@ import type { Actions } from './$types';
 import bcrypt from 'bcryptjs';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { adminSessionSetOptions } from '$lib/server/adminCookie';
 import { createSession } from '$lib/server/adminSession';
 import { isRateLimited } from '$lib/server/rateLimit';
 import { prisma } from '$lib/server/prisma';
@@ -74,13 +75,7 @@ export const actions: Actions = {
         const singleAdmin = getSingleAdminUser();
         if (singleAdmin && singleAdmin.user === usernameLower && singleAdmin.pass === password) {
             const token = await createSession({ loginLabel: usernameTrimmed || null });
-            cookies.set('admin_session', token, {
-                path: '/',
-                httpOnly: true,
-                sameSite: 'strict',
-                secure: true,
-                maxAge: 8 * 60 * 60
-            });
+            cookies.set('admin_session', token, adminSessionSetOptions);
             redirect(303, '/admin');
         }
 
@@ -89,13 +84,7 @@ export const actions: Actions = {
         const validListUser = users.some((u) => u.user === usernameTrimmed && u.pass === password);
         if (validListUser) {
             const token = await createSession({ loginLabel: usernameTrimmed || null });
-            cookies.set('admin_session', token, {
-                path: '/',
-                httpOnly: true,
-                sameSite: 'strict',
-                secure: true,
-                maxAge: 8 * 60 * 60
-            });
+            cookies.set('admin_session', token, adminSessionSetOptions);
             redirect(303, '/admin');
         }
 
@@ -115,13 +104,7 @@ export const actions: Actions = {
         }
 
         const token = await createSession({ adminUserId: dbUser.id });
-        cookies.set('admin_session', token, {
-            path: '/',
-            httpOnly: true,
-            sameSite: 'strict',
-            secure: true,
-            maxAge: 8 * 60 * 60
-        });
+        cookies.set('admin_session', token, adminSessionSetOptions);
 
         redirect(303, '/admin');
     }
