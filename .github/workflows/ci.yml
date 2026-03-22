@@ -90,10 +90,11 @@ jobs:
           rsync -az --delete prisma/ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/prisma/
           scp package.json ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/package.json
           scp prisma.config.ts ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/prisma.config.ts
+          scp ecosystem.config.cjs ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/ecosystem.config.cjs
           scp docker-compose.yml ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/docker-compose.yml
           rsync -az scripts/ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/kontaktformular/scripts/
 
       - name: Restart app
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "cd /opt/kontaktformular && set -a && [ -f .env ] && . ./.env && set +a && npx --yes prisma@7.4.2 migrate deploy && npm install --omit=dev --ignore-scripts --silent && pm2 delete kontaktformular 2>/dev/null || true && pm2 start build/index.js --name kontaktformular && pm2 save --force"
+            "cd /opt/kontaktformular && set -a && [ -f /etc/kontaktformular.env ] && . /etc/kontaktformular.env && set +a && npx --yes prisma@7.4.2 migrate deploy && npm install --omit=dev --ignore-scripts --silent && pm2 delete kontaktformular 2>/dev/null || true && pm2 start ecosystem.config.cjs && pm2 save --force"

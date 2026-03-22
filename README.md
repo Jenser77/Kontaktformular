@@ -58,7 +58,36 @@ Die App spricht nur **Prisma → Postgres**; es muss **kein** Supabase-Stack auf
 
 - Verzeichnis **`/opt/kontaktformular`** anlegen (Schreibrechte für den Deploy-User).
 - **Node.js** (LTS) und **npm** installieren; global **`pm2`**: `npm install -g pm2` (damit `pm2 start` im SSH-Befehl funktioniert).
-- Datei **`/opt/kontaktformular/.env`** anlegen — Inhalt wie **`.env.example`**, aber mit echten Werten: **`DATABASE_URL`** (Postgres **auf dem Server**, siehe oben), **SMTP**, **`ADMIN_*`**, ggf. **`PORT`**. Diese Datei wird **nicht** per Git ausgeliefert und **nicht** von rsync überschrieben.
+
+### Secrets auf dem Server (wichtig)
+
+Secrets gehören **nicht** in eine welt-lesbare `.env` im App-Verzeichnis — und niemals in Git.
+
+1. **Env-Datei anlegen** — z. B. **`/etc/kontaktformular.env`** (oder ein anderer Pfad außerhalb des Webroots):
+
+   ```sh
+   sudo touch /etc/kontaktformular.env
+   sudo chmod 600 /etc/kontaktformular.env
+   sudo chown <DEPLOY_USER>:<DEPLOY_USER> /etc/kontaktformular.env
+   ```
+
+2. **Inhalt** (echte Werte, keine Platzhalter):
+
+   ```env
+   PORT=3000
+   DATABASE_URL=postgresql://postgres:STARKES_PASSWORT@127.0.0.1:5432/postgres
+   SMTP_HOST=smtp.example.com
+   SMTP_PORT=587
+   SMTP_USER=kontakt@firma.de
+   SMTP_PASS=APP_PASSWORT
+   ALLOWED_ORIGIN=https://www.firma.de
+   ```
+
+   **Keine** `ADMIN_USER`/`ADMIN_PASS` — Admin-Zugänge stattdessen über **`bun run create-admin`** in der DB anlegen (siehe [Admin & Sitzungen](#admin--sitzungen)).
+
+3. **PM2** nutzt diese Datei über **`ecosystem.config.cjs`** (wird per CI mit deployt). Die App liest `process.env` — keine separate `.env` im App-Ordner nötig.
+
+4. **Kein `/opt/kontaktformular/.env` in Produktion.** Falls noch eine alte existiert: löschen, nachdem `/etc/kontaktformular.env` korrekt gesetzt ist.
 
 ### Einmalig: GitHub
 
@@ -78,7 +107,7 @@ Der User braucht SSH-Zugang und Schreibrechte unter **`/opt/kontaktformular`**.
 git push origin main
 ```
 
-Der Workflow baut in GitHub Actions, kopiert per **rsync/scp** nach **`/opt/kontaktformular`** (`build/`, `prisma/`, `package.json`, `prisma.config.ts`, **`docker-compose.yml`**, **`scripts/`**), führt auf dem Server **`prisma migrate deploy`**, **`npm install --omit=dev --ignore-scripts`** aus und startet die App mit **PM2** neu (**`kontaktformular`**, Script **`build/index.js`**). Die laufende Konfiguration kommt ausschließlich aus der Server-**`.env`** (wird nicht überschrieben).
+Der Workflow baut in GitHub Actions, kopiert per **rsync/scp** nach **`/opt/kontaktformular`** (`build/`, `prisma/`, `package.json`, `prisma.config.ts`, `ecosystem.config.cjs`, **`docker-compose.yml`**, **`scripts/`**), führt auf dem Server **`prisma migrate deploy`**, **`npm install --omit=dev --ignore-scripts`** aus und startet die App mit **PM2** neu über **`ecosystem.config.cjs`** (liest Secrets aus **`/etc/kontaktformular.env`**, nicht aus einer `.env` im App-Ordner).
 
 **Ohne GitHub:** lokal **`bun run build`**, dann `build/`, `prisma/`, `package.json`, `prisma.config.ts` manuell auf den Server legen und auf dem Server dieselben Befehle wie im Workflow ausführen (migrate, npm install, pm2).
 
@@ -151,8 +180,8 @@ Kein Extra-Paket auf dem Server — nur **`DATABASE_URL`** auf die gehostete DB.
 
 ## Admin & Sitzungen
 
-- **`bun run create-admin <user> <pass> ["Anzeigename"]`** — legt `AdminUser` an (gegen jede erreichbare Postgres-URL aus **`DATABASE_URL`**).
-- Login-Reihenfolge: **`ADMIN_USER` / `ADMIN_PASS`** → **`ADMIN_USERS`** → **`AdminUser`** in der DB.
+- **`bun run create-admin <user> <pass> ["Anzeigename"]`** — legt `AdminUser` an (bcrypt-Hash in der DB). **Empfohlen für Produktion** — kein Klartext-Passwort in Umgebungsvariablen nötig.
+- Login-Reihenfolge: **`ADMIN_USER` / `ADMIN_PASS`** → **`ADMIN_USERS`** → **`AdminUser`** in der DB. In Produktion die ersten beiden **weglassen** und ausschließlich DB-Accounts nutzen.
 - Sitzungen: Tabelle **`AdminSession`** (überleben PM2-Neustarts). Nach DB-Wechsel: neu einloggen.
 
 Weitere Variablen: **`.env.example`**.
