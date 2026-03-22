@@ -10,19 +10,19 @@ SvelteKit, Prisma, PostgreSQL, Nodemailer; auf dem Server läuft der Build mit P
 
 1. **`cp .env.example .env`** und **`DATABASE_URL`** setzen (siehe unten).
 2. **`bun install`**
-3. **`bun run db:up`** — startet Postgres (bevorzugt **Podman** Compose; sonst Docker).
+3. **Postgres starten** — empfohlen: **`npx supabase start`** (lokaler Supabase-Stack inkl. Studio; siehe [unten](#supabase-lokal-cli--docker)). Alternative ohne Supabase: **`bun run db:up`** (nur Postgres via Compose, bevorzugt **Podman**).
 4. **`bun run db:deploy`** — legt Tabellen an (Migrationen).
 5. **`bun run db:seed`** — Demo-Mandanten/Einrichtungen/Fachabteilungen (nur wenn noch leer).
 6. **`bun run dev`**
 
-**Fedora + Podman:** Falls Compose die API nicht findet, einmal **`systemctl --user enable --now podman.socket`** — **`db:up`** versucht das mit. Ohne lokalen Postgres: **`DATABASE_URL`** auf **Supabase**, dann nur **`db:deploy`**.
+**Fedora + Podman:** Für **`supabase start`** / Compose brauchst du laufendes **Docker** oder **Podman** mit Compose. Bei **`db:up`**: falls die API fehlt, **`systemctl --user enable --now podman.socket`**.
 
 **Datenbank — genau eine Variante:**
 
 | Variante | `DATABASE_URL` |
 |----------|----------------|
-| **Container** (`bun run db:up`) | `postgresql://postgres:postgres@localhost:5432/postgres` |
-| **Supabase lokal** (CLI) | `postgresql://postgres:postgres@127.0.0.1:55322/postgres` — siehe [unten](#supabase-lokal-cli--docker) |
+| **Supabase lokal** (CLI, empfohlen) | `postgresql://postgres:postgres@127.0.0.1:55322/postgres` — siehe [unten](#supabase-lokal-cli--docker) |
+| **Nur Postgres** (`bun run db:up`) | `postgresql://postgres:postgres@localhost:5432/postgres` |
 | **Supabase Cloud** | URI aus Dashboard (Direct, Port 5432), mit `?sslmode=require` — [Abschnitt](#supabase-postgresql-in-der-cloud) |
 
 Hilfe: `bun run db:status` · neues Migrationsskript: `bun run db:dev`
