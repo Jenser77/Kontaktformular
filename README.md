@@ -48,7 +48,7 @@ bun run build
 
 Damit die Daten **auf deinem Server** bleiben:
 
-1. **Postgres** auf dem VPS betreiben — z. B. dieselbe **`docker-compose.yml`** wie lokal: im Projektverzeichnis (oder einem eigenen DB-Verzeichnis) **`docker compose up -d`** / **`podman compose up -d`**, Port **5432** nur nach **127.0.0.1** binden (kein öffentliches Postgres ohne Firewall).
+1. **Postgres** auf dem VPS betreiben — ab jedem Deploy liegen **`docker-compose.yml`** und **`scripts/db-up.sh`** unter **`/opt/kontaktformular/`** (siehe CI). Einmalig: **`cd /opt/kontaktformular && bash scripts/db-up.sh`** (oder manuell **`docker compose up -d`** / **`podman compose up -d`**). Die Compose-Datei bindet Postgres nur an **127.0.0.1:5432**. **Wichtig:** Standardpasswort **`postgres`** in **`docker-compose.yml`** auf dem Server durch ein **starkes Passwort** ersetzen und **`DATABASE_URL`** entsprechend anpassen.
 2. In **`/opt/kontaktformular/.env`**: **`DATABASE_URL`** auf diese Instanz, z. B. **`postgresql://postgres:DEIN_PASS@127.0.0.1:5432/postgres`** (User/Passwort und ggf. TLS nach deinem Setup).
 3. Nach dem ersten Deploy: **`prisma migrate deploy`** läuft im CI gegen genau diese URL — Backup-Strategie für das Datenverzeichnis des Postgres-Containers nicht vergessen.
 
@@ -78,7 +78,7 @@ Der User braucht SSH-Zugang und Schreibrechte unter **`/opt/kontaktformular`**.
 git push origin main
 ```
 
-Der Workflow baut in GitHub Actions, kopiert per **rsync** nach **`/opt/kontaktformular`** (`build/`, `prisma/`, `package.json`, `prisma.config.ts`), führt auf dem Server **`prisma migrate deploy`**, **`npm install --omit=dev --ignore-scripts`** aus und startet die App mit **PM2** neu (**`kontaktformular`**, Script **`build/index.js`**). Die laufende Konfiguration kommt ausschließlich aus der Server-**`.env`**.
+Der Workflow baut in GitHub Actions, kopiert per **rsync/scp** nach **`/opt/kontaktformular`** (`build/`, `prisma/`, `package.json`, `prisma.config.ts`, **`docker-compose.yml`**, **`scripts/`**), führt auf dem Server **`prisma migrate deploy`**, **`npm install --omit=dev --ignore-scripts`** aus und startet die App mit **PM2** neu (**`kontaktformular`**, Script **`build/index.js`**). Die laufende Konfiguration kommt ausschließlich aus der Server-**`.env`** (wird nicht überschrieben).
 
 **Ohne GitHub:** lokal **`bun run build`**, dann `build/`, `prisma/`, `package.json`, `prisma.config.ts` manuell auf den Server legen und auf dem Server dieselben Befehle wie im Workflow ausführen (migrate, npm install, pm2).
 
