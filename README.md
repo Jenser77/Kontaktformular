@@ -56,19 +56,47 @@ Die App spricht nur **Prisma → Postgres**; es muss **kein** Supabase-Stack auf
 
 ### Einmalig: Server vorbereiten
 
-- Verzeichnis **`/opt/kontaktformular`** anlegen (Schreibrechte für den Deploy-User).
-- **Node.js** (LTS) und **npm** installieren; global **`pm2`**: `npm install -g pm2` (damit `pm2 start` im SSH-Befehl funktioniert).
+Als **`root`** auf dem VPS ausführen:
+
+1. **Verzeichnis + Node + PM2:**
+
+   ```sh
+   mkdir -p /opt/kontaktformular
+   # Node.js (LTS) + npm installieren (falls nicht vorhanden), dann:
+   npm install -g pm2
+   ```
+
+2. **Deploy-User `deploy` anlegen** (App läuft nicht als `root`):
+
+   ```sh
+   useradd --create-home --shell /bin/bash deploy
+   mkdir -p /home/deploy/.ssh
+   cp /root/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys
+   chown -R deploy:deploy /home/deploy/.ssh
+   chmod 700 /home/deploy/.ssh
+   chmod 600 /home/deploy/.ssh/authorized_keys
+   chown -R deploy:deploy /opt/kontaktformular
+   usermod -aG docker deploy 2>/dev/null || true
+   ```
+
+3. **PM2 beim Booten automatisch starten** (als `deploy`):
+
+   ```sh
+   su - deploy -c "pm2 startup" 2>&1 | grep "sudo" | bash
+   ```
+
+   Das erzeugt einen systemd-Service, der PM2 als `deploy` bei jedem Server-Reboot startet.
 
 ### Secrets auf dem Server (wichtig)
 
 Secrets gehören **nicht** in eine welt-lesbare `.env` im App-Verzeichnis — und niemals in Git.
 
-1. **Env-Datei anlegen** — z. B. **`/etc/kontaktformular.env`** (oder ein anderer Pfad außerhalb des Webroots):
+1. **Env-Datei anlegen** (als `root`):
 
    ```sh
-   sudo touch /etc/kontaktformular.env
-   sudo chmod 600 /etc/kontaktformular.env
-   sudo chown <DEPLOY_USER>:<DEPLOY_USER> /etc/kontaktformular.env
+   touch /etc/kontaktformular.env
+   chmod 600 /etc/kontaktformular.env
+   chown deploy:deploy /etc/kontaktformular.env
    ```
 
 2. **Inhalt** (echte Werte, keine Platzhalter):
@@ -76,7 +104,7 @@ Secrets gehören **nicht** in eine welt-lesbare `.env` im App-Verzeichnis — un
    ```env
    PORT=3000
    DATABASE_URL=postgresql://postgres:STARKES_PASSWORT@127.0.0.1:5432/postgres
-   SMTP_HOST=smtp.example.com
+   SMTP_HOST=smtp.dein-anbieter.de
    SMTP_PORT=587
    SMTP_USER=kontakt@firma.de
    SMTP_PASS=APP_PASSWORT
@@ -89,6 +117,14 @@ Secrets gehören **nicht** in eine welt-lesbare `.env` im App-Verzeichnis — un
 
 4. **Kein `/opt/kontaktformular/.env` in Produktion.** Falls noch eine alte existiert: löschen, nachdem `/etc/kontaktformular.env` korrekt gesetzt ist.
 
+5. **App starten / neu starten:**
+
+   ```sh
+   su - deploy -c "cd /opt/kontaktformular && pm2 start ecosystem.config.cjs && pm2 save --force"
+   ```
+
+   Falls Port 3000 belegt ist (z. B. alte Root-PM2-Instanz): erst **`pm2 kill`** als `root`, dann den Befehl oben als `deploy`.
+
 ### Einmalig: GitHub
 
 Im Repo unter **Settings → Secrets and variables → Actions** drei Secrets setzen:
@@ -96,10 +132,10 @@ Im Repo unter **Settings → Secrets and variables → Actions** drei Secrets se
 | Secret | Inhalt |
 |--------|--------|
 | **`DEPLOY_HOST`** | Hostname oder IP des Servers |
-| **`DEPLOY_USER`** | SSH-Login-User (z. B. `deploy`) |
-| **`DEPLOY_SSH_KEY`** | Privater SSH-Key (kompletter Inkl. `BEGIN`/`END`), passend zum öffentlichen Key in **`~/.ssh/authorized_keys`** dieses Users |
+| **`DEPLOY_USER`** | **`deploy`** (nicht `root`) |
+| **`DEPLOY_SSH_KEY`** | Privater SSH-Key (komplett inkl. `BEGIN`/`END`), passend zum öffentlichen Key in **`/home/deploy/.ssh/authorized_keys`** |
 
-Der User braucht SSH-Zugang und Schreibrechte unter **`/opt/kontaktformular`**.
+Der User `deploy` braucht SSH-Zugang und Schreibrechte unter **`/opt/kontaktformular`**.
 
 ### Bei jedem Deploy
 
