@@ -4,6 +4,8 @@
 
 SvelteKit, Prisma, PostgreSQL, Nodemailer; auf dem Server läuft der Build mit PM2.
 
+**Datenhaltung:** In der **Produktion** soll **`DATABASE_URL`** auf **PostgreSQL auf deinem eigenen Server** zeigen (oder im gleichen Rechenzentrum) — die Daten liegen dann **nicht** bei einem SaaS-Anbieter. **Supabase Cloud** ist nur eine **optionale** Alternative; lokal kannst du **`npx supabase start`** oder **`bun run db:up`** nutzen.
+
 ---
 
 ## Lokal entwickeln
@@ -17,13 +19,14 @@ SvelteKit, Prisma, PostgreSQL, Nodemailer; auf dem Server läuft der Build mit P
 
 **Fedora + Podman:** Für **`supabase start`** / Compose brauchst du laufendes **Docker** oder **Podman** mit Compose. Bei **`db:up`**: falls die API fehlt, **`systemctl --user enable --now podman.socket`**.
 
-**Datenbank — genau eine Variante:**
+**Datenbank — genau eine Variante aktiv:**
 
 | Variante | `DATABASE_URL` |
 |----------|----------------|
-| **Supabase lokal** (CLI, empfohlen) | `postgresql://postgres:postgres@127.0.0.1:55322/postgres` — siehe [unten](#supabase-lokal-cli--docker) |
-| **Nur Postgres** (`bun run db:up`) | `postgresql://postgres:postgres@localhost:5432/postgres` |
-| **Supabase Cloud** | URI aus Dashboard (Direct, Port 5432), mit `?sslmode=require` — [Abschnitt](#supabase-postgresql-in-der-cloud) |
+| **Produktion (eigener Server)** | Postgres auf dem VPS, z. B. `postgresql://USER:PASS@127.0.0.1:5432/postgres` — siehe [unten](#postgresql-auf-dem-server-produktion) |
+| **Supabase lokal** (CLI, Dev) | `postgresql://postgres:postgres@127.0.0.1:55322/postgres` — [Abschnitt](#supabase-lokal-cli--docker) |
+| **Nur Postgres lokal** (`bun run db:up`) | `postgresql://postgres:postgres@localhost:5432/postgres` |
+| **Supabase Cloud** (optional, Daten bei Supabase) | [Abschnitt](#supabase-postgresql-in-der-cloud-optional) |
 
 Hilfe: `bun run db:status` · neues Migrationsskript: `bun run db:dev`
 
@@ -41,11 +44,21 @@ bun run build
 
 ## Auf den Server deployen
 
+### PostgreSQL auf dem Server (Produktion)
+
+Damit die Daten **auf deinem Server** bleiben:
+
+1. **Postgres** auf dem VPS betreiben — z. B. dieselbe **`docker-compose.yml`** wie lokal: im Projektverzeichnis (oder einem eigenen DB-Verzeichnis) **`docker compose up -d`** / **`podman compose up -d`**, Port **5432** nur nach **127.0.0.1** binden (kein öffentliches Postgres ohne Firewall).
+2. In **`/opt/kontaktformular/.env`**: **`DATABASE_URL`** auf diese Instanz, z. B. **`postgresql://postgres:DEIN_PASS@127.0.0.1:5432/postgres`** (User/Passwort und ggf. TLS nach deinem Setup).
+3. Nach dem ersten Deploy: **`prisma migrate deploy`** läuft im CI gegen genau diese URL — Backup-Strategie für das Datenverzeichnis des Postgres-Containers nicht vergessen.
+
+Die App spricht nur **Prisma → Postgres**; es muss **kein** Supabase-Stack auf dem Server laufen, wenn dir ein schlankes Postgres reicht.
+
 ### Einmalig: Server vorbereiten
 
 - Verzeichnis **`/opt/kontaktformular`** anlegen (Schreibrechte für den Deploy-User).
 - **Node.js** (LTS) und **npm** installieren; global **`pm2`**: `npm install -g pm2` (damit `pm2 start` im SSH-Befehl funktioniert).
-- Datei **`/opt/kontaktformular/.env`** anlegen — Inhalt wie **`.env.example`**, aber mit echten Werten: **`DATABASE_URL`** (z. B. Supabase), **SMTP**, **`ADMIN_*`**, ggf. **`PORT`**. Diese Datei wird **nicht** per Git ausgeliefert und **nicht** von rsync überschrieben.
+- Datei **`/opt/kontaktformular/.env`** anlegen — Inhalt wie **`.env.example`**, aber mit echten Werten: **`DATABASE_URL`** (Postgres **auf dem Server**, siehe oben), **SMTP**, **`ADMIN_*`**, ggf. **`PORT`**. Diese Datei wird **nicht** per Git ausgeliefert und **nicht** von rsync überschrieben.
 
 ### Einmalig: GitHub
 
@@ -117,9 +130,11 @@ Damit läuft bei dir **Postgres + Studio** wie bei Supabase in der Cloud, aber a
 
 ---
 
-## Supabase (PostgreSQL in der Cloud)
+## Supabase (PostgreSQL in der Cloud, optional)
 
-Kein Extra-Paket auf dem Server — nur **`DATABASE_URL`**.
+**Nur wenn du bewusst willst**, dass die Datenbank bei **Supabase** (Cloud) liegt — nicht für „Daten nur auf eigenem Server“.
+
+Kein Extra-Paket auf dem Server — nur **`DATABASE_URL`** auf die gehostete DB.
 
 1. [supabase.com](https://supabase.com) → neues Projekt → **Database password** notieren.
 2. **Settings → Database → Connection string → URI → Direct** (`db.….supabase.co`, Port **5432**).
@@ -136,7 +151,7 @@ Kein Extra-Paket auf dem Server — nur **`DATABASE_URL`**.
 
 ## Admin & Sitzungen
 
-- **`bun run create-admin <user> <pass> ["Anzeigename"]`** — legt `AdminUser` an (lokal mit passender `DATABASE_URL` auch gegen Supabase möglich).
+- **`bun run create-admin <user> <pass> ["Anzeigename"]`** — legt `AdminUser` an (gegen jede erreichbare Postgres-URL aus **`DATABASE_URL`**).
 - Login-Reihenfolge: **`ADMIN_USER` / `ADMIN_PASS`** → **`ADMIN_USERS`** → **`AdminUser`** in der DB.
 - Sitzungen: Tabelle **`AdminSession`** (überleben PM2-Neustarts). Nach DB-Wechsel: neu einloggen.
 
