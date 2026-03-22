@@ -22,7 +22,8 @@ SvelteKit, Prisma, PostgreSQL, Nodemailer; auf dem Server läuft der Build mit P
 | Variante | `DATABASE_URL` |
 |----------|----------------|
 | **Container** (`bun run db:up`) | `postgresql://postgres:postgres@localhost:5432/postgres` |
-| **Supabase** | URI aus Dashboard (Direct, Port 5432), mit `?sslmode=require` — Details unter [Supabase](#supabase-postgresql-in-der-cloud) |
+| **Supabase lokal** (CLI) | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` — siehe [unten](#supabase-lokal-cli--docker) |
+| **Supabase Cloud** | URI aus Dashboard (Direct, Port 5432), mit `?sslmode=require` — [Abschnitt](#supabase-postgresql-in-der-cloud) |
 
 Hilfe: `bun run db:status` · neues Migrationsskript: `bun run db:dev`
 
@@ -75,6 +76,44 @@ Die Seite lädt **`/design-new.css`**, **`/script.js`** usw. aus **`build/client
 **Lösung:** Alle Pfade (mindestens `/`, `/_app/*`, `/*.css`, `/*.js`, Bilder) per **`reverse_proxy`** an die App (z. B. `127.0.0.1:3000`) — oder statische Assets identisch unter dem Webroot bereitstellen.
 
 **PM2:** App mit **`cwd /opt/kontaktformular`** und **`node build/index.js`** (oder `build/index.js` als Skript) starten; der Code findet `build/client/index.html` auch ohne `static/` auf dem Server.
+
+---
+
+## Supabase lokal (CLI + Docker)
+
+Damit läuft bei dir **Postgres + Studio** wie bei Supabase in der Cloud, aber auf **127.0.0.1** (Standard-DB-Port **54322**, kollidiert nicht mit `docker compose` auf **5432**).
+
+1. **Docker** oder **Podman** installiert und laufend.
+2. **Supabase CLI** installieren — siehe [Install](https://supabase.com/docs/guides/cli/getting-started).
+3. Im Projektroot (einmalig):
+
+   ```sh
+   npx supabase init
+   ```
+
+4. Stack starten:
+
+   ```sh
+   npx supabase start
+   ```
+
+   Am Ende zeigt die CLI u. a. die **DB-URL**. Standard für Prisma lokal:
+
+   `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
+
+   Falls Prisma meckert, anhängen: **`?sslmode=disable`**
+
+5. In **`.env`** diese URL als **`DATABASE_URL`** setzen, dann:
+
+   ```sh
+   bun run db:deploy
+   bun run db:seed
+   bun run dev
+   ```
+
+6. Stoppen: **`npx supabase stop`**
+
+**Hinweis:** `supabase/` nach **`supabase init`** kannst du committen (Konfiguration). Secrets landen nicht in Git. Die **lokale DB** ist nur auf deinem Rechner.
 
 ---
 

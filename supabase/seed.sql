@@ -1,0 +1,2 @@
+-- Optional: Daten für `supabase db reset`.
+-- Das Kontaktformular nutzt Prisma-Migrationen + ggf. `bun run db:seed`.
