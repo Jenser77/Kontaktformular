@@ -1,6 +1,7 @@
 version: 2
 updates:
-  - package-ecosystem: npm
+  # Bun-Projekt mit bun.lock — „npm“ aktualisiert die Lockdatei nicht → CI scheitert an --frozen-lockfile
+  - package-ecosystem: bun
     directory: /
     schedule:
       interval: weekly
