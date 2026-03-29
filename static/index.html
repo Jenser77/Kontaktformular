@@ -171,6 +171,10 @@
                 gerne für Sie da
                 und berät Sie persönlich.
             </p>
+            <a href="#kontakt-main" class="hero-cta-btn">
+                Jetzt Kontakt aufnehmen
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_downward</span>
+            </a>
         </div>
     </section>
 
@@ -240,8 +244,9 @@
                         </div>
                         <div class="form-grid">
                             <div class="input-group">
-                                <label class="input-label" for="mandant">Organisationsträger (Mandant) <span
-                                        class="required-star">*</span></label>
+                                <label class="input-label" for="mandant">Organisationsträger (Mandant) 
+                                    <span class="tooltip-trigger" data-tooltip="Der rechtliche Träger, unter dem Ihre gewünschte Einrichtung organisiert ist." tabindex="0" role="button" aria-label="Hilfe"></span>
+                                    <span class="required-star">*</span></label>
                                 <p class="field-hint" id="hint-mandant">Der übergeordnete Träger Ihrer gewünschten
                                     Einrichtung — so wird Ihre Anfrage intern korrekt zugeordnet.</p>
                                 <select class="form-select" id="mandant" name="mandant" required
@@ -361,8 +366,11 @@
                         </div>
                         <div class="input-group">
                             <label class="input-label" for="message">Nachricht <span class="required-star">*</span></label>
-                            <textarea class="form-textarea" id="message" name="message"
-                                placeholder="Beschreiben Sie Ihr Anliegen..." rows="7" required></textarea>
+                            <div class="textarea-wrapper">
+                                <textarea class="form-textarea" id="message" name="message"
+                                    placeholder="Beschreiben Sie Ihr Anliegen..." rows="7" required maxlength="2000"></textarea>
+                                <span class="char-counter" id="messageCharCounter">0 / 2000</span>
+                            </div>
                             <span class="error-msg" id="err-message">Bitte geben Sie eine Nachricht ein.</span>
                         </div>
                     </div>
@@ -392,7 +400,13 @@
                         </div>
                         <div class="review-card">
                             <div class="review-block">
-                                <h4 class="review-block-title">Empfänger</h4>
+                                <div class="review-block-header">
+                                    <h4 class="review-block-title">Empfänger</h4>
+                                    <button type="button" class="review-edit-btn" data-edit-step="1">
+                                        <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                                        Ändern
+                                    </button>
+                                </div>
                                 <dl class="review-dl">
                                     <dt>Organisationsträger</dt>
                                     <dd id="review-mandant">—</dd>
@@ -403,7 +417,13 @@
                                 </dl>
                             </div>
                             <div class="review-block">
-                                <h4 class="review-block-title">Kontakt</h4>
+                                <div class="review-block-header">
+                                    <h4 class="review-block-title">Kontakt</h4>
+                                    <button type="button" class="review-edit-btn" data-edit-step="2">
+                                        <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                                        Ändern
+                                    </button>
+                                </div>
                                 <dl class="review-dl">
                                     <dt>Name</dt>
                                     <dd id="review-name">—</dd>
@@ -416,7 +436,13 @@
                                 </dl>
                             </div>
                             <div class="review-block review-block--full">
-                                <h4 class="review-block-title">Nachricht</h4>
+                                <div class="review-block-header">
+                                    <h4 class="review-block-title">Nachricht</h4>
+                                    <button type="button" class="review-edit-btn" data-edit-step="3">
+                                        <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                                        Ändern
+                                    </button>
+                                </div>
                                 <p class="review-subject" id="review-subject">—</p>
                                 <div class="review-message" id="review-message">—</div>
                             </div>

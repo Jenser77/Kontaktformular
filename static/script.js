@@ -143,6 +143,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchRoutingData();
 
+    // Character counter for textarea
+    const messageTextarea = document.getElementById('message');
+    const charCounter = document.getElementById('messageCharCounter');
+    const MAX_CHARS = 2000;
+    const WARNING_THRESHOLD = 1800;
+
+    const updateCharCounter = () => {
+        if (!messageTextarea || !charCounter) return;
+        const count = messageTextarea.value.length;
+        charCounter.textContent = `${count} / ${MAX_CHARS}`;
+        
+        charCounter.classList.remove('warning', 'limit');
+        if (count >= MAX_CHARS) {
+            charCounter.classList.add('limit');
+        } else if (count >= WARNING_THRESHOLD) {
+            charCounter.classList.add('warning');
+        }
+    };
+
+    if (messageTextarea) {
+        messageTextarea.addEventListener('input', updateCharCounter);
+        updateCharCounter();
+    }
+
     const toggleError = (fieldId, isValid) => {
         const field = document.getElementById(fieldId);
         if (!field) return;
@@ -325,6 +349,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Review edit buttons - allow quick navigation to specific steps
+    document.querySelectorAll('[data-edit-step]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const target = parseInt(btn.dataset.editStep, 10);
+            if (!Number.isNaN(target)) {
+                goToStep(target, { skipValidate: true });
+            }
+        });
+    });
+
     setStepVisibility();
 
     form.querySelectorAll('input, select, textarea').forEach((element) => {
@@ -348,6 +382,22 @@ document.addEventListener('DOMContentLoaded', () => {
         element.addEventListener('input', () => {
             if (element.classList.contains('error')) {
                 toggleError(element.id, true);
+            }
+            
+            // Real-time valid state indicator (only for required text inputs)
+            if (element.required && element.type !== 'checkbox') {
+                const value = element.value.trim();
+                let isValid = !!value;
+                if (element.type === 'email' && isValid) {
+                    isValid = emailRegex.test(value);
+                }
+                
+                // Only show valid state if field has content and is valid
+                if (isValid && value.length > 0) {
+                    element.classList.add('valid');
+                } else {
+                    element.classList.remove('valid');
+                }
             }
         });
     });
