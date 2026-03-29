@@ -37,6 +37,7 @@ export type ContactMinAggregateOutputType = {
   targetRecipient: string | null
   targetRecipientLabel: string | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type ContactMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type ContactMaxAggregateOutputType = {
   targetRecipient: string | null
   targetRecipientLabel: string | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type ContactCountAggregateOutputType = {
@@ -67,6 +69,7 @@ export type ContactCountAggregateOutputType = {
   targetRecipient: number
   targetRecipientLabel: number
   createdAt: number
+  deletedAt: number
   _all: number
 }
 
@@ -84,6 +87,7 @@ export type ContactMinAggregateInputType = {
   targetRecipient?: true
   targetRecipientLabel?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type ContactMaxAggregateInputType = {
@@ -99,6 +103,7 @@ export type ContactMaxAggregateInputType = {
   targetRecipient?: true
   targetRecipientLabel?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type ContactCountAggregateInputType = {
@@ -114,6 +119,7 @@ export type ContactCountAggregateInputType = {
   targetRecipient?: true
   targetRecipientLabel?: true
   createdAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -202,6 +208,7 @@ export type ContactGroupByOutputType = {
   targetRecipient: string | null
   targetRecipientLabel: string | null
   createdAt: Date
+  deletedAt: Date | null
   _count: ContactCountAggregateOutputType | null
   _min: ContactMinAggregateOutputType | null
   _max: ContactMaxAggregateOutputType | null
@@ -238,6 +245,7 @@ export type ContactWhereInput = {
   targetRecipient?: Prisma.StringNullableFilter<"Contact"> | string | null
   targetRecipientLabel?: Prisma.StringNullableFilter<"Contact"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Contact"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Contact"> | Date | string | null
 }
 
 export type ContactOrderByWithRelationInput = {
@@ -253,6 +261,7 @@ export type ContactOrderByWithRelationInput = {
   targetRecipient?: Prisma.SortOrderInput | Prisma.SortOrder
   targetRecipientLabel?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type ContactWhereUniqueInput = Prisma.AtLeast<{
@@ -271,6 +280,7 @@ export type ContactWhereUniqueInput = Prisma.AtLeast<{
   targetRecipient?: Prisma.StringNullableFilter<"Contact"> | string | null
   targetRecipientLabel?: Prisma.StringNullableFilter<"Contact"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Contact"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Contact"> | Date | string | null
 }, "id">
 
 export type ContactOrderByWithAggregationInput = {
@@ -286,6 +296,7 @@ export type ContactOrderByWithAggregationInput = {
   targetRecipient?: Prisma.SortOrderInput | Prisma.SortOrder
   targetRecipientLabel?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ContactCountOrderByAggregateInput
   _max?: Prisma.ContactMaxOrderByAggregateInput
   _min?: Prisma.ContactMinOrderByAggregateInput
@@ -307,6 +318,7 @@ export type ContactScalarWhereWithAggregatesInput = {
   targetRecipient?: Prisma.StringNullableWithAggregatesFilter<"Contact"> | string | null
   targetRecipientLabel?: Prisma.StringNullableWithAggregatesFilter<"Contact"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Contact"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Contact"> | Date | string | null
 }
 
 export type ContactCreateInput = {
@@ -322,6 +334,7 @@ export type ContactCreateInput = {
   targetRecipient?: string | null
   targetRecipientLabel?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ContactUncheckedCreateInput = {
@@ -337,6 +350,7 @@ export type ContactUncheckedCreateInput = {
   targetRecipient?: string | null
   targetRecipientLabel?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ContactUpdateInput = {
@@ -352,6 +366,7 @@ export type ContactUpdateInput = {
   targetRecipient?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetRecipientLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ContactUncheckedUpdateInput = {
@@ -367,6 +382,7 @@ export type ContactUncheckedUpdateInput = {
   targetRecipient?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetRecipientLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ContactCreateManyInput = {
@@ -382,6 +398,7 @@ export type ContactCreateManyInput = {
   targetRecipient?: string | null
   targetRecipientLabel?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ContactUpdateManyMutationInput = {
@@ -397,6 +414,7 @@ export type ContactUpdateManyMutationInput = {
   targetRecipient?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetRecipientLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ContactUncheckedUpdateManyInput = {
@@ -412,6 +430,7 @@ export type ContactUncheckedUpdateManyInput = {
   targetRecipient?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   targetRecipientLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ContactCountOrderByAggregateInput = {
@@ -427,6 +446,7 @@ export type ContactCountOrderByAggregateInput = {
   targetRecipient?: Prisma.SortOrder
   targetRecipientLabel?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ContactMaxOrderByAggregateInput = {
@@ -442,6 +462,7 @@ export type ContactMaxOrderByAggregateInput = {
   targetRecipient?: Prisma.SortOrder
   targetRecipientLabel?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ContactMinOrderByAggregateInput = {
@@ -457,6 +478,7 @@ export type ContactMinOrderByAggregateInput = {
   targetRecipient?: Prisma.SortOrder
   targetRecipientLabel?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -475,6 +497,10 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 
 
 export type ContactSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -490,6 +516,7 @@ export type ContactSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   targetRecipient?: boolean
   targetRecipientLabel?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["contact"]>
 
 export type ContactSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -505,6 +532,7 @@ export type ContactSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   targetRecipient?: boolean
   targetRecipientLabel?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["contact"]>
 
 export type ContactSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -520,6 +548,7 @@ export type ContactSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   targetRecipient?: boolean
   targetRecipientLabel?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["contact"]>
 
 export type ContactSelectScalar = {
@@ -535,9 +564,10 @@ export type ContactSelectScalar = {
   targetRecipient?: boolean
   targetRecipientLabel?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }
 
-export type ContactOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "organization" | "email" | "phone" | "subject" | "message" | "privacyAccepted" | "targetRecipient" | "targetRecipientLabel" | "createdAt", ExtArgs["result"]["contact"]>
+export type ContactOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "organization" | "email" | "phone" | "subject" | "message" | "privacyAccepted" | "targetRecipient" | "targetRecipientLabel" | "createdAt" | "deletedAt", ExtArgs["result"]["contact"]>
 
 export type $ContactPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Contact"
@@ -558,6 +588,7 @@ export type $ContactPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
      */
     targetRecipientLabel: string | null
     createdAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["contact"]>
   composites: {}
 }
@@ -993,6 +1024,7 @@ export interface ContactFieldRefs {
   readonly targetRecipient: Prisma.FieldRef<"Contact", 'String'>
   readonly targetRecipientLabel: Prisma.FieldRef<"Contact", 'String'>
   readonly createdAt: Prisma.FieldRef<"Contact", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Contact", 'DateTime'>
 }
     
 

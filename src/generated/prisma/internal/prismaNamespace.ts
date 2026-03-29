@@ -904,7 +904,8 @@ export const ContactScalarFieldEnum = {
   privacyAccepted: 'privacyAccepted',
   targetRecipient: 'targetRecipient',
   targetRecipientLabel: 'targetRecipientLabel',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type ContactScalarFieldEnum = (typeof ContactScalarFieldEnum)[keyof typeof ContactScalarFieldEnum]

@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { log } from '$lib/server/logger';
 import { prisma } from '$lib/server/prisma';
 
 export const GET: RequestHandler = async () => {
@@ -9,7 +10,7 @@ export const GET: RequestHandler = async () => {
         await prisma.$queryRaw`SELECT 1`;
         dbOk = true;
     } catch (e) {
-        console.error('[health] database unreachable:', e);
+        log.error({ err: e }, 'health database unreachable');
     }
 
     return json({

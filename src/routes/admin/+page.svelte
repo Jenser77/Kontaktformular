@@ -51,6 +51,35 @@
 	let editingId = $state<string | null>(null);
 	let editingName = $state<string>("");
 	let editingEmail = $state<string>("");
+	let exportBusy = $state(false);
+
+	async function exportCsv() {
+		if (exportBusy) return;
+		exportBusy = true;
+		try {
+			const res = await fetch("/admin/export", {
+				method: "POST",
+				credentials: "include",
+			});
+			if (!res.ok) {
+				alert(`Export fehlgeschlagen (HTTP ${res.status}).`);
+				return;
+			}
+			const blob = await res.blob();
+			const cd = res.headers.get("Content-Disposition");
+			const m = cd?.match(/filename="([^"]+)"/);
+			const name =
+				m?.[1] ?? `kontaktanfragen-${new Date().toISOString().slice(0, 10)}.csv`;
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = name;
+			a.click();
+			URL.revokeObjectURL(url);
+		} finally {
+			exportBusy = false;
+		}
+	}
 
 	function startEdit(id: string, name: string, email: string = "") {
 		editingId = id;
@@ -113,9 +142,14 @@
 				>
 					Empfänger-Struktur
 				</button>
-				<a class="sidebar-link sidebar-export" href="/admin/export">
-					Kontakte als CSV
-				</a>
+				<button
+					type="button"
+					class="sidebar-link sidebar-export"
+					disabled={exportBusy}
+					onclick={exportCsv}
+				>
+					{exportBusy ? "Export …" : "Kontakte als CSV"}
+				</button>
 			</nav>
 			<div class="sidebar-footer">
 				{#if data.adminDisplayName}

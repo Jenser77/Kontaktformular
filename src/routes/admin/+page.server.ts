@@ -1,4 +1,5 @@
 import { adminSessionDeleteOptions } from '$lib/server/adminCookie';
+import { log } from '$lib/server/logger';
 import { prisma } from '$lib/server/prisma';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
@@ -40,6 +41,7 @@ function recipientLabel(
 export const load: PageServerLoad = async () => {
     // 1. Fetch Contact Requests
     const rows: ContactRecord[] = await prisma.contact.findMany({
+        where: { deletedAt: null },
         orderBy: { createdAt: 'desc' }
     });
 
@@ -114,10 +116,13 @@ export const actions: Actions = {
         if (typeof id !== 'string' || !id) return fail(400, { error: 'Ungültige ID.' });
 
         try {
-            await prisma.contact.delete({ where: { id } });
+            await prisma.contact.update({
+                where: { id },
+                data: { deletedAt: new Date() }
+            });
             return { success: true };
         } catch (error) {
-            console.error('Error deleting contact:', error);
+            log.error({ err: error }, 'Error soft-deleting contact');
             return fail(500, { error: 'Fehler beim Löschen.' });
         }
     },
@@ -132,7 +137,7 @@ export const actions: Actions = {
             await prisma.mandant.create({ data: { name: name.trim() } });
             return { success: true };
         } catch (error) {
-            console.error('Error creating Mandant:', error);
+            log.error({ err: error }, 'Error creating Mandant');
             return fail(500, { error: 'Mandant konnte nicht angelegt werden.' });
         }
     },
@@ -148,7 +153,7 @@ export const actions: Actions = {
             await prisma.mandant.update({ where: { id }, data: { name: name.trim() } });
             return { success: true };
         } catch (error) {
-            console.error('Error updating Mandant:', error);
+            log.error({ err: error }, 'Error updating Mandant');
             return fail(500, { error: 'Mandant konnte nicht aktualisiert werden.' });
         }
     },
@@ -161,7 +166,7 @@ export const actions: Actions = {
             await prisma.mandant.delete({ where: { id } });
             return { success: true };
         } catch (error) {
-            console.error('Error deleting Mandant:', error);
+            log.error({ err: error }, 'Error deleting Mandant');
             return fail(500, { error: 'Mandant konnte nicht gelöscht werden.' });
         }
     },
@@ -179,7 +184,7 @@ export const actions: Actions = {
             await prisma.einrichtung.create({ data: { name: name.trim(), mandantId } });
             return { success: true };
         } catch (error) {
-            console.error('Error creating Einrichtung:', error);
+            log.error({ err: error }, 'Error creating Einrichtung');
             return fail(500, { error: 'Einrichtung konnte nicht angelegt werden.' });
         }
     },
@@ -208,7 +213,7 @@ export const actions: Actions = {
             await prisma.einrichtung.delete({ where: { id } });
             return { success: true };
         } catch (error) {
-            console.error('Error deleting Einrichtung:', error);
+            log.error({ err: error }, 'Error deleting Einrichtung');
             return fail(500, { error: 'Einrichtung konnte nicht gelöscht werden.' });
         }
     },
@@ -233,7 +238,7 @@ export const actions: Actions = {
             await prisma.fachabteilung.create({ data: { name: name.trim(), email: email.trim(), einrichtungId } });
             return { success: true };
         } catch (error) {
-            console.error('Error creating Fachabteilung:', error);
+            log.error({ err: error }, 'Error creating Fachabteilung');
             return fail(500, { error: 'Fachabteilung konnte nicht angelegt werden.' });
         }
     },
@@ -257,7 +262,7 @@ export const actions: Actions = {
             await prisma.fachabteilung.update({ where: { id }, data: { name: name.trim(), email: email.trim() } });
             return { success: true };
         } catch (error) {
-            console.error('Error updating Fachabteilung:', error);
+            log.error({ err: error }, 'Error updating Fachabteilung');
             return fail(500, { error: 'Fachabteilung konnte nicht aktualisiert werden.' });
         }
     },
@@ -270,7 +275,7 @@ export const actions: Actions = {
             await prisma.fachabteilung.delete({ where: { id } });
             return { success: true };
         } catch (error) {
-            console.error('Error deleting Fachabteilung:', error);
+            log.error({ err: error }, 'Error deleting Fachabteilung');
             return fail(500, { error: 'Fachabteilung konnte nicht gelöscht werden.' });
         }
     }

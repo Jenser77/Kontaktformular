@@ -844,9 +844,3 @@
 		</form>
 	</div>
 </main>
-
-<style>
-	.hidden {
-		display: none !important;
-	}
-</style>

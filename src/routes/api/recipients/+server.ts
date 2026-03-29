@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { log } from '$lib/server/logger';
 import { prisma } from '$lib/server/prisma';
 
 export const GET: RequestHandler = async () => {
@@ -32,7 +33,7 @@ export const GET: RequestHandler = async () => {
 
         return json({ success: true, data: structure });
     } catch (e) {
-        console.error('API /recipients error', e);
+        log.error({ err: e }, 'API /recipients error');
         return json({ success: false, error: 'Ein interner Serverfehler ist aufgetreten.' }, { status: 500 });
     }
 };

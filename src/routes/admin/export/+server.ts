@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import type { Cookies } from '@sveltejs/kit';
 import { getValidAdminSession } from '$lib/server/adminSession';
 import { prisma } from '$lib/server/prisma';
 
@@ -11,13 +12,14 @@ function csvCell(value: string | number | boolean | null | undefined): string {
     return s;
 }
 
-export const GET: RequestHandler = async ({ cookies }) => {
+async function csvExportResponse(cookies: Cookies): Promise<Response> {
     const token = cookies.get('admin_session');
     if (!(await getValidAdminSession(token))) {
         error(401, 'Nicht angemeldet');
     }
 
     const rows = await prisma.contact.findMany({
+        where: { deletedAt: null },
         orderBy: { createdAt: 'desc' }
     });
 
@@ -62,4 +64,12 @@ export const GET: RequestHandler = async ({ cookies }) => {
             'Content-Disposition': `attachment; filename="kontaktanfragen-${new Date().toISOString().slice(0, 10)}.csv"`
         }
     });
-};
+}
+
+export const POST: RequestHandler = async ({ cookies }) => csvExportResponse(cookies);
+
+export const GET: RequestHandler = () =>
+    new Response('Method Not Allowed — CSV-Export nur per POST aus dem Admin-Bereich.', {
+        status: 405,
+        headers: { Allow: 'POST' }
+    });

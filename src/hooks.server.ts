@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { redirect } from '@sveltejs/kit';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { displayNameFromSession, getValidAdminSession } from '$lib/server/adminSession';
+import { log } from '$lib/server/logger';
 
 export const handle: Handle = async ({ event, resolve }) => {
     // --- 1. Session Auth for /admin routes (except /admin/login) ---
@@ -34,7 +35,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         [
             "default-src 'self'",
             "script-src 'self'",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+            "style-src 'self' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
             "img-src 'self' data:",
             "connect-src 'self'",
@@ -59,7 +60,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 
 export const handleError: HandleServerError = ({ error, status }) => {
-    console.error(`[Error Handler] Status ${status}:`, error);
+    log.error({ err: error, status }, 'handleError');
 
     return {
         message: status === 500

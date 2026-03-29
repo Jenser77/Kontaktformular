@@ -5,6 +5,7 @@ import { prisma } from '$lib/server/prisma';
 import { sendContactEmail } from '$lib/server/mailer';
 import type { ContactData } from '$lib/server/mailer';
 import { contactRequestSchema } from '$lib/server/contactSchema';
+import { log } from '$lib/server/logger';
 
 function honeypotTripped(raw: unknown): boolean {
     if (!raw || typeof raw !== 'object') return false;
@@ -64,7 +65,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
         targetEmail = fachabteilung.email;
         recipientLabel = `${fachabteilung.einrichtung.mandant.name} → ${fachabteilung.einrichtung.name} → ${fachabteilung.name}`;
     } catch (e) {
-        console.error('API /contact recipient lookup error:', e);
+        log.error({ err: e }, 'API /contact recipient lookup error');
         return json({ success: false, error: 'Datenbankfehler bei der Empfängerprüfung.' }, { status: 500 });
     }
 
@@ -101,7 +102,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
             message: 'Ihre Nachricht wurde erfolgreich gesendet. Wir melden uns in Kürze.'
         });
     } catch (error) {
-        console.error('[Contact API] Fehler beim Mailversand oder Speichern:', error);
+        log.error({ err: error }, 'Contact API mail or persist error');
         return json(
             {
                 success: false,

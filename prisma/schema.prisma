@@ -21,9 +21,11 @@ model Contact {
   /// Snapshot at submit time: "Mandant → Einrichtung → Abteilung"
   targetRecipientLabel  String?
   createdAt             DateTime @default(now())
+  deletedAt             DateTime?
 
   @@index([createdAt])
   @@index([targetRecipient])
+  @@index([deletedAt])
 }
 
 model Mandant {
