@@ -1,9 +1,21 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { prisma } from '$lib/server/prisma';
 
-export const GET: RequestHandler = () => {
+export const GET: RequestHandler = async () => {
+    const t0 = Date.now();
+    let dbOk = false;
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+        dbOk = true;
+    } catch (e) {
+        console.error('[health] database unreachable:', e);
+    }
+
     return json({
-        status: 'OK',
-        uptime: process.uptime()
+        status: dbOk ? 'OK' : 'degraded',
+        db: dbOk,
+        uptime: process.uptime(),
+        dbLatencyMs: Date.now() - t0
     });
 };

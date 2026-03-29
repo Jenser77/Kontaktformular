@@ -17,6 +17,12 @@ export const handle: Handle = async ({ event, resolve }) => {
     // --- 2. Resolve the request ---
     const response = await resolve(event);
 
+    // --- 2b. Cache static filenames served from /static (hashed Kit assets use their own headers) ---
+    const pathname = event.url.pathname;
+    if (/\.(css|png|jpe?g|gif|webp|ico|svg|woff2?)$/i.test(pathname)) {
+        response.headers.set('Cache-Control', 'public, max-age=86400');
+    }
+
     // --- 3. Security Headers ---
     response.headers.set('X-Content-Type-Options', 'nosniff');
     response.headers.set('X-Frame-Options', 'DENY');
@@ -27,7 +33,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         'Content-Security-Policy',
         [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline'",
+            "script-src 'self'",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
             "img-src 'self' data:",

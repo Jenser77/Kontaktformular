@@ -31,7 +31,8 @@ export const GET: RequestHandler = async ({ cookies }) => {
         'subject',
         'message',
         'privacyAccepted',
-        'targetRecipient'
+        'targetRecipient',
+        'targetRecipientLabel'
     ];
 
     const lines = [
@@ -47,7 +48,8 @@ export const GET: RequestHandler = async ({ cookies }) => {
                 r.subject,
                 r.message,
                 r.privacyAccepted,
-                r.targetRecipient
+                r.targetRecipient,
+                r.targetRecipientLabel
             ].map(csvCell).join(',')
         )
     ];

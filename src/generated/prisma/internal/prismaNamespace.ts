@@ -903,6 +903,7 @@ export const ContactScalarFieldEnum = {
   message: 'message',
   privacyAccepted: 'privacyAccepted',
   targetRecipient: 'targetRecipient',
+  targetRecipientLabel: 'targetRecipientLabel',
   createdAt: 'createdAt'
 } as const
 

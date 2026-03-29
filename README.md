@@ -327,7 +327,7 @@ Dann **`git push origin main`** — CI deployt auf den neuen Server. Test: `curl
 ## Admin & Sitzungen
 
 - **`bun run create-admin <user> <pass> ["Anzeigename"]`** — legt `AdminUser` an (bcrypt-Hash in der DB). **Empfohlen für Produktion** — kein Klartext-Passwort in Umgebungsvariablen nötig.
-- Login-Reihenfolge: **`ADMIN_USER` / `ADMIN_PASS`** → **`ADMIN_USERS`** → **`AdminUser`** in der DB. In Produktion die ersten beiden **weglassen** und ausschließlich DB-Accounts nutzen.
+- Login erfolgt **ausschließlich** über **`AdminUser`** in der DB (bcrypt). Es gibt keine Klartext-Admin-Variablen mehr in der `.env`.
 - Sitzungen: Tabelle **`AdminSession`** (überleben PM2-Neustarts). Nach DB-Wechsel: neu einloggen.
 
 Weitere Variablen: **`.env.example`**.

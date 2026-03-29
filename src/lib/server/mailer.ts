@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
-import { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 export interface ContactData {
     firstName: string;
@@ -22,13 +22,15 @@ function escapeHtml(text: string): string {
 }
 
 function createTransporter(): Transporter {
+    const portStr = env.SMTP_PORT ?? '587';
+    const port = parseInt(portStr, 10);
     return nodemailer.createTransport({
-        host: SMTP_HOST,
-        port: parseInt(SMTP_PORT || '587', 10),
-        secure: SMTP_PORT === '465',
+        host: env.SMTP_HOST,
+        port,
+        secure: portStr === '465',
         auth: {
-            user: SMTP_USER,
-            pass: SMTP_PASS
+            user: env.SMTP_USER,
+            pass: env.SMTP_PASS
         }
     });
 }
@@ -71,7 +73,7 @@ ${contactData.message}
 Der Benutzer hat die Datenschutzbestimmungen akzeptiert.`;
 
     await transporter.sendMail({
-        from: `"Kontaktformular Portal" <${SMTP_USER}>`,
+        from: `"Kontaktformular Portal" <${env.SMTP_USER}>`,
         to: targetEmail,
         replyTo: contactData.email,
         subject: `Neue Anfrage Portal: ${contactData.subject}`,

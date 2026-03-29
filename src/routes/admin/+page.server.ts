@@ -15,6 +15,7 @@ interface ContactRecord {
     message: string;
     privacyAccepted: boolean;
     targetRecipient: string | null;
+    targetRecipientLabel: string | null;
     createdAt: Date;
 }
 
@@ -57,10 +58,12 @@ export const load: PageServerLoad = async () => {
     const contacts = rows.map((c) => ({
         ...c,
         createdAt: c.createdAt.toISOString(),
-        recipientLabel: recipientLabel(
-            c.targetRecipient ? deptById.get(c.targetRecipient) : undefined,
-            c.targetRecipient
-        )
+        recipientLabel:
+            c.targetRecipientLabel ??
+            recipientLabel(
+                c.targetRecipient ? deptById.get(c.targetRecipient) : undefined,
+                c.targetRecipient
+            )
     }));
 
     // 2. Fetch Recipient Structure

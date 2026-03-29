@@ -8,17 +8,22 @@ datasource db {
 }
 
 model Contact {
-  id              String   @id @default(uuid())
-  firstName       String
-  lastName        String
-  organization    String?
-  email           String
-  phone           String?
-  subject         String
-  message         String
-  privacyAccepted Boolean
-  targetRecipient String?
-  createdAt       DateTime @default(now())
+  id                    String   @id @default(uuid())
+  firstName             String
+  lastName              String
+  organization          String?
+  email                 String
+  phone                 String?
+  subject               String
+  message               String
+  privacyAccepted       Boolean
+  targetRecipient       String?
+  /// Snapshot at submit time: "Mandant → Einrichtung → Abteilung"
+  targetRecipientLabel  String?
+  createdAt             DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([targetRecipient])
 }
 
 model Mandant {
