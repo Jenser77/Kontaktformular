@@ -52,7 +52,20 @@ document.addEventListener('DOMContentLoaded', () => {
         mainEl.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
     };
 
+    const setSelectLoading = (selectEl, isLoading) => {
+        if (isLoading) {
+            selectEl.classList.add('is-loading');
+            selectEl.disabled = true;
+        } else {
+            selectEl.classList.remove('is-loading');
+        }
+    };
+
     const fetchRoutingData = async () => {
+        // Show loading state
+        setSelectLoading(selMandant, true);
+        selMandant.innerHTML = '<option value="" disabled selected>Wird geladen...</option>';
+        
         try {
             const response = await fetch('/api/recipients');
             const data = await response.json();
@@ -64,6 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch {
             selMandant.innerHTML = '<option value="" disabled selected>Fehler beim Laden</option>';
+        } finally {
+            setSelectLoading(selMandant, false);
+            selMandant.disabled = false;
         }
     };
 
@@ -228,11 +244,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (step === 4) fillReview();
         setStepVisibility();
         scrollWizardIntoView();
+        
+        // Improved focus management: focus first interactive element after step change
         const panel = document.querySelector(`.form-step[data-step="${step}"]`);
-        const focusable = panel?.querySelector(
-            'button:not([disabled]), [href], input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])'
-        );
-        if (focusable && step !== 4) focusable.focus({ preventScroll: true });
+        
+        // Use requestAnimationFrame to ensure DOM is updated before focusing
+        requestAnimationFrame(() => {
+            const focusable = panel?.querySelector(
+                'select:not([disabled]), input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), button:not([disabled]), [href]'
+            );
+            if (focusable) {
+                focusable.focus({ preventScroll: true });
+                // Announce step change to screen readers
+                if (wizardLive) {
+                    wizardLive.textContent = `${STEP_LABELS[step] || ''} - Fokus auf erstes Eingabefeld gesetzt.`;
+                }
+            }
+        });
     };
 
     const selectedOptionText = (selectEl) => {
