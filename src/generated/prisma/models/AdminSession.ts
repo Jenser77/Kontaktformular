@@ -158,7 +158,7 @@ export type AdminSessionGroupByOutputType = {
   _max: AdminSessionMaxAggregateOutputType | null
 }
 
-type GetAdminSessionGroupByPayload<T extends AdminSessionGroupByArgs> = Prisma.PrismaPromise<
+export type GetAdminSessionGroupByPayload<T extends AdminSessionGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AdminSessionGroupByOutputType, T['by']> &
       {
@@ -1122,6 +1122,11 @@ export type AdminSessionFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` AdminSessions.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of AdminSessions.
+   */
   distinct?: Prisma.AdminSessionScalarFieldEnum | Prisma.AdminSessionScalarFieldEnum[]
 }
 

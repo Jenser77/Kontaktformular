@@ -151,7 +151,7 @@ export type EinrichtungGroupByOutputType = {
   _max: EinrichtungMaxAggregateOutputType | null
 }
 
-type GetEinrichtungGroupByPayload<T extends EinrichtungGroupByArgs> = Prisma.PrismaPromise<
+export type GetEinrichtungGroupByPayload<T extends EinrichtungGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<EinrichtungGroupByOutputType, T['by']> &
       {
@@ -1196,6 +1196,11 @@ export type EinrichtungFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` Einrichtungs.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Einrichtungs.
+   */
   distinct?: Prisma.EinrichtungScalarFieldEnum | Prisma.EinrichtungScalarFieldEnum[]
 }
 

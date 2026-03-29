@@ -94,4 +94,4 @@ jobs:
       - name: Restart app
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "cd /opt/kontaktformular && set -a && [ -f /etc/kontaktformular.env ] && . /etc/kontaktformular.env && set +a && npx --yes prisma@7.4.2 migrate deploy && npm install --omit=dev --ignore-scripts --silent && pm2 delete kontaktformular 2>/dev/null || true && pm2 start ecosystem.config.cjs && pm2 save --force"
+            "cd /opt/kontaktformular && set -a && [ -f /etc/kontaktformular.env ] && . /etc/kontaktformular.env && set +a && npx --yes prisma@7.6.0 migrate deploy && npm install --omit=dev --ignore-scripts --silent && pm2 delete kontaktformular 2>/dev/null || true && pm2 start ecosystem.config.cjs && pm2 save --force"

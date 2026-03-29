@@ -144,7 +144,7 @@ export type MandantGroupByOutputType = {
   _max: MandantMaxAggregateOutputType | null
 }
 
-type GetMandantGroupByPayload<T extends MandantGroupByArgs> = Prisma.PrismaPromise<
+export type GetMandantGroupByPayload<T extends MandantGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<MandantGroupByOutputType, T['by']> &
       {
@@ -1024,6 +1024,11 @@ export type MandantFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` Mandants.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Mandants.
+   */
   distinct?: Prisma.MandantScalarFieldEnum | Prisma.MandantScalarFieldEnum[]
 }
 
