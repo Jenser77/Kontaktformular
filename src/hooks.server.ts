@@ -30,18 +30,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     response.headers.set('X-XSS-Protection', '1; mode=block');
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
-    response.headers.set(
-        'Content-Security-Policy',
-        [
-            "default-src 'self'",
-            "script-src 'self'",
-            "style-src 'self' https://fonts.googleapis.com",
-            "font-src 'self' https://fonts.gstatic.com",
-            "img-src 'self' data:",
-            "connect-src 'self'",
-            "frame-ancestors 'none'",
-        ].join('; ')
-    );
 
     // --- 4. CORS for API routes ---
     if (event.url.pathname.startsWith('/api')) {
