@@ -58,6 +58,8 @@
 	let editingName = $state<string>("");
 	let editingEmail = $state<string>("");
 	let exportBusy = $state(false);
+	let passwordBusy = $state(false);
+	let passwordFeedback = $state<{ type: "success" | "error"; text: string } | null>(null);
 
 	let visibleContacts = $derived(
 		(() => {
@@ -188,6 +190,30 @@
 	function handleDetailKeydown(event: KeyboardEvent) {
 		if (event.key === "Escape") closeDetails();
 	}
+
+	function enhancePasswordForm() {
+		passwordBusy = true;
+		passwordFeedback = null;
+		return async ({ result, update }: { result: { type: string; data?: unknown }; update: (opts?: { reset?: boolean }) => Promise<void> }) => {
+			passwordBusy = false;
+			if (result.type === "success") {
+				passwordFeedback = { type: "success", text: "Passwort erfolgreich geändert." };
+				await update({ reset: true });
+				return;
+			}
+
+			if (result.type === "failure") {
+				const maybeData = (result.data ?? {}) as { error?: string };
+				passwordFeedback = {
+					type: "error",
+					text: maybeData.error ?? "Passwort konnte nicht geändert werden."
+				};
+				return;
+			}
+
+			passwordFeedback = { type: "error", text: "Unbekannter Fehler beim Ändern des Passworts." };
+		};
+	}
 </script>
 
 <div class="admin-wrapper">
@@ -227,6 +253,20 @@
 				{#if data.adminDisplayName}
 					<p class="sidebar-user">{data.adminDisplayName}</p>
 				{/if}
+				<form method="POST" action="?/changePassword" use:enhance={enhancePasswordForm} class="password-form">
+					<p class="password-title">Passwort ändern</p>
+					<input type="password" name="currentPassword" placeholder="Aktuelles Passwort" required minlength="10" />
+					<input type="password" name="newPassword" placeholder="Neues Passwort" required minlength="10" />
+					<input type="password" name="confirmPassword" placeholder="Neues Passwort wiederholen" required minlength="10" />
+					<button type="submit" class="btn-password" disabled={passwordBusy}>
+						{passwordBusy ? "Speichert …" : "Passwort speichern"}
+					</button>
+					{#if passwordFeedback}
+						<p class="password-feedback {passwordFeedback.type}" role="status">
+							{passwordFeedback.text}
+						</p>
+					{/if}
+				</form>
 				<form method="POST" action="?/logout">
 					<button type="submit" class="btn-logout">Abmelden</button>
 				</form>
@@ -816,6 +856,60 @@
 		font-size: 0.875rem;
 		color: #555;
 		line-height: 1.35;
+	}
+
+	.password-form {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		margin-bottom: 12px;
+	}
+
+	.password-title {
+		margin: 0;
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: #444;
+	}
+
+	.password-form input {
+		width: 100%;
+		box-sizing: border-box;
+		padding: 8px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		font-size: 0.8rem;
+	}
+
+	.btn-password {
+		width: 100%;
+		background: #3c1361;
+		color: #fff;
+		padding: 8px 12px;
+		border: 0;
+		border-radius: 4px;
+		font-size: 0.8rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.btn-password:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	.password-feedback {
+		margin: 0;
+		font-size: 0.78rem;
+		line-height: 1.25;
+	}
+
+	.password-feedback.success {
+		color: #166534;
+	}
+
+	.password-feedback.error {
+		color: #b91c1c;
 	}
 
 	.btn-logout {
