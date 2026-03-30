@@ -27,7 +27,7 @@ export const actions: Actions = {
         const usernameTrimmed = username.trim().replace(/\r/g, '');
         const usernameNorm = usernameTrimmed.toLowerCase();
 
-        let dbUser = null;
+        let dbUser: Awaited<ReturnType<typeof prisma.adminUser.findUnique>>;
         try {
             dbUser = usernameNorm
                 ? await prisma.adminUser.findUnique({ where: { username: usernameNorm } })
