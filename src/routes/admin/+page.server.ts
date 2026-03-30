@@ -4,6 +4,7 @@ import { prisma } from '$lib/server/prisma';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { deleteSession } from '$lib/server/adminSession';
+import { CONTACTS_PER_PAGE, EMAIL_REGEX } from '$lib/constants';
 
 interface ContactRecord {
     id: string;
@@ -38,11 +39,20 @@ function recipientLabel(
     return null;
 }
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url }) => {
+    const pageRaw = Number(url.searchParams.get('page') ?? '1');
+    const currentPage = Number.isFinite(pageRaw) && pageRaw > 0 ? Math.floor(pageRaw) : 1;
+
+    const totalContacts = await prisma.contact.count({ where: { deletedAt: null } });
+    const totalPages = Math.max(1, Math.ceil(totalContacts / CONTACTS_PER_PAGE));
+    const safePage = Math.min(currentPage, totalPages);
+
     // 1. Fetch Contact Requests
     const rows: ContactRecord[] = await prisma.contact.findMany({
         where: { deletedAt: null },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        skip: (safePage - 1) * CONTACTS_PER_PAGE,
+        take: CONTACTS_PER_PAGE
     });
 
     const recipientIds = [...new Set(rows.map((c) => c.targetRecipient).filter(Boolean))] as string[];
@@ -85,6 +95,9 @@ export const load: PageServerLoad = async () => {
 
     return {
         contacts,
+        currentPage: safePage,
+        totalPages,
+        totalContacts,
         mandanten: mandanten.map((m) => ({
             ...m,
             createdAt: m.createdAt.toISOString(),
@@ -200,7 +213,7 @@ export const actions: Actions = {
             await prisma.einrichtung.update({ where: { id }, data: { name: name.trim() } });
             return { success: true };
         } catch (error) {
-            console.error('Error updating Einrichtung:', error);
+            log.error({ err: error }, 'Error updating Einrichtung');
             return fail(500, { error: 'Einrichtung konnte nicht aktualisiert werden.' });
         }
     },
@@ -229,8 +242,7 @@ export const actions: Actions = {
             return fail(400, { error: 'Name, E-Mail und Einrichtung-ID sind erforderlich.' });
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (!EMAIL_REGEX.test(email)) {
             return fail(400, { error: 'Ungültige E-Mail Adresse.' });
         }
 
@@ -253,8 +265,7 @@ export const actions: Actions = {
             return fail(400, { error: 'Name und E-Mail sind erforderlich.' });
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (!EMAIL_REGEX.test(email)) {
             return fail(400, { error: 'Ungültige E-Mail Adresse.' });
         }
 

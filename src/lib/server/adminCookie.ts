@@ -1,4 +1,5 @@
 import { dev } from '$app/environment';
+import { SESSION_DURATION_S } from '$lib/constants';
 
 /** `Secure` nur außerhalb des Vite-Devservers — sonst schlägt Admin-Login auf http://localhost fehl. */
 export const adminSessionSecure = !dev;
@@ -8,7 +9,7 @@ export const adminSessionSetOptions = {
 	httpOnly: true,
 	sameSite: 'strict' as const,
 	secure: adminSessionSecure,
-	maxAge: 8 * 60 * 60
+	maxAge: SESSION_DURATION_S
 };
 
 /** Optionen für `cookies.delete` — `secure` muss zum Setzen passen. */

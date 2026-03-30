@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { EMAIL_REGEX } from '$lib/constants';
 
 	type Abteilung = { id: string; name: string };
 	type Einrichtung = { id: string; name: string; abteilungen: Abteilung[] };
@@ -20,7 +21,6 @@
 		3: ['subject', 'message']
 	};
 
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 	let recipientData = $state<Mandant[]>([]);
 	let routingLoadFailed = $state(false);
@@ -113,7 +113,7 @@
 			case 'lastName':
 				return lastName.trim() !== '';
 			case 'email':
-				return email.trim() !== '' && emailRegex.test(email.trim());
+				return email.trim() !== '' && EMAIL_REGEX.test(email.trim());
 			case 'subject':
 				return subject.trim() !== '';
 			case 'message':
@@ -336,7 +336,7 @@
 		if (el.type === 'checkbox') {
 			isValid = (el as HTMLInputElement).checked;
 		} else if (el.type === 'email') {
-			isValid = el.value.trim() !== '' && emailRegex.test(el.value.trim());
+			isValid = el.value.trim() !== '' && EMAIL_REGEX.test(el.value.trim());
 		} else {
 			isValid = el.value.trim() !== '';
 		}

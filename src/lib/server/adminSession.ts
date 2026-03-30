@@ -1,6 +1,6 @@
 import { prisma } from '$lib/server/prisma';
-
-const SESSION_MS = 8 * 60 * 60 * 1000;
+import { log } from '$lib/server/logger';
+import { SESSION_DURATION_MS } from '$lib/constants';
 
 export type ValidAdminSession = {
     adminUser: { username: string; displayName: string | null } | null;
@@ -18,7 +18,9 @@ export async function getValidAdminSession(token: string | undefined): Promise<V
     if (!row) return null;
 
     if (row.expiresAt < new Date()) {
-        await prisma.adminSession.delete({ where: { id: token } }).catch(() => {});
+        await prisma.adminSession.delete({ where: { id: token } }).catch((err) => {
+            log.debug({ err }, 'Failed to delete expired admin session');
+        });
         return null;
     }
 
@@ -48,7 +50,7 @@ export type CreateSessionOptions = {
 
 export async function createSession(opts: CreateSessionOptions = {}): Promise<string> {
     const token = crypto.randomUUID();
-    const expiresAt = new Date(Date.now() + SESSION_MS);
+    const expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
 
     await prisma.adminSession.create({
         data: {

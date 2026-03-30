@@ -2,6 +2,8 @@ import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
 import { env } from '$env/dynamic/private';
 
+let transporterSingleton: Transporter | null = null;
+
 export interface ContactData {
     firstName: string;
     lastName: string;
@@ -22,9 +24,13 @@ function escapeHtml(text: string): string {
 }
 
 function createTransporter(): Transporter {
+    if (transporterSingleton) {
+        return transporterSingleton;
+    }
+
     const portStr = env.SMTP_PORT ?? '587';
     const port = parseInt(portStr, 10);
-    return nodemailer.createTransport({
+    transporterSingleton = nodemailer.createTransport({
         host: env.SMTP_HOST,
         port,
         secure: portStr === '465',
@@ -33,6 +39,8 @@ function createTransporter(): Transporter {
             pass: env.SMTP_PASS
         }
     });
+
+    return transporterSingleton;
 }
 
 export async function sendContactEmail(contactData: ContactData, targetEmail: string): Promise<void> {

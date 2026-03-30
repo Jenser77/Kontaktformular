@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { EMAIL_REGEX } from '$lib/constants';
 
 function trimmedNonEmpty(fieldLabel: string, max: number) {
     return z
@@ -29,7 +30,7 @@ export const contactRequestSchema = z.object({
         .max(320)
         .transform((s) => s.trim())
         .refine((s) => s.length > 0, { message: 'E-Mail ist erforderlich.' })
-        .refine((s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s), { message: 'Ungültige E-Mail-Adresse.' }),
+        .refine((s) => EMAIL_REGEX.test(s), { message: 'Ungültige E-Mail-Adresse.' }),
     phone: optionalTrimmed(80),
     subject: trimmedNonEmpty('Betreff', 500),
     message: trimmedNonEmpty('Nachricht', 20_000),

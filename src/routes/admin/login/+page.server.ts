@@ -5,11 +5,18 @@ import { adminSessionSetOptions } from '$lib/server/adminCookie';
 import { createSession } from '$lib/server/adminSession';
 import { isRateLimited } from '$lib/server/rateLimit';
 import { prisma } from '$lib/server/prisma';
+import { DEFAULT_RATE_LIMIT_MAX, DEFAULT_RATE_LIMIT_WINDOW_MS } from '$lib/constants';
 
 export const actions: Actions = {
     default: async ({ request, cookies, getClientAddress }) => {
         const ip = getClientAddress();
-        if (await isRateLimited(ip, { windowMs: 15 * 60 * 1000, max: 5 }, 'admin-login')) {
+        if (
+            await isRateLimited(
+                ip,
+                { windowMs: DEFAULT_RATE_LIMIT_WINDOW_MS, max: DEFAULT_RATE_LIMIT_MAX },
+                'admin-login'
+            )
+        ) {
             return fail(429, { error: 'Zu viele Anmeldeversuche. Bitte 15 Minuten warten.' });
         }
 

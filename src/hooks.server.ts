@@ -34,11 +34,12 @@ export const handle: Handle = async ({ event, resolve }) => {
     // --- 4. CORS for API routes ---
     if (event.url.pathname.startsWith('/api')) {
         const origin = event.request.headers.get('origin');
-        const allowedOrigin = process.env.ALLOWED_ORIGIN ?? '';
+        const allowedOrigin = process.env.ALLOWED_ORIGIN?.trim() ?? '';
         const isLocalhost = origin?.startsWith('http://localhost') || origin?.startsWith('http://127.0.0.1');
 
-        if (!origin || origin === allowedOrigin || isLocalhost) {
-            response.headers.set('Access-Control-Allow-Origin', origin ?? '*');
+        if (origin && (origin === allowedOrigin || isLocalhost)) {
+            response.headers.set('Vary', 'Origin');
+            response.headers.set('Access-Control-Allow-Origin', origin);
             response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
             response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
         }

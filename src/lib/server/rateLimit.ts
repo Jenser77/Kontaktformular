@@ -1,5 +1,6 @@
 import { Ratelimit, type Duration } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import { DEFAULT_RATE_LIMIT_MAX, DEFAULT_RATE_LIMIT_WINDOW_MS } from '$lib/constants';
 
 interface RateLimitEntry {
     count: number;
@@ -76,7 +77,7 @@ function memoryRateLimited(ip: string, namespace: string, options: RateLimitOpti
  */
 export async function isRateLimited(
     ip: string,
-    options: RateLimitOptions = { windowMs: 15 * 60 * 1000, max: 5 },
+    options: RateLimitOptions = { windowMs: DEFAULT_RATE_LIMIT_WINDOW_MS, max: DEFAULT_RATE_LIMIT_MAX },
     namespace = 'default'
 ): Promise<boolean> {
     if (isRateLimitDisabled()) {
