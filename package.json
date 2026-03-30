@@ -11,6 +11,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"lint": "eslint .",
+		"test": "npm run check",
 		"db:status": "prisma migrate status",
 		"db:up": "bash scripts/db-up.sh",
 		"db:deploy": "prisma migrate deploy",

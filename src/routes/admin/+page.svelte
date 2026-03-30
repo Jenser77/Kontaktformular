@@ -44,6 +44,9 @@
 
 	let contacts = $derived(data.contacts as ContactView[]);
 	let mandanten = $derived(data.mandanten as MandantView[]);
+	let currentPage = $derived(data.currentPage ?? 1);
+	let totalPages = $derived(data.totalPages ?? 1);
+	let totalContacts = $derived(data.totalContacts ?? contacts.length);
 
 	let selectedContact = $state<ContactView | null>(null);
 	let activeTab = $state<"contacts" | "recipients">("contacts");
@@ -117,6 +120,14 @@
 			minute: "2-digit",
 		});
 	}
+
+	function closeDetails() {
+		selectedContact = null;
+	}
+
+	function handleDetailKeydown(event: KeyboardEvent) {
+		if (event.key === "Escape") closeDetails();
+	}
 </script>
 
 <div class="admin-wrapper">
@@ -146,6 +157,7 @@
 					type="button"
 					class="sidebar-link sidebar-export"
 					disabled={exportBusy}
+					aria-busy={exportBusy ? 'true' : 'false'}
 					onclick={exportCsv}
 				>
 					{exportBusy ? "Export …" : "Kontakte als CSV"}
@@ -165,6 +177,7 @@
 		<main class="admin-main">
 			{#if activeTab === "contacts"}
 				<h2>Kontaktanfragen</h2>
+				<p class="hint">Gesamt: {totalContacts} Kontakte</p>
 
 				<table class="admin-table">
 					<thead>
@@ -238,12 +251,20 @@
 				</table>
 
 				{#if selectedContact}
-					<div class="detail-panel">
+					<div
+						class="detail-panel"
+						role="dialog"
+						aria-modal="true"
+						aria-labelledby="detail-title"
+						tabindex="-1"
+						onkeydown={handleDetailKeydown}
+					>
 						<div class="detail-header">
-							<h3>Details zur Anfrage</h3>
+							<h3 id="detail-title">Details zur Anfrage</h3>
 							<button
 								class="btn btn-close"
-								onclick={() => (selectedContact = null)}
+								onclick={closeDetails}
+								aria-label="Details schließen"
 								>Schließen</button
 							>
 						</div>
@@ -277,6 +298,26 @@
 							</p>
 						</div>
 					</div>
+				{/if}
+
+				{#if totalPages > 1}
+					<nav class="pagination" aria-label="Kontaktseiten">
+						<a
+							class="btn btn-secondary btn-sm"
+							href={currentPage > 1 ? `/admin?page=${currentPage - 1}` : '#'}
+							aria-disabled={currentPage <= 1}
+						>
+							Zurück
+						</a>
+						<span>Seite {currentPage} von {totalPages}</span>
+						<a
+							class="btn btn-secondary btn-sm"
+							href={currentPage < totalPages ? `/admin?page=${currentPage + 1}` : '#'}
+							aria-disabled={currentPage >= totalPages}
+						>
+							Weiter
+						</a>
+					</nav>
 				{/if}
 			{:else if activeTab === "recipients"}
 				<h2>Empfänger-Struktur verwalten</h2>
@@ -800,6 +841,19 @@
 	.btn-sm {
 		padding: 4px 8px;
 		font-size: 0.8rem;
+	}
+
+	.pagination {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 12px;
+		margin-top: 16px;
+	}
+
+	.pagination a[aria-disabled="true"] {
+		pointer-events: none;
+		opacity: 0.5;
 	}
 
 	form {
