@@ -117,12 +117,7 @@ jobs:
             node --version; npm --version; \
             echo [deploy] npm install; \
             npm install --omit=dev --ignore-scripts --legacy-peer-deps; \
-            if [ -n "${DATABASE_URL:-}" ]; then \
-              echo [deploy] prisma migrate deploy; \
-              PRISMA_DISABLE_CONFIG=1 npx --yes prisma@7.6.0 migrate deploy --schema prisma/schema.prisma; \
-            else \
-              echo [deploy] WARN DATABASE_URL missing, skipping prisma migrate deploy; \
-            fi; \
+            echo [deploy] prisma migrate skipped in CI deploy; \
             echo [deploy] pm2 startOrRestart; \
             pm2 startOrRestart ecosystem.config.cjs --update-env; \
             pm2 save --force; \
