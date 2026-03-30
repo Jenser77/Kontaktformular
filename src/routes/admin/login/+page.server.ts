@@ -6,6 +6,7 @@ import { createSession } from '$lib/server/adminSession';
 import { isRateLimited } from '$lib/server/rateLimit';
 import { prisma } from '$lib/server/prisma';
 import { DEFAULT_RATE_LIMIT_MAX, DEFAULT_RATE_LIMIT_WINDOW_MS } from '$lib/constants';
+import { log } from '$lib/server/logger';
 
 export const actions: Actions = {
     default: async ({ request, cookies, getClientAddress }) => {
@@ -26,9 +27,15 @@ export const actions: Actions = {
         const usernameTrimmed = username.trim().replace(/\r/g, '');
         const usernameNorm = usernameTrimmed.toLowerCase();
 
-        const dbUser = usernameNorm
-            ? await prisma.adminUser.findUnique({ where: { username: usernameNorm } })
-            : null;
+        let dbUser = null;
+        try {
+            dbUser = usernameNorm
+                ? await prisma.adminUser.findUnique({ where: { username: usernameNorm } })
+                : null;
+        } catch (error) {
+            log.error({ err: error }, 'Admin login database lookup failed');
+            return fail(503, { error: 'Login derzeit nicht verfügbar. Bitte später erneut versuchen.' });
+        }
 
         if (!dbUser) {
             return fail(401, { error: 'Benutzername oder Passwort falsch.' });
