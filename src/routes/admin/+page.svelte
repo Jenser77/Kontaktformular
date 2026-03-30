@@ -255,9 +255,9 @@
 				{/if}
 				<form method="POST" action="?/changePassword" use:enhance={enhancePasswordForm} class="password-form">
 					<p class="password-title">Passwort ändern</p>
-					<input type="password" name="currentPassword" placeholder="Aktuelles Passwort" required minlength="10" />
-					<input type="password" name="newPassword" placeholder="Neues Passwort" required minlength="10" />
-					<input type="password" name="confirmPassword" placeholder="Neues Passwort wiederholen" required minlength="10" />
+					<input type="password" name="currentPassword" placeholder="Aktuelles Passwort" autocomplete="current-password" required minlength="10" />
+					<input type="password" name="newPassword" placeholder="Neues Passwort" autocomplete="new-password" required minlength="10" />
+					<input type="password" name="confirmPassword" placeholder="Neues Passwort wiederholen" autocomplete="new-password" required minlength="10" />
 					<button type="submit" class="btn-password" disabled={passwordBusy}>
 						{passwordBusy ? "Speichert …" : "Passwort speichern"}
 					</button>
