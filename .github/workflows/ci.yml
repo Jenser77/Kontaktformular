@@ -110,11 +110,14 @@ jobs:
       - name: Restart app
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "set -euo pipefail; \
+            "bash -lc 'set -euo pipefail; \
             cd /opt/kontaktformular; \
             set -a; [ -f /etc/kontaktformular.env ] && . /etc/kontaktformular.env; set +a; \
+            echo [deploy] npm install; \
             npm install --omit=dev --ignore-scripts --silent; \
+            echo [deploy] prisma migrate deploy; \
             PRISMA_DISABLE_CONFIG=1 npx --yes prisma@7.6.0 migrate deploy --schema prisma/schema.prisma; \
+            echo [deploy] pm2 startOrRestart; \
             pm2 startOrRestart ecosystem.config.cjs --update-env; \
             pm2 save --force; \
-            pm2 status kontaktformular"
+            pm2 status kontaktformular'"
