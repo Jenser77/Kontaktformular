@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import { enhance } from "$app/forms";
 	import type { PageData } from "./$types";
 
@@ -50,11 +51,70 @@
 
 	let selectedContact = $state<ContactView | null>(null);
 	let activeTab = $state<"contacts" | "recipients">("contacts");
+	let contactQuery = $state("");
+	let contactSort = $state<"newest" | "oldest" | "name">("newest");
 
 	let editingId = $state<string | null>(null);
 	let editingName = $state<string>("");
 	let editingEmail = $state<string>("");
 	let exportBusy = $state(false);
+
+	let visibleContacts = $derived(
+		(() => {
+			const query = contactQuery.trim().toLowerCase();
+			let list = [...contacts];
+
+			if (query) {
+				list = list.filter((contact) => {
+					const haystack = [
+						contact.firstName,
+						contact.lastName,
+						contact.email,
+						contact.subject,
+						contact.recipientLabel ?? "",
+					].join(" ").toLowerCase();
+					return haystack.includes(query);
+				});
+			}
+
+			if (contactSort === "oldest") {
+				list.sort((a, b) => +new Date(a.createdAt) - +new Date(b.createdAt));
+			} else if (contactSort === "name") {
+				list.sort((a, b) => `${a.lastName} ${a.firstName}`.localeCompare(`${b.lastName} ${b.firstName}`, "de"));
+			} else {
+				list.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+			}
+
+			return list;
+		})(),
+	);
+
+	onMount(() => {
+		const tab = localStorage.getItem("admin_active_tab");
+		const savedSort = localStorage.getItem("admin_contact_sort");
+		const savedQuery = localStorage.getItem("admin_contact_query");
+
+		if (tab === "contacts" || tab === "recipients") activeTab = tab;
+		if (savedSort === "newest" || savedSort === "oldest" || savedSort === "name") {
+			contactSort = savedSort;
+		}
+		if (savedQuery) contactQuery = savedQuery;
+	});
+
+	function setActiveTab(tab: "contacts" | "recipients") {
+		activeTab = tab;
+		localStorage.setItem("admin_active_tab", tab);
+	}
+
+	function setContactSort(sort: "newest" | "oldest" | "name") {
+		contactSort = sort;
+		localStorage.setItem("admin_contact_sort", sort);
+	}
+
+	function setContactQuery(value: string) {
+		contactQuery = value;
+		localStorage.setItem("admin_contact_query", value);
+	}
 
 	async function exportCsv() {
 		if (exportBusy) return;
@@ -141,15 +201,15 @@
 					class="sidebar-link {activeTab === 'contacts'
 						? 'active'
 						: ''}"
-					onclick={() => (activeTab = "contacts")}
+					onclick={() => setActiveTab("contacts")}
 				>
-					Kontaktanfragen ({contacts.length})
+					Kontaktanfragen ({totalContacts})
 				</button>
 				<button
 					class="sidebar-link {activeTab === 'recipients'
 						? 'active'
 						: ''}"
-					onclick={() => (activeTab = "recipients")}
+					onclick={() => setActiveTab("recipients")}
 				>
 					Empfänger-Struktur
 				</button>
@@ -177,7 +237,27 @@
 		<main class="admin-main">
 			{#if activeTab === "contacts"}
 				<h2>Kontaktanfragen</h2>
-				<p class="hint">Gesamt: {totalContacts} Kontakte</p>
+				<p class="hint">Gesamt: {totalContacts} Kontakte, angezeigt: {visibleContacts.length}</p>
+
+				<div class="table-controls">
+					<input
+						type="search"
+						class="form-filter"
+						placeholder="Suche nach Name, E-Mail, Betreff …"
+						value={contactQuery}
+						oninput={(e) => setContactQuery((e.currentTarget as HTMLInputElement).value)}
+					/>
+					<select
+						class="form-filter"
+						value={contactSort}
+						onchange={(e) =>
+							setContactSort((e.currentTarget as HTMLSelectElement).value as "newest" | "oldest" | "name")}
+					>
+						<option value="newest">Sortierung: Neueste zuerst</option>
+						<option value="oldest">Sortierung: Älteste zuerst</option>
+						<option value="name">Sortierung: Name A-Z</option>
+					</select>
+				</div>
 
 				<table class="admin-table">
 					<thead>
@@ -190,14 +270,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#if contacts.length === 0}
+						{#if visibleContacts.length === 0}
 							<tr
 								><td colspan="5" class="empty-state"
-									>Keine Anfragen vorhanden.</td
+									>Keine passenden Anfragen gefunden.</td
 								></tr
 							>
 						{:else}
-							{#each contacts as contact (contact.id)}
+							{#each visibleContacts as contact (contact.id)}
 								<tr>
 									<td>{formatDate(contact.createdAt)}</td>
 									<td
@@ -895,6 +975,22 @@
 		padding: 20px;
 		text-align: center;
 		color: #999;
+	}
+
+	.table-controls {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+		margin-bottom: 12px;
+		flex-wrap: wrap;
+	}
+
+	.form-filter {
+		border: 1px solid #d0d0d0;
+		border-radius: 4px;
+		padding: 8px 10px;
+		font-size: 0.9rem;
+		min-width: 240px;
 	}
 
 	/* Details View */

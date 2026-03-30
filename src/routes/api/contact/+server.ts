@@ -6,7 +6,16 @@ import { sendContactEmail } from '$lib/server/mailer';
 import type { ContactData } from '$lib/server/mailer';
 import { contactRequestSchema } from '$lib/server/contactSchema';
 import { log } from '$lib/server/logger';
-import { DEFAULT_RATE_LIMIT_MAX, DEFAULT_RATE_LIMIT_WINDOW_MS } from '$lib/constants';
+import {
+    CSRF_COOKIE_NAME,
+    DEFAULT_RATE_LIMIT_MAX,
+    DEFAULT_RATE_LIMIT_WINDOW_MS
+} from '$lib/constants';
+import {
+    getCsrfTokenFromRequest,
+    isAllowedApiOrigin,
+    isValidDoubleSubmitCsrf
+} from '$lib/server/security';
 
 function honeypotTripped(raw: unknown): boolean {
     if (!raw || typeof raw !== 'object') return false;
@@ -14,18 +23,15 @@ function honeypotTripped(raw: unknown): boolean {
     return typeof v === 'string' && v.trim() !== '';
 }
 
-function isAllowedApiOrigin(request: Request): boolean {
-    const origin = request.headers.get('origin');
-    if (!origin) return false;
-
-    const allowedOrigin = process.env.ALLOWED_ORIGIN?.trim() ?? '';
-    const isLocalhost = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
-    return origin === allowedOrigin || isLocalhost;
-}
-
-export const POST: RequestHandler = async ({ request, getClientAddress }) => {
-    if (!isAllowedApiOrigin(request)) {
+export const POST: RequestHandler = async ({ request, cookies, getClientAddress }) => {
+    if (!isAllowedApiOrigin(request, process.env.ALLOWED_ORIGIN ?? '')) {
         return json({ success: false, error: 'Ungültige Herkunft der Anfrage.' }, { status: 403 });
+    }
+
+    const requestCsrf = getCsrfTokenFromRequest(request);
+    const cookieCsrf = cookies.get(CSRF_COOKIE_NAME) ?? '';
+    if (!isValidDoubleSubmitCsrf(requestCsrf, cookieCsrf)) {
+        return json({ success: false, error: 'Ungültiges Sicherheits-Token.' }, { status: 403 });
     }
 
     const ip = getClientAddress();

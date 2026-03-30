@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"lint": "eslint .",
-		"test": "npm run check",
+		"test": "npm run test:unit && npm run check",
+		"test:unit": "vitest run --config vitest.config.ts",
 		"db:status": "prisma migrate status",
 		"db:up": "bash scripts/db-up.sh",
 		"db:deploy": "prisma migrate deploy",
@@ -35,7 +36,8 @@
 		"svelte-check": "^4.4.5",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.56.1",
-		"vite": "^8.0.3"
+		"vite": "^8.0.3",
+		"vitest": "^2.1.8"
 	},
 	"dependencies": {
 		"@prisma/adapter-pg": "^7.6.0",

@@ -288,9 +288,13 @@
 		if (honeypotAlt.trim()) payload.phone_alt = honeypotAlt;
 
 		try {
+			const csrfToken = readCookie('kf_csrf');
 			const response = await fetch('/api/contact', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'x-csrf-token': csrfToken
+				},
 				body: JSON.stringify(payload)
 			});
 			const result = await response.json();
@@ -324,6 +328,14 @@
 
 	function onEinrichtungChange() {
 		recipientId = '';
+	}
+
+	function readCookie(name: string): string {
+		if (typeof document === 'undefined') return '';
+		const entries = document.cookie.split(';').map((part) => part.trim());
+		const hit = entries.find((entry) => entry.startsWith(`${name}=`));
+		if (!hit) return '';
+		return decodeURIComponent(hit.slice(name.length + 1));
 	}
 
 	function onBlurRequired(fieldId: string, el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {

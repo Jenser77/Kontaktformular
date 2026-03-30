@@ -1,10 +1,25 @@
 import 'dotenv/config';
+import { dev } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { displayNameFromSession, getValidAdminSession } from '$lib/server/adminSession';
 import { log } from '$lib/server/logger';
+import { CSRF_COOKIE_NAME } from '$lib/constants';
+import { createCsrfToken } from '$lib/server/security';
 
 export const handle: Handle = async ({ event, resolve }) => {
+    const accept = event.request.headers.get('accept') ?? '';
+    const isBrowserDocumentRequest = event.request.method === 'GET' && accept.includes('text/html');
+    if (isBrowserDocumentRequest && !event.cookies.get(CSRF_COOKIE_NAME)) {
+        event.cookies.set(CSRF_COOKIE_NAME, createCsrfToken(), {
+            path: '/',
+            httpOnly: false,
+            sameSite: 'strict',
+            secure: !dev,
+            maxAge: 60 * 60 * 24
+        });
+    }
+
     // --- 1. Session Auth for /admin routes (except /admin/login) ---
     if (event.url.pathname.startsWith('/admin') && !event.url.pathname.startsWith('/admin/login')) {
         const token = event.cookies.get('admin_session');
