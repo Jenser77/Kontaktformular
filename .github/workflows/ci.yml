@@ -113,6 +113,7 @@ jobs:
             "bash -lc 'set -euo pipefail; \
             cd /opt/kontaktformular; \
             set -a; [ -f /etc/kontaktformular.env ] && . /etc/kontaktformular.env; set +a; \
+            rm -f prisma.config.ts; \
             node --version; npm --version; \
             echo [deploy] npm install; \
             npm install --omit=dev --ignore-scripts --legacy-peer-deps; \
