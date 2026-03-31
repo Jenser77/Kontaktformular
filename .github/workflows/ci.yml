@@ -5,6 +5,13 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      run_migrations:
+        description: "Run Prisma migrations on server after deploy"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -64,7 +71,7 @@ jobs:
     name: Deploy to Server
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     env:
       DATABASE_URL: postgresql://localhost:5432/postgres
 
@@ -122,3 +129,32 @@ jobs:
             pm2 startOrRestart ecosystem.config.cjs --update-env; \
             pm2 save --force; \
             pm2 status kontaktformular'"
+
+  migrate:
+    name: Run DB Migrations
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_migrations == 'true'
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          printf "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile /dev/null\n" > ~/.ssh/config
+
+      - name: Run migrations on server
+        run: |
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "bash -lc 'set -euo pipefail; \
+            cd /opt/kontaktformular; \
+            set -a; [ -f /etc/kontaktformular.env ] && . /etc/kontaktformular.env; [ -f .env ] && . ./.env || true; set +a; \
+            if [ -z "\${DATABASE_URL:-}" ]; then \
+              echo [migrate] ERROR DATABASE_URL missing on server environment; \
+              exit 1; \
+            fi; \
+            rm -f prisma.config.ts; \
+            npm install --omit=dev --ignore-scripts --legacy-peer-deps; \
+            PRISMA_DISABLE_CONFIG=1 npx --yes prisma@7.6.0 migrate deploy --schema prisma/schema.prisma; \
+            echo [migrate] done'"
