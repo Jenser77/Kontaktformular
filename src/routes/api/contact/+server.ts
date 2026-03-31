@@ -12,6 +12,7 @@ import {
     DEFAULT_RATE_LIMIT_WINDOW_MS
 } from '$lib/constants';
 import {
+    getClientIp,
     getCsrfTokenFromRequest,
     isAllowedApiOrigin,
     isValidDoubleSubmitCsrf
@@ -34,7 +35,7 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
         return json({ success: false, error: 'Ungültiges Sicherheits-Token.' }, { status: 403 });
     }
 
-    const ip = getClientAddress();
+    const ip = getClientIp({ request, getClientAddress });
     if (
         await isRateLimited(
             ip,

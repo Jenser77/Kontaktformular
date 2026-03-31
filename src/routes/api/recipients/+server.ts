@@ -4,9 +4,10 @@ import { log } from '$lib/server/logger';
 import { prisma } from '$lib/server/prisma';
 import { isRateLimited } from '$lib/server/rateLimit';
 import { DEFAULT_RATE_LIMIT_MAX, DEFAULT_RATE_LIMIT_WINDOW_MS } from '$lib/constants';
+import { getClientIp } from '$lib/server/security';
 
-export const GET: RequestHandler = async ({ getClientAddress }) => {
-    const ip = getClientAddress();
+export const GET: RequestHandler = async ({ request, getClientAddress }) => {
+    const ip = getClientIp({ request, getClientAddress });
     if (
         await isRateLimited(
             ip,

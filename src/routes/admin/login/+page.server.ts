@@ -7,10 +7,11 @@ import { isRateLimited } from '$lib/server/rateLimit';
 import { prisma } from '$lib/server/prisma';
 import { DEFAULT_RATE_LIMIT_MAX, DEFAULT_RATE_LIMIT_WINDOW_MS } from '$lib/constants';
 import { log } from '$lib/server/logger';
+import { getClientIp } from '$lib/server/security';
 
 export const actions: Actions = {
     default: async ({ request, cookies, getClientAddress }) => {
-        const ip = getClientAddress();
+        const ip = getClientIp({ request, getClientAddress });
         if (
             await isRateLimited(
                 ip,

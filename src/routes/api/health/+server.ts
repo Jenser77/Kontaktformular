@@ -8,9 +8,10 @@ import {
     DEFAULT_RATE_LIMIT_WINDOW_MS,
     HEALTH_DB_LATENCY_WARN_MS
 } from '$lib/constants';
+import { getClientIp } from '$lib/server/security';
 
-export const GET: RequestHandler = async ({ getClientAddress }) => {
-    const ip = getClientAddress();
+export const GET: RequestHandler = async ({ request, getClientAddress }) => {
+    const ip = getClientIp({ request, getClientAddress });
     if (
         await isRateLimited(
             ip,
