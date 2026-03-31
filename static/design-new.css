@@ -881,8 +881,8 @@ body {
 
 .footer-contact-link:hover,
 .footer-contact-link:focus-visible {
-    color: #7be0ff;
-    text-decoration-color: #7be0ff;
+    color: var(--accent);
+    text-decoration-color: var(--accent);
     text-decoration-thickness: 2px;
 }
 
