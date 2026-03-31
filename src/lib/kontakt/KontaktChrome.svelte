@@ -20,8 +20,8 @@
             <div class="header-content">
                 <!-- Logo Area -->
                 <div class="logo-area">
-                    <a href="https://diakoniestiftung-sachsen.de/"><img src="/logo.png"
-                            alt="Diakoniestiftung in Sachsen" class="header-logo-img"></a>
+                    <a href="https://diakoniestiftung-sachsen.de/"><img src="/logo.png?v=20260331"
+                        alt="Diakoniestiftung in Sachsen" class="header-logo-img" width="1091" height="444" decoding="async"></a>
                 </div>
                 <!-- Navigation Area -->
                 <div class="nav-area">
@@ -167,7 +167,7 @@
             <div class="footer-col">
                 <div class="footer-logo-wrapper">
                     <a href="https://www.diakoniestiftung-sachsen.de/">
-                        <img src="/footer_logo.png" alt="Diakonie Kliniken Zschadraß" class="footer-logo-img">
+                        <img src="/footer_logo.svg?v=20260331" alt="Diakoniestiftung in Sachsen" class="footer-logo-img" width="1134" height="567" decoding="async">
                     </a>
                 </div>
                 <div class="footer-text footer-address" style="margin-top: 1rem;">
