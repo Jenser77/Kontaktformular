@@ -186,7 +186,7 @@
                     Wildparkstraße 3<br>
                     09247 Chemnitz<br>
                     <br>
-                    Telefon: <a href="tel:+03722469370" style="color: inherit; text-decoration: none;">03722 46937
+                    Telefon: <a href="tel:+03722469370" class="footer-contact-link">03722 46937
                         0</a><br>
                     Telefax: 03722 49937 99
                 </div>

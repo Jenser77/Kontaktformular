@@ -871,6 +871,21 @@ body {
     margin-top: 1.5rem;
 }
 
+.footer-contact-link,
+.footer-contact-link:visited {
+    color: #ffffff;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.6);
+    text-underline-offset: 2px;
+}
+
+.footer-contact-link:hover,
+.footer-contact-link:focus-visible {
+    color: #7be0ff;
+    text-decoration-color: #7be0ff;
+    text-decoration-thickness: 2px;
+}
+
 .social-links {
     display: flex;
     gap: 1rem;
