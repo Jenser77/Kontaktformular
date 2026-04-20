@@ -14,7 +14,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         event.cookies.set(CSRF_COOKIE_NAME, createCsrfToken(), {
             path: '/',
             httpOnly: false,
-            sameSite: 'strict',
+            sameSite: 'lax',
             secure: !dev,
             maxAge: 60 * 60 * 24
         });
@@ -42,9 +42,11 @@ export const handle: Handle = async ({ event, resolve }) => {
     // --- 3. Security Headers ---
     response.headers.set('X-Content-Type-Options', 'nosniff');
     response.headers.set('X-Frame-Options', 'DENY');
-    response.headers.set('X-XSS-Protection', '1; mode=block');
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    if (!dev) {
+        response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+    }
 
     // --- 4. CORS for API routes ---
     if (event.url.pathname.startsWith('/api')) {
