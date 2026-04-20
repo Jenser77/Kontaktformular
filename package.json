@@ -39,6 +39,7 @@
 		"vitest": "^2.1.8"
 	},
 	"dependencies": {
+		"@fontsource/public-sans": "^5.2.5",
 		"@prisma/adapter-pg": "^7.6.0",
 		"@prisma/client": "^7.6.0",
 		"@upstash/ratelimit": "^2.0.8",

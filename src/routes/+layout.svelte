@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { CONSENT_STORAGE_KEY } from '$lib/constants';
+	import '@fontsource/public-sans/300.css';
+	import '@fontsource/public-sans/400.css';
+	import '@fontsource/public-sans/500.css';
+	import '@fontsource/public-sans/600.css';
+	import '@fontsource/public-sans/700.css';
+	import '@fontsource/public-sans/800.css';
+	import '@fontsource/public-sans/900.css';
 
 	let { children } = $props();
 	let showConsentBanner = $state(false);
@@ -85,10 +92,6 @@
 
 <svelte:head>
 	<link rel="icon" href="/favicon.png" type="image/png" />
-	<link
-		href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap"
-		rel="stylesheet"
-	/>
 	<link
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
 		rel="stylesheet"
