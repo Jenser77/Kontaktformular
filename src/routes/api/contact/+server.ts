@@ -107,9 +107,7 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
             message: data.message
         };
 
-        await sendContactEmail(contactData, targetEmail);
-
-        await prisma.contact.create({
+        const contact = await prisma.contact.create({
             data: {
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -120,8 +118,16 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
                 message: data.message,
                 privacyAccepted: true,
                 targetRecipient: data.recipientId,
-                targetRecipientLabel: recipientLabel
+                targetRecipientLabel: recipientLabel,
+                emailSentAt: null
             }
+        });
+
+        await sendContactEmail(contactData, targetEmail);
+
+        await prisma.contact.update({
+            where: { id: contact.id },
+            data: { emailSentAt: new Date() }
         });
 
         return json({

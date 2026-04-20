@@ -20,6 +20,7 @@ model Contact {
   targetRecipient       String?
   /// Snapshot at submit time: "Mandant → Einrichtung → Abteilung"
   targetRecipientLabel  String?
+  emailSentAt           DateTime?
   createdAt             DateTime @default(now())
   deletedAt             DateTime?
 

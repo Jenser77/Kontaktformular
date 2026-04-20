@@ -87,6 +87,7 @@ export const ContactScalarFieldEnum = {
   privacyAccepted: 'privacyAccepted',
   targetRecipient: 'targetRecipient',
   targetRecipientLabel: 'targetRecipientLabel',
+  emailSentAt: 'emailSentAt',
   createdAt: 'createdAt',
   deletedAt: 'deletedAt'
 } as const
