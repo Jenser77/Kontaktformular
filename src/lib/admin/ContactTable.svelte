@@ -96,7 +96,42 @@
 	onCancel={() => resolveConfirm(false)}
 />
 
-<table class="admin-table">
+<div class="contact-cards-mobile">
+	{#if contacts.length === 0}
+		<p class="empty-state">Keine passenden Anfragen gefunden.</p>
+	{:else}
+		{#each contacts as contact (contact.id)}
+		<article class="contact-card">
+			<div class="contact-card-header">
+				<strong>{contact.firstName} {contact.lastName}</strong>
+				<span class="contact-card-meta">{formatDate(contact.createdAt)}</span>
+			</div>
+			<p class="contact-card-subject">{contact.subject}</p>
+			<p class="contact-card-recipient">{contact.recipientLabel ?? "—"}</p>
+			<div class="contact-card-actions">
+				<button type="button" class="btn btn-view" onclick={() => (selectedContact = contact)}>Ansehen</button>
+				<form
+					method="POST"
+					action="?/deleteContact"
+					use:enhance={async ({ cancel }) => {
+						const ok = await confirmAsync("Soll dieser Kontakt wirklich gelöscht werden?");
+						if (!ok) {
+							cancel();
+							return;
+						}
+						return handleDeleteContact(contact.id);
+					}}
+				>
+					<input type="hidden" name="id" value={contact.id} />
+					<button type="submit" class="btn btn-delete">Löschen</button>
+				</form>
+			</div>
+		</article>
+		{/each}
+	{/if}
+</div>
+
+<table class="admin-table admin-table-desktop">
 	<thead>
 		<tr>
 			<th>Datum</th>
