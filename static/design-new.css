@@ -35,27 +35,6 @@ body {
     border: 0;
 }
 
-.material-symbols-outlined {
-    font-family: 'Material Symbols Outlined' !important;
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    font-variation-settings:
-        'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24;
-    -webkit-font-feature-settings: 'liga';
-    -webkit-font-smoothing: antialiased;
-}
-
 /* Header */
 .site-header-new {
     position: sticky;
@@ -129,8 +108,10 @@ body {
 }
 
 .nav-item .chevron {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
     color: var(--primary);
-    font-size: 1.25rem;
     transition: transform 0.2s;
 }
 
@@ -217,7 +198,9 @@ body {
 }
 
 .nav-dropdown-arrow {
-    font-size: 1.125rem;
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
     margin-right: -0.5rem;
     opacity: 0.6;
 }
@@ -481,10 +464,17 @@ body {
 
 .section-icon {
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: var(--primary);
     padding: 0.5rem;
     background-color: rgba(90, 37, 114, 0.1);
     border-radius: 0.5rem;
+}
+
+.section-icon svg {
+    display: block;
 }
 
 .section-title {
@@ -1283,7 +1273,14 @@ body {
 }
 
 .btn-wizard-icon {
-    font-size: 1.25rem !important;
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+}
+
+.btn-wizard-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 .btn-wizard-primary {

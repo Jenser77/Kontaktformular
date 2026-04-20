@@ -1,5 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import ArrowUp from '@lucide/svelte/icons/arrow-up';
+	import ChevronDown from '@lucide/svelte/icons/chevron-down';
+	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 
 	let { children }: { children: Snippet } = $props();
 
@@ -29,12 +32,12 @@
 
                         <div class="nav-item">
                             <span class="nav-link">Fachbereiche</span>
-                            <span class="material-symbols-outlined chevron">expand_more</span>
+                            <span class="chevron" aria-hidden="true"><ChevronDown size={20} strokeWidth={2} /></span>
                             <ul class="nav-dropdown">
                                 <li class="nav-dropdown-item">
                                     <a href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=363737&rq_MenuGuid=96BDD3EE84338C0AF2E4265DBDE6CF7687EC4F5D"
                                         class="nav-dropdown-link">Fachkrankenhäuser <span
-                                            class="material-symbols-outlined nav-dropdown-arrow">chevron_right</span></a>
+                                            class="nav-dropdown-arrow" aria-hidden="true"><ChevronRight size={18} strokeWidth={2} /></span></a>
                                     <ul class="nav-submenu">
                                         <li class="nav-dropdown-item"><a
                                                 href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373133&rq_MenuGuid=9CFB03847032F6B8AC0EE2F7736061AA3A8BA029"
@@ -49,7 +52,7 @@
                                 <li class="nav-dropdown-item">
                                     <a href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=353838&rq_MenuGuid=CDA8B738B53CE2605FCE93AB9CDF12310547CD86"
                                         class="nav-dropdown-link">Reha-Kliniken <span
-                                            class="material-symbols-outlined nav-dropdown-arrow">chevron_right</span></a>
+                                            class="nav-dropdown-arrow" aria-hidden="true"><ChevronRight size={18} strokeWidth={2} /></span></a>
                                     <ul class="nav-submenu">
                                         <li class="nav-dropdown-item"><a
                                                 href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373330&rq_MenuGuid=B9A15DAFB6ECB42EF94784456EA7DD9E96F832A0"
@@ -68,7 +71,7 @@
                                 <li class="nav-dropdown-item">
                                     <a href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373134&rq_MenuGuid=2174538AF3F7DA5310706798A3EB0CFB62613A8F"
                                         class="nav-dropdown-link">Med. Versorgungszentrum <span
-                                            class="material-symbols-outlined nav-dropdown-arrow">chevron_right</span></a>
+                                            class="nav-dropdown-arrow" aria-hidden="true"><ChevronRight size={18} strokeWidth={2} /></span></a>
                                     <ul class="nav-submenu">
                                         <li class="nav-dropdown-item"><a
                                                 href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373333&rq_MenuGuid=3A4C8A1FE5A90EF45D28210DE1A9775932E50CE0"
@@ -93,7 +96,7 @@
                         </div>
                         <div class="nav-item">
                             <span class="nav-link">Über uns</span>
-                            <span class="material-symbols-outlined chevron">expand_more</span>
+                            <span class="chevron" aria-hidden="true"><ChevronDown size={20} strokeWidth={2} /></span>
                             <ul class="nav-dropdown">
                                 <li class="nav-dropdown-item"><a
                                         href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373231&rq_MenuGuid=F058B55022023B587ED0EB2256DF0E7248DD5A0C"
@@ -238,7 +241,7 @@
 
             <div class="donation-center-btn">
                 <button type="button" class="scroll-up-btn" aria-label="Nach oben scrollen" onclick={scrollTopClick}>
-                    <span class="material-symbols-outlined">arrow_upward</span>
+                    <ArrowUp size={24} strokeWidth={2} aria-hidden="true" />
                 </button>
             </div>
         </div>

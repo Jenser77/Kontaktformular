@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { EMAIL_REGEX } from '$lib/constants';
+	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+	import ArrowRight from '@lucide/svelte/icons/arrow-right';
+	import Building2 from '@lucide/svelte/icons/building-2';
+	import ClipboardCheck from '@lucide/svelte/icons/clipboard-check';
+	import CircleCheck from '@lucide/svelte/icons/circle-check';
+	import MessageCircle from '@lucide/svelte/icons/message-circle';
+	import Pencil from '@lucide/svelte/icons/pencil';
+	import User from '@lucide/svelte/icons/user';
 
 	type Abteilung = { id: string; name: string };
 	type Einrichtung = { id: string; name: string; abteilungen: Abteilung[] };
@@ -436,7 +444,7 @@
 			>
 				<div class="form-section">
 					<div class="section-header">
-						<span class="material-symbols-outlined section-icon" aria-hidden="true">apartment</span>
+						<span class="section-icon" aria-hidden="true"><Building2 size={24} strokeWidth={2} /></span>
 						<div>
 							<h3 class="section-title" id="step-title-1">Wohin soll Ihre Nachricht?</h3>
 							<p class="section-lead">
@@ -536,7 +544,7 @@
 					<span class="wizard-nav-spacer" aria-hidden="true"></span>
 					<button type="button" class="btn-wizard btn-wizard-primary" onclick={() => goToStep(2)}>
 						Weiter zu Kontaktdaten
-						<span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">arrow_forward</span>
+						<span class="btn-wizard-icon" aria-hidden="true"><ArrowRight size={20} strokeWidth={2} /></span>
 					</button>
 				</div>
 			</div>
@@ -553,7 +561,7 @@
 			>
 				<div class="form-section">
 					<div class="section-header">
-						<span class="material-symbols-outlined section-icon" aria-hidden="true">person</span>
+						<span class="section-icon" aria-hidden="true"><User size={24} strokeWidth={2} /></span>
 						<div>
 							<h3 class="section-title" id="step-title-2">Wie können wir Sie erreichen?</h3>
 							<p class="section-lead">Ihre Daten nutzen wir nur zur Bearbeitung dieser Anfrage.</p>
@@ -651,12 +659,12 @@
 				</div>
 				<div class="wizard-nav">
 					<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(1, true)}>
-						<span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">arrow_back</span>
+						<span class="btn-wizard-icon" aria-hidden="true"><ArrowLeft size={20} strokeWidth={2} /></span>
 						Zurück
 					</button>
 					<button type="button" class="btn-wizard btn-wizard-primary" onclick={() => goToStep(3)}>
 						Weiter zur Nachricht
-						<span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">arrow_forward</span>
+						<span class="btn-wizard-icon" aria-hidden="true"><ArrowRight size={20} strokeWidth={2} /></span>
 					</button>
 				</div>
 			</div>
@@ -673,7 +681,7 @@
 			>
 				<div class="form-section">
 					<div class="section-header">
-						<span class="material-symbols-outlined section-icon" aria-hidden="true">chat_bubble</span>
+						<span class="section-icon" aria-hidden="true"><MessageCircle size={24} strokeWidth={2} /></span>
 						<div>
 							<h3 class="section-title" id="step-title-3">Ihr Anliegen</h3>
 							<p class="section-lead">Je konkreter Ihre Nachricht, desto schneller können wir helfen.</p>
@@ -722,12 +730,12 @@
 				</div>
 				<div class="wizard-nav">
 					<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(2, true)}>
-						<span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">arrow_back</span>
+						<span class="btn-wizard-icon" aria-hidden="true"><ArrowLeft size={20} strokeWidth={2} /></span>
 						Zurück
 					</button>
 					<button type="button" class="btn-wizard btn-wizard-primary" onclick={() => goToStep(4)}>
 						Zur Übersicht
-						<span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">fact_check</span>
+						<span class="btn-wizard-icon" aria-hidden="true"><ClipboardCheck size={20} strokeWidth={2} /></span>
 					</button>
 				</div>
 			</div>
@@ -744,7 +752,7 @@
 			>
 				<div class="form-section">
 					<div class="section-header">
-						<span class="material-symbols-outlined section-icon" aria-hidden="true">task_alt</span>
+						<span class="section-icon" aria-hidden="true"><CircleCheck size={24} strokeWidth={2} /></span>
 						<div>
 							<h3 class="section-title" id="step-title-4">Bitte prüfen Sie Ihre Angaben</h3>
 							<p class="section-lead">Stimmt alles? Dann senden Sie die Nachricht mit einem Klick ab.</p>
@@ -816,7 +824,7 @@
 
 					<div class="wizard-nav wizard-nav--final">
 						<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(3, true)}>
-							<span class="material-symbols-outlined btn-wizard-icon" aria-hidden="true">edit</span>
+							<span class="btn-wizard-icon" aria-hidden="true"><Pencil size={20} strokeWidth={2} /></span>
 							Noch anpassen
 						</button>
 						<button class="btn-submit" type="submit" disabled={submitting}>
