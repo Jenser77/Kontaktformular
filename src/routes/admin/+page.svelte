@@ -832,7 +832,7 @@
 		background: #f5f5f5;
 		padding: 20px;
 		border: 1px solid #ddd;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		flex-shrink: 0;
 		display: flex;
 		flex-direction: column;
@@ -877,7 +877,7 @@
 		box-sizing: border-box;
 		padding: 8px;
 		border: 1px solid #ccc;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		font-size: 0.8rem;
 	}
 
@@ -887,7 +887,7 @@
 		color: #fff;
 		padding: 8px 12px;
 		border: 0;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		font-size: 0.8rem;
 		font-weight: 600;
 		cursor: pointer;
@@ -918,7 +918,7 @@
 		border: 1px solid #ccc;
 		color: #666;
 		padding: 8px 12px;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		cursor: pointer;
 		font-size: 0.875rem;
 		text-align: center;
@@ -939,7 +939,7 @@
 		text-decoration: none;
 		font-weight: 600;
 		padding: 10px 12px;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		font-size: 1rem;
 		width: 100%;
 	}
@@ -958,7 +958,7 @@
 		background: #fff;
 		padding: 24px;
 		border: 1px solid #ddd;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		min-height: 500px;
 	}
 
@@ -987,7 +987,7 @@
 		border: none;
 		padding: 6px 14px;
 		cursor: pointer;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		font-size: 0.85rem;
 		font-weight: 600;
 	}
@@ -1081,7 +1081,7 @@
 
 	.form-filter {
 		border: 1px solid #d0d0d0;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		padding: 8px 10px;
 		font-size: 0.9rem;
 		min-width: 240px;
@@ -1093,7 +1093,7 @@
 		padding: 20px;
 		border: 2px solid #5e2d91;
 		background: #faf7fd;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 	}
 	.detail-header {
 		display: flex;
@@ -1115,7 +1115,7 @@
 		background: #fff;
 		padding: 10px;
 		border: 1px solid #ddd;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 	}
 
 	/* Recipients UI */
@@ -1128,13 +1128,13 @@
 	.add-box {
 		background: #faf7fd;
 		padding: 15px;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		border: 1px dashed #5e2d91;
 	}
 	.add-box input[type="text"] {
 		padding: 8px;
 		border: 1px solid #ccc;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		width: 300px;
 		margin-right: 10px;
 	}
@@ -1142,7 +1142,7 @@
 	.mandant-card {
 		border: 1px solid #ddd;
 		border-top: 4px solid #5e2d91;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		padding: 20px;
 		background: #fff;
 		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
@@ -1166,7 +1166,7 @@
 	.add-inline input[type="text"] {
 		padding: 6px;
 		border: 1px solid #ccc;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		width: 200px;
 		margin-right: 5px;
 	}
@@ -1176,7 +1176,7 @@
 		border: 1px solid #eee;
 		border-left: 3px solid #888;
 		padding: 15px;
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 	}
 
 	.einrichtung-header {

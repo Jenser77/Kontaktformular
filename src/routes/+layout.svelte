@@ -204,19 +204,19 @@
 <style>
 	.cookie-banner {
 		position: fixed;
-		left: 16px;
-		right: 16px;
-		bottom: 16px;
+		left: var(--space-4);
+		right: var(--space-4);
+		bottom: var(--space-4);
 		z-index: 1000;
 		display: flex;
-		gap: 1rem;
+		gap: var(--space-4);
 		align-items: flex-start;
 		justify-content: space-between;
 		background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
 		color: #fff;
-		padding: 16px 18px;
-		border-radius: 14px;
-		box-shadow: 0 18px 40px rgba(16, 24, 40, 0.35);
+		padding: var(--space-4) 1.125rem;
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-lg);
 		border: 1px solid rgba(255, 255, 255, 0.22);
 	}
 
@@ -242,7 +242,7 @@
 
 	.cookie-actions {
 		display: flex;
-		gap: 8px;
+		gap: var(--space-2);
 		flex-wrap: wrap;
 	}
 
@@ -301,8 +301,8 @@
 
 	.cookie-settings-fab {
 		position: fixed;
-		right: 16px;
-		bottom: 16px;
+		right: var(--space-4);
+		bottom: var(--space-4);
 		z-index: 999;
 		border: 0;
 		background: var(--primary);
@@ -312,7 +312,7 @@
 		font-size: 0.85rem;
 		font-weight: 600;
 		cursor: pointer;
-		box-shadow: 0 10px 24px rgba(90, 37, 114, 0.35);
+		box-shadow: var(--shadow-fab);
 		transition: background-color 0.2s ease, transform 0.15s ease;
 	}
 
@@ -364,7 +364,7 @@
 		gap: 10px;
 		padding: 10px 12px;
 		border: 1px solid #e2e8f0;
-		border-radius: 12px;
+		border-radius: var(--space-3);
 		background: #f8fafc;
 	}
 
