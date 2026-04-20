@@ -14,6 +14,24 @@ export interface RateLimitOptions {
 
 const memoryStore = new Map<string, RateLimitEntry>();
 
+let memoryCleanupInterval: ReturnType<typeof setInterval> | undefined;
+
+function scheduleMemoryCleanupIfNeeded(): void {
+    if (memoryCleanupInterval !== undefined) {
+        return;
+    }
+    memoryCleanupInterval = setInterval(() => {
+        const now = Date.now();
+        const windowMs = 15 * 60 * 1000;
+        for (const [key, entry] of memoryStore) {
+            if (now - entry.firstRequest > windowMs) {
+                memoryStore.delete(key);
+            }
+        }
+    }, 5 * 60 * 1000);
+    memoryCleanupInterval.unref?.();
+}
+
 const upstashLimiters = new Map<string, Ratelimit>();
 
 function isRateLimitDisabled(): boolean {
@@ -91,15 +109,6 @@ export async function isRateLimited(
         return !success;
     }
 
+    scheduleMemoryCleanupIfNeeded();
     return memoryRateLimited(ip, namespace, options);
 }
-
-setInterval(() => {
-    const now = Date.now();
-    const windowMs = 15 * 60 * 1000;
-    for (const [key, entry] of memoryStore) {
-        if (now - entry.firstRequest > windowMs) {
-            memoryStore.delete(key);
-        }
-    }
-}, 5 * 60 * 1000);
