@@ -10,29 +10,27 @@
 	import '@fontsource/public-sans/900.css';
 	import '../app.css';
 
+	type StoredConsent = {
+		necessary: true;
+		/** v2: no optional categories; kept for migration */
+		acknowledgedAt: string;
+	};
+
 	let { children } = $props();
 	let showConsentBanner = $state(false);
 	let showConsentSettings = $state(false);
 	let consentLoaded = $state(false);
-	let consentPrefs = $state({
-		necessary: true,
-		analytics: false,
-		marketing: false,
-		updatedAt: ''
-	});
 
 	onMount(() => {
 		const raw = localStorage.getItem(CONSENT_STORAGE_KEY);
 		if (raw) {
 			try {
-				const parsed = JSON.parse(raw);
-				consentPrefs = {
-					necessary: true,
-					analytics: !!parsed.analytics,
-					marketing: !!parsed.marketing,
-					updatedAt: parsed.updatedAt || ''
-				};
-				showConsentBanner = false;
+				const parsed = JSON.parse(raw) as Partial<StoredConsent> & { updatedAt?: string };
+				if (parsed.necessary === true || parsed.updatedAt) {
+					showConsentBanner = false;
+				} else {
+					showConsentBanner = true;
+				}
 			} catch {
 				showConsentBanner = true;
 			}
@@ -42,14 +40,12 @@
 		consentLoaded = true;
 	});
 
-	function saveConsent(analytics: boolean, marketing: boolean) {
-		consentPrefs = {
+	function persistAcknowledgement() {
+		const payload: StoredConsent = {
 			necessary: true,
-			analytics,
-			marketing,
-			updatedAt: new Date().toISOString()
+			acknowledgedAt: new Date().toISOString()
 		};
-		localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(consentPrefs));
+		localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(payload));
 		showConsentBanner = false;
 		showConsentSettings = false;
 	}
@@ -70,24 +66,10 @@
 		}
 	}
 
-	function acceptOnlyNecessary() {
-		saveConsent(false, false);
-	}
-
-	function acceptAllCookies() {
-		saveConsent(true, true);
-	}
-
 	function revokeConsent() {
 		localStorage.removeItem(CONSENT_STORAGE_KEY);
 		showConsentBanner = true;
 		showConsentSettings = false;
-		consentPrefs = {
-			necessary: true,
-			analytics: false,
-			marketing: false,
-			updatedAt: ''
-		};
 	}
 </script>
 
@@ -100,24 +82,25 @@
 {#if consentLoaded && showConsentBanner}
 	<section class="cookie-banner" aria-label="Cookie-Hinweis">
 		<div class="cookie-banner-copy">
-			<p class="cookie-banner-title">Cookie-Einstellungen</p>
+			<p class="cookie-banner-title">Cookies</p>
 			<p>
-				Diese Website verwendet technisch notwendige Cookies sowie optionale Kategorien (Statistik/Marketing).
+				Wir setzen nur technisch notwendige Cookies ein (z.&nbsp;B. für Sicherheit und das Kontaktformular).
+				Es werden keine Statistik- oder Marketing-Cookies verwendet.
 			</p>
 		</div>
-		<div class="cookie-actions">
-			<button type="button" class="cookie-btn cookie-btn-muted" onclick={acceptOnlyNecessary}>
-				Nur notwendige
+		<div class="cookie-actions cookie-actions--banner">
+			<button type="button" class="cookie-btn cookie-btn-primary" onclick={persistAcknowledgement}>
+				Nur notwendige Cookies
+			</button>
+			<button type="button" class="cookie-btn cookie-btn-primary" onclick={persistAcknowledgement}>
+				Bestätigen &amp; schließen
 			</button>
 			<button
 				type="button"
-				class="cookie-btn cookie-btn-muted"
+				class="cookie-btn cookie-btn-quiet"
 				onclick={() => (showConsentSettings = true)}
 			>
-				Einstellungen
-			</button>
-			<button type="button" class="cookie-btn cookie-btn-primary" onclick={acceptAllCookies}>
-				Alle akzeptieren
+				Details
 			</button>
 		</div>
 	</section>
@@ -128,9 +111,9 @@
 		type="button"
 		class="cookie-settings-fab"
 		onclick={() => (showConsentSettings = true)}
-		aria-label="Cookie-Einstellungen öffnen"
+		aria-label="Cookie-Hinweis öffnen"
 	>
-		Cookie-Einstellungen
+		Cookie-Hinweis
 	</button>
 {/if}
 
@@ -139,7 +122,7 @@
 		class="cookie-modal-backdrop"
 		role="button"
 		tabindex="0"
-		aria-label="Cookie-Einstellungen schließen"
+		aria-label="Details schließen"
 		onclick={onBackdropClick}
 		onkeydown={onBackdropKeydown}
 	>
@@ -150,51 +133,26 @@
 			aria-modal="true"
 			aria-labelledby="cookie-settings-title"
 		>
-			<h2 id="cookie-settings-title">Cookie-Einstellungen</h2>
+			<h2 id="cookie-settings-title">Technisch notwendige Cookies</h2>
 			<p class="cookie-modal-text">
-				Wählen Sie, welche optionalen Cookies aktiviert werden dürfen. Notwendige Cookies sind immer aktiv.
+				Diese Anwendung verwendet ausschließlich Cookies, die für den Betrieb erforderlich sind — etwa zum
+				Schutz vor Missbrauch (CSRF) und zur sicheren Nutzung des Formulars. Es werden keine optionalen
+				Kategorien wie Statistik oder Marketing eingesetzt.
 			</p>
-			<label class="cookie-option disabled">
-				<input type="checkbox" checked disabled />
-				<span>Notwendige Cookies (immer aktiv)</span>
-			</label>
-			<label class="cookie-option">
-				<input
-					type="checkbox"
-					checked={consentPrefs.analytics}
-					onchange={(e) =>
-						(consentPrefs = {
-							...consentPrefs,
-							analytics: (e.currentTarget as HTMLInputElement).checked
-						})}
-				/>
-				<span>Statistik / Analyse</span>
-			</label>
-			<label class="cookie-option">
-				<input
-					type="checkbox"
-					checked={consentPrefs.marketing}
-					onchange={(e) =>
-						(consentPrefs = {
-							...consentPrefs,
-							marketing: (e.currentTarget as HTMLInputElement).checked
-						})}
-				/>
-				<span>Marketing</span>
-			</label>
-			<div class="cookie-actions">
+			<p class="cookie-modal-text">
+				Weitere Informationen finden Sie in der
+				<a
+					href="https://www.diakoniestiftung-sachsen.de/info/datenschutz"
+					target="_blank"
+					rel="noopener noreferrer">Datenschutzerklärung</a
+				>.
+			</p>
+			<div class="cookie-actions cookie-actions--modal">
 				<button type="button" class="cookie-btn cookie-btn-muted" onclick={closeConsentSettings}>
-					Abbrechen
+					Schließen
 				</button>
 				<button type="button" class="cookie-btn cookie-btn-danger" onclick={revokeConsent}>
-					Einwilligung widerrufen
-				</button>
-				<button
-					type="button"
-					class="cookie-btn cookie-btn-primary"
-					onclick={() => saveConsent(consentPrefs.analytics, consentPrefs.marketing)}
-				>
-					Speichern
+					Hinweis erneut anzeigen
 				</button>
 			</div>
 		</div>
@@ -246,6 +204,15 @@
 		flex-wrap: wrap;
 	}
 
+	.cookie-actions--banner {
+		justify-content: flex-end;
+		align-items: center;
+	}
+
+	.cookie-actions--modal {
+		margin-top: var(--space-2);
+	}
+
 	.cookie-btn {
 		border: 0;
 		padding: 9px 14px;
@@ -274,6 +241,18 @@
 		color: #07283a;
 	}
 
+	.cookie-btn-quiet {
+		background: transparent;
+		color: #fff;
+		border: 1px solid rgba(255, 255, 255, 0.45);
+		font-weight: 500;
+	}
+
+	.cookie-btn-quiet:hover,
+	.cookie-btn-quiet:focus-visible {
+		background: rgba(255, 255, 255, 0.1);
+	}
+
 	.cookie-btn-muted {
 		background: rgba(255, 255, 255, 0.12);
 		color: #fff;
@@ -291,8 +270,10 @@
 		border: 1px solid #cbd5e1;
 	}
 
-	.cookie-modal .cookie-btn-primary {
-		color: #fff;
+	.cookie-modal .cookie-btn-danger {
+		background: #fef2f2;
+		color: #991b1b;
+		border: 1px solid #fecaca;
 	}
 
 	.cookie-modal .cookie-btn:focus-visible {
@@ -358,22 +339,9 @@
 		line-height: 1.45;
 	}
 
-	.cookie-option {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		padding: 10px 12px;
-		border: 1px solid #e2e8f0;
-		border-radius: var(--space-3);
-		background: #f8fafc;
-	}
-
-	.cookie-option input[type='checkbox'] {
-		accent-color: var(--primary);
-	}
-
-	.cookie-option.disabled {
-		opacity: 0.7;
+	.cookie-modal-text a {
+		color: var(--primary);
+		font-weight: 600;
 	}
 
 	@media (max-width: 640px) {
@@ -382,9 +350,14 @@
 			align-items: flex-start;
 		}
 
+		.cookie-actions--banner {
+			width: 100%;
+			flex-direction: column;
+			align-items: stretch;
+		}
+
 		.cookie-settings-fab {
 			bottom: 82px;
 		}
 	}
 </style>
-
