@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
+	import ConfirmDialog from "$lib/ui/ConfirmDialog.svelte";
 	import type { MandantView } from "./types";
 
 	interface Props {
@@ -11,6 +12,25 @@
 	let editingId = $state<string | null>(null);
 	let editingName = $state("");
 	let editingEmail = $state("");
+
+	let confirmOpen = $state(false);
+	let confirmMessage = $state("");
+	let confirmTitle = $state("Bestätigen");
+	let confirmResolver = $state<((value: boolean) => void) | null>(null);
+
+	function confirmAsync(message: string, title = "Bestätigen"): Promise<boolean> {
+		return new Promise((resolve) => {
+			confirmTitle = title;
+			confirmMessage = message;
+			confirmResolver = resolve;
+			confirmOpen = true;
+		});
+	}
+
+	function resolveConfirm(value: boolean) {
+		confirmResolver?.(value);
+		confirmResolver = null;
+	}
 
 	function startEdit(id: string, name: string, email: string = "") {
 		editingId = id;
@@ -27,6 +47,16 @@
 
 <h2>Empfänger-Struktur verwalten</h2>
 <p class="hint">Verwalten Sie hier die Mandanten, Einrichtungen und Fachabteilungen für das Kontaktformular.</p>
+
+<ConfirmDialog
+	bind:open={confirmOpen}
+	title={confirmTitle}
+	message={confirmMessage}
+	confirmText="Löschen"
+	cancelText="Abbrechen"
+	onConfirm={() => resolveConfirm(true)}
+	onCancel={() => resolveConfirm(false)}
+/>
 
 <div class="mandant-list">
 	<div class="add-box">
@@ -64,10 +94,12 @@
 					<form
 						method="POST"
 						action="?/deleteMandant"
-						use:enhance={({ cancel }) => {
-							if (!confirm(`Mandant "${mandant.name}" und alle zugehörigen Daten endgültig löschen?`)) {
-								cancel();
-							}
+						use:enhance={async ({ cancel }) => {
+							const ok = await confirmAsync(
+								`Mandant "${mandant.name}" und alle zugehörigen Daten endgültig löschen?`,
+								"Mandant löschen",
+							);
+							if (!ok) cancel();
 						}}
 					>
 						<input type="hidden" name="id" value={mandant.id} />
@@ -113,10 +145,12 @@
 								<form
 									method="POST"
 									action="?/deleteEinrichtung"
-									use:enhance={({ cancel }) => {
-										if (!confirm(`Einrichtung "${e.name}" und alle zugehörigen Fachabteilungen endgültig löschen?`)) {
-											cancel();
-										}
+									use:enhance={async ({ cancel }) => {
+										const ok = await confirmAsync(
+											`Einrichtung "${e.name}" und alle zugehörigen Fachabteilungen endgültig löschen?`,
+											"Einrichtung löschen",
+										);
+										if (!ok) cancel();
 									}}
 								>
 									<input type="hidden" name="id" value={e.id} />
@@ -168,10 +202,9 @@
 													<form
 														method="POST"
 														action="?/deleteFachabteilung"
-														use:enhance={({ cancel }) => {
-															if (!confirm(`Abteilung "${a.name}" löschen?`)) {
-																cancel();
-															}
+														use:enhance={async ({ cancel }) => {
+															const ok = await confirmAsync(`Abteilung "${a.name}" löschen?`, "Abteilung löschen");
+															if (!ok) cancel();
 														}}
 													>
 														<input type="hidden" name="id" value={a.id} />

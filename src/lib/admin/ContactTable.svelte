@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
+	import ConfirmDialog from "$lib/ui/ConfirmDialog.svelte";
 	import type { ContactView } from "./types";
 	import ContactDetailPanel from "./ContactDetailPanel.svelte";
 
@@ -15,6 +16,23 @@
 	let { contacts, totalContacts, currentPage, totalPages, contactQuery, contactSort }: Props = $props();
 
 	let selectedContact = $state<ContactView | null>(null);
+
+	let confirmOpen = $state(false);
+	let confirmMessage = $state("");
+	let confirmResolver = $state<((value: boolean) => void) | null>(null);
+
+	function confirmAsync(message: string): Promise<boolean> {
+		return new Promise((resolve) => {
+			confirmMessage = message;
+			confirmResolver = resolve;
+			confirmOpen = true;
+		});
+	}
+
+	function resolveConfirm(value: boolean) {
+		confirmResolver?.(value);
+		confirmResolver = null;
+	}
 
 	function queryForPage(page: number): string {
 		const parts: string[] = [];
@@ -68,6 +86,16 @@
 	<button type="submit" class="btn btn-secondary btn-sm">Anwenden</button>
 </form>
 
+<ConfirmDialog
+	bind:open={confirmOpen}
+	message={confirmMessage}
+	title="Kontakt löschen"
+	confirmText="Löschen"
+	cancelText="Abbrechen"
+	onConfirm={() => resolveConfirm(true)}
+	onCancel={() => resolveConfirm(false)}
+/>
+
 <table class="admin-table">
 	<thead>
 		<tr>
@@ -95,8 +123,9 @@
 						<form
 							method="POST"
 							action="?/deleteContact"
-							use:enhance={({ cancel }) => {
-								if (!confirm("Soll dieser Kontakt wirklich gelöscht werden?")) {
+							use:enhance={async ({ cancel }) => {
+								const ok = await confirmAsync("Soll dieser Kontakt wirklich gelöscht werden?");
+								if (!ok) {
 									cancel();
 									return;
 								}
