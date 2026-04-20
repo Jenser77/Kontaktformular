@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '$lib/kontakt/fields/TextField.svelte';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import User from '@lucide/svelte/icons/user';
@@ -49,93 +50,69 @@
 			</div>
 		</div>
 		<div class="form-grid-2">
-			<div class="input-group">
-				<label class="input-label" for="firstName">Vorname <span class="required-star">*</span></label>
-				<input
-					class="form-input"
-					class:error={showErr.firstName}
-					id="firstName"
-					name="firstName"
-					placeholder="Max"
-					type="text"
-					required
-					autocomplete="given-name"
-					aria-invalid={showErr.firstName ? 'true' : undefined}
-					aria-describedby="err-firstName"
-					bind:value={firstName}
-					onblur={(e) => onBlurRequired('firstName', e.currentTarget)}
-					oninput={() => showErr.firstName && toggleError('firstName', true)}
-				/>
-				<span class="error-msg" class:visible={showErr.firstName} id="err-firstName" role="alert">
-					Bitte geben Sie Ihren Vornamen an.
-				</span>
-			</div>
-			<div class="input-group">
-				<label class="input-label" for="lastName">Nachname <span class="required-star">*</span></label>
-				<input
-					class="form-input"
-					class:error={showErr.lastName}
-					id="lastName"
-					name="lastName"
-					placeholder="Mustermann"
-					type="text"
-					required
-					autocomplete="family-name"
-					aria-invalid={showErr.lastName ? 'true' : undefined}
-					aria-describedby="err-lastName"
-					bind:value={lastName}
-					onblur={(e) => onBlurRequired('lastName', e.currentTarget)}
-					oninput={() => showErr.lastName && toggleError('lastName', true)}
-				/>
-				<span class="error-msg" class:visible={showErr.lastName} id="err-lastName" role="alert">
-					Bitte geben Sie Ihren Nachnamen an.
-				</span>
-			</div>
-			<div class="input-group col-span-2">
-				<label class="input-label" for="organization">Organisation oder Arbeitgeber (optional)</label>
-				<input
-					class="form-input"
-					id="organization"
-					name="organization"
-					placeholder="z. B. Firma oder Verein"
-					type="text"
-					autocomplete="organization"
-					bind:value={organization}
-				/>
-			</div>
-			<div class="input-group">
-				<label class="input-label" for="email">E-Mail-Adresse <span class="required-star">*</span></label>
-				<input
-					class="form-input"
-					class:error={showErr.email}
-					id="email"
-					name="email"
-					placeholder="max.mustermann@beispiel.de"
-					type="email"
-					required
-					autocomplete="email"
-					aria-invalid={showErr.email ? 'true' : undefined}
-					aria-describedby="err-email"
-					bind:value={email}
-					onblur={(e) => onBlurRequired('email', e.currentTarget)}
-					oninput={() => showErr.email && toggleError('email', true)}
-				/>
-				<span class="error-msg" class:visible={showErr.email} id="err-email" role="alert">
-					Bitte geben Sie eine gültige E-Mail-Adresse an.
-				</span>
-			</div>
-			<div class="input-group">
-				<label class="input-label" for="phone">Telefonnummer (optional)</label>
-				<input
-					class="form-input"
-					id="phone"
-					name="phone"
-					placeholder="+49 123 456789"
-					type="tel"
-					autocomplete="tel"
-					bind:value={phone}
-				/>
-			</div>
+			<TextField
+				id="firstName"
+				label="Vorname"
+				required
+				placeholder="Max"
+				autocomplete="given-name"
+				bind:value={firstName}
+				{showErr}
+				errorMessage="Bitte geben Sie Ihren Vornamen an."
+				{toggleError}
+				{onBlurRequired}
+			/>
+			<TextField
+				id="lastName"
+				label="Nachname"
+				required
+				placeholder="Mustermann"
+				autocomplete="family-name"
+				bind:value={lastName}
+				{showErr}
+				errorMessage="Bitte geben Sie Ihren Nachnamen an."
+				{toggleError}
+				{onBlurRequired}
+			/>
+			<TextField
+				id="organization"
+				label="Organisation oder Arbeitgeber (optional)"
+				placeholder="z. B. Firma oder Verein"
+				autocomplete="organization"
+				bind:value={organization}
+				{showErr}
+				fieldId="organization"
+				errorMessage=""
+				groupClass="col-span-2"
+				blurValidate={false}
+				{onBlurRequired}
+			/>
+			<TextField
+				id="email"
+				label="E-Mail-Adresse"
+				required
+				type="email"
+				placeholder="max.mustermann@beispiel.de"
+				autocomplete="email"
+				bind:value={email}
+				{showErr}
+				errorMessage="Bitte geben Sie eine gültige E-Mail-Adresse an."
+				{toggleError}
+				{onBlurRequired}
+			/>
+			<TextField
+				id="phone"
+				label="Telefonnummer (optional)"
+				type="tel"
+				placeholder="+49 123 456789"
+				autocomplete="tel"
+				bind:value={phone}
+				{showErr}
+				fieldId="phone"
+				errorMessage=""
+				blurValidate={false}
+				{onBlurRequired}
+			/>
 		</div>
 	</div>
 	<div class="wizard-nav">

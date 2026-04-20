@@ -1,4 +1,6 @@
 <script lang="ts">
+	import TextField from '$lib/kontakt/fields/TextField.svelte';
+	import TextareaField from '$lib/kontakt/fields/TextareaField.svelte';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ClipboardCheck from '@lucide/svelte/icons/clipboard-check';
 	import MessageCircle from '@lucide/svelte/icons/message-circle';
@@ -42,46 +44,29 @@
 				<p class="section-lead">Je konkreter Ihre Nachricht, desto schneller können wir helfen.</p>
 			</div>
 		</div>
-		<div class="input-group">
-			<label class="input-label" for="subject">Betreff <span class="required-star">*</span></label>
-			<input
-				class="form-input"
-				class:error={showErr.subject}
-				id="subject"
-				name="subject"
-				placeholder="Wie können wir helfen?"
-				type="text"
-				required
-				aria-invalid={showErr.subject ? 'true' : undefined}
-				aria-describedby="err-subject"
-				bind:value={subject}
-				onblur={(e) => onBlurRequired('subject', e.currentTarget)}
-				oninput={() => showErr.subject && toggleError('subject', true)}
-			/>
-			<span class="error-msg" class:visible={showErr.subject} id="err-subject" role="alert">
-				Bitte geben Sie einen Betreff an.
-			</span>
-		</div>
-		<div class="input-group">
-			<label class="input-label" for="message">Nachricht <span class="required-star">*</span></label>
-			<textarea
-				class="form-textarea"
-				class:error={showErr.message}
-				id="message"
-				name="message"
-				placeholder="Beschreiben Sie Ihr Anliegen..."
-				rows="7"
-				required
-				aria-invalid={showErr.message ? 'true' : undefined}
-				aria-describedby="err-message"
-				bind:value={message}
-				onblur={(e) => onBlurRequired('message', e.currentTarget)}
-				oninput={() => showErr.message && toggleError('message', true)}
-			></textarea>
-			<span class="error-msg" class:visible={showErr.message} id="err-message" role="alert">
-				Bitte geben Sie eine Nachricht ein.
-			</span>
-		</div>
+		<TextField
+			id="subject"
+			label="Betreff"
+			required
+			placeholder="Wie können wir helfen?"
+			bind:value={subject}
+			{showErr}
+			errorMessage="Bitte geben Sie einen Betreff an."
+			{toggleError}
+			{onBlurRequired}
+		/>
+		<TextareaField
+			id="message"
+			label="Nachricht"
+			required
+			placeholder="Beschreiben Sie Ihr Anliegen..."
+			rows={7}
+			bind:value={message}
+			{showErr}
+			errorMessage="Bitte geben Sie eine Nachricht ein."
+			{toggleError}
+			{onBlurRequired}
+		/>
 	</div>
 	<div class="wizard-nav">
 		<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(2, true)}>

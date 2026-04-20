@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '$lib/kontakt/fields/SelectField.svelte';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import Building2 from '@lucide/svelte/icons/building-2';
 	import type { Mandant } from './types';
@@ -30,6 +31,16 @@
 		onEinrichtungChange: () => void;
 		goToStep: (step: number, skipValidate?: boolean) => void;
 	} = $props();
+
+	let mandantOptions = $derived(
+		recipientData.map((m) => ({ value: m.id, label: m.name }))
+	);
+	let einrichtungOptions = $derived(
+		einrichtungen.map((e) => ({ value: e.id, label: e.name }))
+	);
+	let abteilungOptions = $derived(
+		abteilungen.map((a) => ({ value: a.id, label: a.name }))
+	);
 </script>
 
 <div
@@ -52,90 +63,51 @@
 			</div>
 		</div>
 		<div class="form-grid">
-			<div class="input-group">
-				<label class="input-label" for="mandant">
-					Organisationsträger (Mandant) <span class="required-star">*</span>
-				</label>
-				<p class="field-hint" id="hint-mandant">
-					Der übergeordnete Träger Ihrer gewünschten Einrichtung — so wird Ihre Anfrage intern korrekt
-					zugeordnet.
-				</p>
-				<select
-					class="form-select"
-					class:error={showErr.mandant}
-					id="mandant"
-					name="mandant"
-					required
-					aria-describedby="hint-mandant err-mandant"
-					aria-invalid={showErr.mandant ? 'true' : undefined}
-					bind:value={mandantId}
-					onchange={onMandantChange}
-				>
-					<option value="" disabled>
-						{routingLoadFailed ? 'Fehler beim Laden' : 'Bitte wählen...'}
-					</option>
-					{#each recipientData as m (m.id)}
-						<option value={m.id}>{m.name}</option>
-					{/each}
-				</select>
-				<span class="error-msg" class:visible={showErr.mandant} id="err-mandant" role="alert">
-					Bitte wählen Sie einen Mandanten aus.
-				</span>
-			</div>
+			<SelectField
+				id="mandant"
+				name="mandant"
+				fieldId="mandant"
+				label="Organisationsträger (Mandant)"
+				required
+				bind:value={mandantId}
+				emptyLabel={routingLoadFailed ? 'Fehler beim Laden' : 'Bitte wählen...'}
+				options={mandantOptions}
+				hint={{
+					id: 'hint-mandant',
+					text: 'Der übergeordnete Träger Ihrer gewünschten Einrichtung — so wird Ihre Anfrage intern korrekt zugeordnet.'
+				}}
+				{showErr}
+				errorMessage="Bitte wählen Sie einen Mandanten aus."
+				onchange={onMandantChange}
+			/>
 			<div class="form-grid-2">
-				<div class="input-group">
-					<label class="input-label" for="einrichtung">
-						Einrichtung <span class="required-star">*</span>
-					</label>
-					<select
-						class="form-select"
-						class:error={showErr.einrichtung}
-						id="einrichtung"
-						name="einrichtung"
-						required
-						disabled={!mandantId}
-						aria-invalid={showErr.einrichtung ? 'true' : undefined}
-						aria-describedby="err-einrichtung"
-						bind:value={einrichtungId}
-						onchange={onEinrichtungChange}
-					>
-						<option value="" disabled>
-							{mandantId ? 'Bitte wählen...' : 'Bitte zuerst Mandant wählen...'}
-						</option>
-						{#each einrichtungen as ein (ein.id)}
-							<option value={ein.id}>{ein.name}</option>
-						{/each}
-					</select>
-					<span class="error-msg" class:visible={showErr.einrichtung} id="err-einrichtung" role="alert">
-						Bitte wählen Sie eine Einrichtung aus.
-					</span>
-				</div>
-				<div class="input-group">
-					<label class="input-label" for="recipientId">
-						Fachabteilung <span class="required-star">*</span>
-					</label>
-					<select
-						class="form-select"
-						class:error={showErr.recipientId}
-						id="recipientId"
-						name="recipientId"
-						required
-						disabled={!einrichtungId}
-						aria-invalid={showErr.recipientId ? 'true' : undefined}
-						aria-describedby="err-recipientId"
-						bind:value={recipientId}
-					>
-						<option value="" disabled>
-							{einrichtungId ? 'Bitte wählen...' : 'Bitte zuerst Einrichtung wählen...'}
-						</option>
-						{#each abteilungen as abt (abt.id)}
-							<option value={abt.id}>{abt.name}</option>
-						{/each}
-					</select>
-					<span class="error-msg" class:visible={showErr.recipientId} id="err-recipientId" role="alert">
-						Bitte wählen Sie eine Fachabteilung aus.
-					</span>
-				</div>
+				<SelectField
+					id="einrichtung"
+					name="einrichtung"
+					fieldId="einrichtung"
+					label="Einrichtung"
+					required
+					bind:value={einrichtungId}
+					disabled={!mandantId}
+					emptyLabel={mandantId ? 'Bitte wählen...' : 'Bitte zuerst Mandant wählen...'}
+					options={einrichtungOptions}
+					{showErr}
+					errorMessage="Bitte wählen Sie eine Einrichtung aus."
+					onchange={onEinrichtungChange}
+				/>
+				<SelectField
+					id="recipientId"
+					name="recipientId"
+					fieldId="recipientId"
+					label="Fachabteilung"
+					required
+					bind:value={recipientId}
+					disabled={!einrichtungId}
+					emptyLabel={einrichtungId ? 'Bitte wählen...' : 'Bitte zuerst Einrichtung wählen...'}
+					options={abteilungOptions}
+					{showErr}
+					errorMessage="Bitte wählen Sie eine Fachabteilung aus."
+				/>
 			</div>
 		</div>
 	</div>
