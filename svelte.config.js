@@ -11,9 +11,9 @@ const config = {
 			directives: {
 				'default-src': ['self'],
 				'script-src': ['self'],
-				'style-src': ['self', 'https://fonts.googleapis.com'],
-				'font-src': ['self', 'https://fonts.gstatic.com'],
-					'img-src': ['self', 'data:', 'https://www.diakoniestiftung-sachsen.de'],
+				'style-src': ['self'],
+				'font-src': ['self'],
+				'img-src': ['self', 'data:', 'https://www.diakoniestiftung-sachsen.de'],
 				'connect-src': ['self'],
 				'frame-ancestors': ['none']
 			}
