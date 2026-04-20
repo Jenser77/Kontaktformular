@@ -39,5 +39,8 @@ id_rsa_deploy
 .agent
 .claude
 
+# UI/UX Pro Max skill (Python cache)
+.cursor/skills/**/__pycache__/
+
 # Lock files (keep bun.lock, ignore npm)
 package-lock.json
