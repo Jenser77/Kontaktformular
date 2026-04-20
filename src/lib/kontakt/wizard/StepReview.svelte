@@ -4,6 +4,7 @@
 
 	let {
 		currentStep,
+		wideLayout = false,
 		reviewMandant,
 		reviewEinrichtung,
 		reviewAbteilung,
@@ -21,6 +22,7 @@
 		goToStep
 	}: {
 		currentStep: number;
+		wideLayout?: boolean;
 		reviewMandant: string;
 		reviewEinrichtung: string;
 		reviewAbteilung: string;
@@ -41,12 +43,12 @@
 
 <div
 	class="form-step"
-	class:is-active={currentStep === 4}
+	class:is-active={wideLayout || currentStep === 4}
 	data-step="4"
 	id="step-panel-4"
 	role="region"
 	aria-labelledby="step-title-4"
-	hidden={currentStep !== 4}
+	hidden={!wideLayout && currentStep !== 4}
 >
 	<div class="form-section">
 		<div class="section-header">
@@ -117,10 +119,14 @@
 		</span>
 
 		<div class="wizard-nav wizard-nav--final">
-			<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(3, true)}>
-				<span class="btn-wizard-icon" aria-hidden="true"><Pencil size={20} strokeWidth={2} /></span>
-				Noch anpassen
-			</button>
+			{#if !wideLayout}
+				<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(3, true)}>
+					<span class="btn-wizard-icon" aria-hidden="true"><Pencil size={20} strokeWidth={2} /></span>
+					Noch anpassen
+				</button>
+			{:else}
+				<span class="wizard-nav-spacer" aria-hidden="true"></span>
+			{/if}
 			<button class="btn-submit" type="submit" disabled={submitting}>
 				<span class="btn-text" class:hidden={submitting}>Nachricht absenden</span>
 				<div class="spinner" class:hidden={!submitting} aria-hidden="true">

@@ -6,6 +6,7 @@
 
 	let {
 		currentStep,
+		wideLayout = false,
 		firstName = $bindable(),
 		lastName = $bindable(),
 		organization = $bindable(),
@@ -17,6 +18,7 @@
 		goToStep
 	}: {
 		currentStep: number;
+		wideLayout?: boolean;
 		firstName: string;
 		lastName: string;
 		organization: string;
@@ -34,12 +36,12 @@
 
 <div
 	class="form-step"
-	class:is-active={currentStep === 2}
+	class:is-active={wideLayout || currentStep === 2}
 	data-step="2"
 	id="step-panel-2"
 	role="region"
 	aria-labelledby="step-title-2"
-	hidden={currentStep !== 2}
+	hidden={!wideLayout && currentStep !== 2}
 >
 	<div class="form-section">
 		<div class="section-header">
@@ -115,14 +117,16 @@
 			/>
 		</div>
 	</div>
-	<div class="wizard-nav">
-		<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(1, true)}>
-			<span class="btn-wizard-icon" aria-hidden="true"><ArrowLeft size={20} strokeWidth={2} /></span>
-			Zurück
-		</button>
-		<button type="button" class="btn-wizard btn-wizard-primary" onclick={() => goToStep(3)}>
-			Weiter zur Nachricht
-			<span class="btn-wizard-icon" aria-hidden="true"><ArrowRight size={20} strokeWidth={2} /></span>
-		</button>
-	</div>
+	{#if !wideLayout}
+		<div class="wizard-nav">
+			<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(1, true)}>
+				<span class="btn-wizard-icon" aria-hidden="true"><ArrowLeft size={20} strokeWidth={2} /></span>
+				Zurück
+			</button>
+			<button type="button" class="btn-wizard btn-wizard-primary" onclick={() => goToStep(3)}>
+				Weiter zur Nachricht
+				<span class="btn-wizard-icon" aria-hidden="true"><ArrowRight size={20} strokeWidth={2} /></span>
+			</button>
+		</div>
+	{/if}
 </div>

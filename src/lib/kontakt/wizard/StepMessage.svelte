@@ -7,6 +7,7 @@
 
 	let {
 		currentStep,
+		wideLayout = false,
 		subject = $bindable(),
 		message = $bindable(),
 		showErr,
@@ -15,6 +16,7 @@
 		goToStep
 	}: {
 		currentStep: number;
+		wideLayout?: boolean;
 		subject: string;
 		message: string;
 		showErr: Record<string, boolean>;
@@ -68,14 +70,16 @@
 			{onBlurRequired}
 		/>
 	</div>
-	<div class="wizard-nav">
-		<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(2, true)}>
-			<span class="btn-wizard-icon" aria-hidden="true"><ArrowLeft size={20} strokeWidth={2} /></span>
-			Zurück
-		</button>
-		<button type="button" class="btn-wizard btn-wizard-primary" onclick={() => goToStep(4)}>
-			Zur Übersicht
-			<span class="btn-wizard-icon" aria-hidden="true"><ClipboardCheck size={20} strokeWidth={2} /></span>
-		</button>
-	</div>
+	{#if !wideLayout}
+		<div class="wizard-nav">
+			<button type="button" class="btn-wizard btn-wizard-secondary" onclick={() => goToStep(2, true)}>
+				<span class="btn-wizard-icon" aria-hidden="true"><ArrowLeft size={20} strokeWidth={2} /></span>
+				Zurück
+			</button>
+			<button type="button" class="btn-wizard btn-wizard-primary" onclick={() => goToStep(4)}>
+				Zur Übersicht
+				<span class="btn-wizard-icon" aria-hidden="true"><ClipboardCheck size={20} strokeWidth={2} /></span>
+			</button>
+		</div>
+	{/if}
 </div>

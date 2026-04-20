@@ -1265,6 +1265,28 @@ body {
     }
 }
 
+/* Desktop: contact form as single page + sticky review column */
+@media (min-width: 1024px) {
+    .kontakt-form-adaptive .kontakt-adaptive-grid {
+        display: grid;
+        grid-template-columns: 1fr min(22rem, 34vw);
+        gap: var(--space-6);
+        align-items: start;
+    }
+
+    .kontakt-form-adaptive .kontakt-adaptive-aside {
+        position: sticky;
+        top: var(--space-4);
+        max-height: calc(100vh - var(--space-8));
+        overflow-y: auto;
+        padding-bottom: var(--space-2);
+    }
+
+    .kontakt-form-adaptive .kontakt-adaptive-main .form-step + .form-step {
+        margin-top: var(--space-5);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .form-step .wizard-nav,
     .submit-section--wizard .wizard-nav--final {

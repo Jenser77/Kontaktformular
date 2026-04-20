@@ -6,6 +6,7 @@
 
 	let {
 		currentStep,
+		wideLayout = false,
 		routingLoadFailed,
 		recipientData,
 		mandantId = $bindable(),
@@ -19,6 +20,8 @@
 		goToStep
 	}: {
 		currentStep: number;
+		/** Desktop single-page: all sections visible, no wizard chrome */
+		wideLayout?: boolean;
 		routingLoadFailed: boolean;
 		recipientData: Mandant[];
 		mandantId: string;
@@ -111,11 +114,13 @@
 			</div>
 		</div>
 	</div>
-	<div class="wizard-nav">
-		<span class="wizard-nav-spacer" aria-hidden="true"></span>
-		<button type="button" class="btn-wizard btn-wizard-primary" onclick={() => goToStep(2)}>
-			Weiter zu Kontaktdaten
-			<span class="btn-wizard-icon" aria-hidden="true"><ArrowRight size={20} strokeWidth={2} /></span>
-		</button>
-	</div>
+	{#if !wideLayout}
+		<div class="wizard-nav">
+			<span class="wizard-nav-spacer" aria-hidden="true"></span>
+			<button type="button" class="btn-wizard btn-wizard-primary" onclick={() => goToStep(2)}>
+				Weiter zu Kontaktdaten
+				<span class="btn-wizard-icon" aria-hidden="true"><ArrowRight size={20} strokeWidth={2} /></span>
+			</button>
+		</div>
+	{/if}
 </div>

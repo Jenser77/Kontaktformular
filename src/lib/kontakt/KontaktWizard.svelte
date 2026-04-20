@@ -38,6 +38,9 @@
 
 	let showErr = $state<Record<string, boolean>>({});
 
+	/** Desktop ≥1024px: single-page layout with sticky review (set in onMount). */
+	let wideLayout = $state(false);
+
 	let einrichtungen = $derived(
 		recipientData.find((m) => m.id === mandantId)?.einrichtungen ?? []
 	);
@@ -78,6 +81,14 @@
 	}
 
 	onMount(() => {
+		const mq =
+			typeof window !== 'undefined' ? window.matchMedia('(min-width: 1024px)') : null;
+		const syncWide = () => {
+			wideLayout = mq?.matches ?? false;
+		};
+		syncWide();
+		mq?.addEventListener('change', syncWide);
+
 		(async () => {
 			try {
 				const response = await fetch('/api/recipients');
@@ -91,6 +102,8 @@
 				routingLoadFailed = true;
 			}
 		})();
+
+		return () => mq?.removeEventListener('change', syncWide);
 	});
 
 	function toggleError(fieldId: string, isValid: boolean) {
@@ -123,6 +136,7 @@
 
 	function setStepVisibility() {
 		scrollWizardIntoView();
+		if (wideLayout) return;
 		const panel = document.querySelector(`.form-step[data-step="${currentStep}"]`);
 		const focusable = panel?.querySelector(
 			'button:not([disabled]), [href], input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])'
@@ -333,7 +347,7 @@
 	<div class="form-wrapper form-wrapper--premium">
 		<form
 			id="contactForm"
-			class="contact-form-new contact-form-wizard"
+			class="contact-form-new contact-form-wizard kontakt-form-adaptive"
 			novalidate
 			onsubmit={handleSubmit}
 		>
@@ -355,71 +369,83 @@
 				/>
 			</div>
 
-			<WizardProgress
-				{currentStep}
-				{maxStepVisited}
-				{progressPct}
-				onGoStep={handleGoStep}
-			/>
+			{#if !wideLayout}
+				<WizardProgress
+					{currentStep}
+					{maxStepVisited}
+					{progressPct}
+					onGoStep={handleGoStep}
+				/>
 
-			<p class="wizard-step-hint sr-only" aria-live="polite">{STEP_LABELS[currentStep] ?? ''}</p>
+				<p class="wizard-step-hint sr-only" aria-live="polite">{STEP_LABELS[currentStep] ?? ''}</p>
+			{/if}
 
-			<StepRecipient
-				{currentStep}
-				{routingLoadFailed}
-				{recipientData}
-				bind:mandantId
-				bind:einrichtungId
-				bind:recipientId
-				{einrichtungen}
-				{abteilungen}
-				{showErr}
-				onMandantChange={onMandantChange}
-				onEinrichtungChange={onEinrichtungChange}
-				goToStep={goToStep}
-			/>
+			<div class="kontakt-adaptive-grid">
+				<div class="kontakt-adaptive-main">
+					<StepRecipient
+						{currentStep}
+						wideLayout={wideLayout}
+						{routingLoadFailed}
+						{recipientData}
+						bind:mandantId
+						bind:einrichtungId
+						bind:recipientId
+						{einrichtungen}
+						{abteilungen}
+						{showErr}
+						onMandantChange={onMandantChange}
+						onEinrichtungChange={onEinrichtungChange}
+						goToStep={goToStep}
+					/>
 
-			<StepContact
-				{currentStep}
-				bind:firstName
-				bind:lastName
-				bind:organization
-				bind:email
-				bind:phone
-				{showErr}
-				{toggleError}
-				onBlurRequired={onBlurRequired}
-				goToStep={goToStep}
-			/>
+					<StepContact
+						{currentStep}
+						wideLayout={wideLayout}
+						bind:firstName
+						bind:lastName
+						bind:organization
+						bind:email
+						bind:phone
+						{showErr}
+						{toggleError}
+						onBlurRequired={onBlurRequired}
+						goToStep={goToStep}
+					/>
 
-			<StepMessage
-				{currentStep}
-				bind:subject
-				bind:message
-				{showErr}
-				{toggleError}
-				onBlurRequired={onBlurRequired}
-				goToStep={goToStep}
-			/>
+					<StepMessage
+						{currentStep}
+						wideLayout={wideLayout}
+						bind:subject
+						bind:message
+						{showErr}
+						{toggleError}
+						onBlurRequired={onBlurRequired}
+						goToStep={goToStep}
+					/>
+				</div>
 
-			<StepReview
-				{currentStep}
-				{reviewMandant}
-				{reviewEinrichtung}
-				{reviewAbteilung}
-				{reviewName}
-				{reviewEmail}
-				{reviewPhone}
-				{reviewOrg}
-				{reviewSubject}
-				{reviewMessage}
-				bind:privacyAccepted
-				{showErr}
-				{toggleError}
-				{submitting}
-				{feedback}
-				goToStep={goToStep}
-			/>
+				<aside class="kontakt-adaptive-aside" aria-label="Prüfen und absenden">
+					<StepReview
+						{currentStep}
+						wideLayout={wideLayout}
+						{reviewMandant}
+						{reviewEinrichtung}
+						{reviewAbteilung}
+						{reviewName}
+						{reviewEmail}
+						{reviewPhone}
+						{reviewOrg}
+						{reviewSubject}
+						{reviewMessage}
+						bind:privacyAccepted
+						{showErr}
+						{toggleError}
+						{submitting}
+						{feedback}
+						goToStep={goToStep}
+					/>
+				</aside>
+			</div>
 		</form>
 	</div>
 </main>
