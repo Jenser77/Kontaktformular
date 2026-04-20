@@ -7,10 +7,55 @@
 		font-family: "Public Sans", system-ui, sans-serif;
 	}
 
-	& h1 {
-		color: #3c1361;
+	& .admin-page-header {
+		display: flex;
+		align-items: center;
+		gap: 12px;
 		border-bottom: 2px solid #5e2d91;
 		padding-bottom: 10px;
+	}
+
+	& .admin-page-header h1 {
+		color: #3c1361;
+		margin: 0;
+		font-size: clamp(1.25rem, 4vw, 1.75rem);
+		flex: 1;
+		min-width: 0;
+	}
+
+	& .admin-menu-toggle {
+		display: none;
+		align-items: center;
+		justify-content: center;
+		padding: 8px 14px;
+		font-weight: 600;
+		font-size: 0.9rem;
+		border: 1px solid #5e2d91;
+		background: #fff;
+		color: #5e2d91;
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+		flex-shrink: 0;
+		font-family: inherit;
+	}
+
+	& .admin-menu-toggle:hover {
+		background: #faf7fd;
+	}
+
+	& .admin-sidebar-shell {
+		flex-shrink: 0;
+	}
+
+	& .admin-sidebar-backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: 150;
+		margin: 0;
+		padding: 0;
+		border: none;
+		background: rgba(0, 0, 0, 0.45);
+		cursor: pointer;
 	}
 
 	& .admin-layout {

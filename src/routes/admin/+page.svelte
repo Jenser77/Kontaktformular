@@ -19,15 +19,31 @@
 
 	let activeTab = $state<"contacts" | "recipients">("contacts");
 	let exportBusy = $state(false);
+	let narrowNav = $state(false);
+	let sidebarDrawerOpen = $state(false);
 
 	onMount(() => {
 		const tab = localStorage.getItem("admin_active_tab");
 		if (tab === "contacts" || tab === "recipients") activeTab = tab;
+
+		const mq = window.matchMedia("(max-width: 1023px)");
+		const syncNav = () => {
+			narrowNav = mq.matches;
+			if (!mq.matches) sidebarDrawerOpen = false;
+		};
+		syncNav();
+		mq.addEventListener("change", syncNav);
+		return () => mq.removeEventListener("change", syncNav);
 	});
 
 	function setActiveTab(tab: "contacts" | "recipients") {
 		activeTab = tab;
 		localStorage.setItem("admin_active_tab", tab);
+		sidebarDrawerOpen = false;
+	}
+
+	function closeSidebarDrawer() {
+		sidebarDrawerOpen = false;
 	}
 
 	async function exportCsv() {
@@ -60,17 +76,41 @@
 
 <div class="admin-root">
 	<div class="admin-wrapper">
-		<h1>Admin Dashboard</h1>
+		<header class="admin-page-header">
+			{#if narrowNav}
+				<button
+					type="button"
+					class="admin-menu-toggle"
+					onclick={() => (sidebarDrawerOpen = !sidebarDrawerOpen)}
+					aria-expanded={sidebarDrawerOpen}
+					aria-controls="admin-sidebar-shell"
+				>
+					Menü
+				</button>
+			{/if}
+			<h1>Admin Dashboard</h1>
+		</header>
+
+		{#if narrowNav && sidebarDrawerOpen}
+			<button type="button" class="admin-sidebar-backdrop" onclick={closeSidebarDrawer} aria-label="Navigation schließen"></button>
+		{/if}
 
 		<div class="admin-layout">
-			<AdminSidebar
-				{activeTab}
-				onTab={setActiveTab}
-				{totalContacts}
-				adminDisplayName={data.adminDisplayName ?? null}
-				{exportBusy}
-				onExportCsv={exportCsv}
-			/>
+			<div
+				id="admin-sidebar-shell"
+				class="admin-sidebar-shell"
+				class:drawer-open={narrowNav && sidebarDrawerOpen}
+				class:drawer-mode={narrowNav}
+			>
+				<AdminSidebar
+					{activeTab}
+					onTab={setActiveTab}
+					{totalContacts}
+					adminDisplayName={data.adminDisplayName ?? null}
+					{exportBusy}
+					onExportCsv={exportCsv}
+				/>
+			</div>
 
 			<main class="admin-main">
 				{#if activeTab === "contacts"}
