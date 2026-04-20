@@ -33,10 +33,12 @@ export const handle: Handle = async ({ event, resolve }) => {
     // --- 2. Resolve the request ---
     const response = await resolve(event);
 
-    // --- 2b. Cache static filenames served from /static (hashed Kit assets use their own headers) ---
+    // --- 2b. Cache: immutable for Vite-hashed assets; short TTL for unhashed /static files ---
     const pathname = event.url.pathname;
-    if (/\.(css|png|jpe?g|gif|webp|ico|svg|woff2?)$/i.test(pathname)) {
-        response.headers.set('Cache-Control', 'public, max-age=86400');
+    if (pathname.startsWith('/_app/immutable/')) {
+        response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (/\.(css|png|jpe?g|gif|webp|ico|svg|woff2?)$/i.test(pathname)) {
+        response.headers.set('Cache-Control', 'public, max-age=3600');
     }
 
     // --- 3. Security Headers ---

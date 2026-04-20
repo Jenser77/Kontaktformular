@@ -8,6 +8,7 @@
 	import '@fontsource/public-sans/700.css';
 	import '@fontsource/public-sans/800.css';
 	import '@fontsource/public-sans/900.css';
+	import '../app.css';
 
 	let { children } = $props();
 	let showConsentBanner = $state(false);
@@ -92,7 +93,6 @@
 
 <svelte:head>
 	<link rel="icon" href="/favicon.png" type="image/png" />
-	<link rel="stylesheet" href="/design-new.css" />
 </svelte:head>
 
 {@render children()}
