@@ -3,8 +3,20 @@
 	import ArrowUp from '@lucide/svelte/icons/arrow-up';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
+	import {
+		fachbereicheNav,
+		newsNavHref,
+		traumjobNavHref,
+		uberUnsNav,
+		type FachbereichNavEntry,
+		type NavGroupItem
+	} from '$lib/kontakt/navigation';
 
 	let { children }: { children: Snippet } = $props();
+
+	function hasSubmenu(entry: FachbereichNavEntry): entry is NavGroupItem {
+		return 'items' in entry && Array.isArray(entry.items);
+	}
 
 	function scrollTopClick() {
 		const reduce =
@@ -34,99 +46,51 @@
                             <span class="nav-link">Fachbereiche</span>
                             <span class="chevron" aria-hidden="true"><ChevronDown size={20} strokeWidth={2} /></span>
                             <ul class="nav-dropdown">
-                                <li class="nav-dropdown-item">
-                                    <a href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=363737&rq_MenuGuid=96BDD3EE84338C0AF2E4265DBDE6CF7687EC4F5D"
-                                        class="nav-dropdown-link">Fachkrankenhäuser <span
-                                            class="nav-dropdown-arrow" aria-hidden="true"><ChevronRight size={18} strokeWidth={2} /></span></a>
-                                    <ul class="nav-submenu">
-                                        <li class="nav-dropdown-item"><a
-                                                href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373133&rq_MenuGuid=9CFB03847032F6B8AC0EE2F7736061AA3A8BA029"
-                                                class="nav-dropdown-link">Fachklinik für Psychiatrie,
-                                                Psychosomatik und Psychotherapie in Colditz</a></li>
-                                        <li class="nav-dropdown-item"><a
-                                                href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373335&rq_MenuGuid=D83A9041B616B4CC9220DEC318F34BCCCCC49019"
-                                                class="nav-dropdown-link">Fachklinik für Orthopädie in
-                                                Rothenburg</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-dropdown-item">
-                                    <a href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=353838&rq_MenuGuid=CDA8B738B53CE2605FCE93AB9CDF12310547CD86"
-                                        class="nav-dropdown-link">Reha-Kliniken <span
-                                            class="nav-dropdown-arrow" aria-hidden="true"><ChevronRight size={18} strokeWidth={2} /></span></a>
-                                    <ul class="nav-submenu">
-                                        <li class="nav-dropdown-item"><a
-                                                href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373330&rq_MenuGuid=B9A15DAFB6ECB42EF94784456EA7DD9E96F832A0"
-                                                class="nav-dropdown-link">Fachklinik Sonnenhöhe in Bad
-                                                Elster</a></li>
-                                        <li class="nav-dropdown-item"><a
-                                                href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373339&rq_MenuGuid=68B95322640586AC25B601DB614467A59C5C52DB"
-                                                class="nav-dropdown-link">Fachklinik Heidehof in
-                                                Weinböhla</a></li>
-                                        <li class="nav-dropdown-item"><a
-                                                href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373336&rq_MenuGuid=20313B0BF9E96E57D4B970566A681FE38FCE29B8"
-                                                class="nav-dropdown-link">Klinik für Rehabilitation /
-                                                Orthopädie in Rothenburg</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-dropdown-item">
-                                    <a href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373134&rq_MenuGuid=2174538AF3F7DA5310706798A3EB0CFB62613A8F"
-                                        class="nav-dropdown-link">Med. Versorgungszentrum <span
-                                            class="nav-dropdown-arrow" aria-hidden="true"><ChevronRight size={18} strokeWidth={2} /></span></a>
-                                    <ul class="nav-submenu">
-                                        <li class="nav-dropdown-item"><a
-                                                href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373333&rq_MenuGuid=3A4C8A1FE5A90EF45D28210DE1A9775932E50CE0"
-                                                class="nav-dropdown-link">MVZ Martin-Ulbrich-Haus</a>
-                                        </li>
-                                        <li class="nav-dropdown-item"><a
-                                                href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373334&rq_MenuGuid=DCFFDC5A32E3941439E3BF82F1630B3B0BDCED90"
-                                                class="nav-dropdown-link">MVZ Landkreis Leipzig</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-dropdown-item"><a
-                                        href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=363634&rq_MenuGuid=1032F3A3771F43654BBF4213DBC39B1B6DD5CA14"
-                                        class="nav-dropdown-link">Pflege und Wohnen</a></li>
-                                <li class="nav-dropdown-item"><a
-                                        href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=343339&rq_MenuGuid=E1739578DAF9ECBA517F855CB74FBA9302899082"
-                                        class="nav-dropdown-link">Hospizdienst</a>
-                                </li>
-                                <li class="nav-dropdown-item"><a href="https://hvhs-kohren-sahlis.de/" target="_blank"
-                                        rel="noopener noreferrer" class="nav-dropdown-link">Bildungs- und
-                                        Tagungsstätte</a></li>
+								{#each fachbereicheNav as entry (`${entry.label}-${entry.href}`)}
+									<li class="nav-dropdown-item">
+										{#if hasSubmenu(entry)}
+											<a href={entry.href} class="nav-dropdown-link"
+												>{entry.label}
+												<span class="nav-dropdown-arrow" aria-hidden="true"
+													><ChevronRight size={18} strokeWidth={2} /></span
+												></a
+											>
+											<ul class="nav-submenu">
+												{#each entry.items as sub (sub.href)}
+													<li class="nav-dropdown-item">
+														<a href={sub.href} class="nav-dropdown-link">{sub.label}</a>
+													</li>
+												{/each}
+											</ul>
+										{:else}
+											<a
+												href={entry.href}
+												class="nav-dropdown-link"
+												target={entry.external ? '_blank' : undefined}
+												rel={entry.external ? 'noopener noreferrer' : undefined}>{entry.label}</a
+											>
+										{/if}
+									</li>
+								{/each}
                             </ul>
                         </div>
                         <div class="nav-item">
                             <span class="nav-link">Über uns</span>
                             <span class="chevron" aria-hidden="true"><ChevronDown size={20} strokeWidth={2} /></span>
                             <ul class="nav-dropdown">
-                                <li class="nav-dropdown-item"><a
-                                        href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373231&rq_MenuGuid=F058B55022023B587ED0EB2256DF0E7248DD5A0C"
-                                        class="nav-dropdown-link">Kontakt</a></li>
-                                <li class="nav-dropdown-item"><a
-                                        href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=363734&rq_MenuGuid=CB79366E5BD5BEB3659072A519EA7D6DAA43D680"
-                                        class="nav-dropdown-link">Unser Auftrag</a>
-                                </li>
-                                <li class="nav-dropdown-item"><a
-                                        href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=363930&rq_MenuGuid=7CF52A51B509A3C2D56E7F95FB22D50A688EE663"
-                                        class="nav-dropdown-link">Wir als Arbeitgeber</a></li>
-                                <li class="nav-dropdown-item"><a
-                                        href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373232&rq_MenuGuid=B79706AD22D2AD8168D2F0B75F6CB82813FE66CF"
-                                        class="nav-dropdown-link">Qualitätsmanagement</a></li>
-                                <li class="nav-dropdown-item"><a
-                                        href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=373233&rq_MenuGuid=E76846FBDA45BB199B19BD4FB293396BBAB59F63"
-                                        class="nav-dropdown-link">Impressum</a></li>
-                                <li class="nav-dropdown-item"><a
-                                        href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=B2713E72CB38D775ED30CEB0144CE8D134C8BE46&rq_TargetPageGuid=423F5C237F16633EC7B12ADF6514E6937EC2B360&rq_RecId=343432&rq_MenuGuid=04C9F40A5B7EC5A0264B60A62A6EE6912FE5C690"
-                                        class="nav-dropdown-link">Datenschutz</a></li>
+								{#each uberUnsNav as link (link.href)}
+									<li class="nav-dropdown-item">
+										<a href={link.href} class="nav-dropdown-link">{link.label}</a>
+									</li>
+								{/each}
                             </ul>
                         </div>
                         <div class="nav-item">
-                            <a href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=306184BD9B7865606538D4D6107C4F951C685A64&rq_TargetPageGuid=7121C63A1814A7ACAFE5DD9E0FFE6E73FE6B90BC&rq_MenuGuid=8415907AE88E5DE9CAEB3F837B23A968D01F7750"
-                                class="nav-link">News</a>
+                            <a href={newsNavHref} class="nav-link">News</a>
                         </div>
                     </nav>
                     <!-- CTA Button -->
-                    <a href="https://www.diakoniestiftung-sachsen.de/path/app/?rq_AppGuid=C6099B9640F8855AD692222664AA8CF65B259DF7&rq_TargetPageGuid=0AE7221270A4F38B0F1139F6C84B395C8FE40740&rq_MenuGuid=EB8CF777C8CDE182495A8A3F5591DD4B4AB5BDB8"
-                        class="btn-traumjob" style="text-decoration: none;">Traumjob finden</a>
+                    <a href={traumjobNavHref} class="btn-traumjob" style="text-decoration: none;">Traumjob finden</a>
                 </div>
             </div>
         </div>
