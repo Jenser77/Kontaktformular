@@ -37,8 +37,27 @@ Hilfe: `bun run db:status` · neues Migrationsskript: `bun run db:dev`
 ```sh
 bun run lint
 bun run check
+bun run test:unit
 bun run build
 ```
+
+**End-to-End (Playwright):** Einmal Browser installieren: **`bunx playwright install chromium`**. Tests starten einen Dev-Server auf Port **4199** (überschreibbar mit **`PLAYWRIGHT_PORT`**, Basis-URL mit **`PLAYWRIGHT_BASE_URL`**). Postgres muss laufen; dieselbe **`DATABASE_URL`** wie oben. Empfehlung: **`bun run db:seed`**, damit das Kontaktformular Empfänger hat.
+
+```sh
+DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/postgres?sslmode=disable" bun run test:e2e
+```
+
+Optional: **`E2E_ADMIN_USERNAME`** und **`E2E_ADMIN_PASSWORD`** setzen, dann prüft **`tests/e2e/admin-login.spec.ts`** auch die erfolgreiche Anmeldung (sonst wird dieser Fall übersprungen).
+
+---
+
+## Architektur (Kurzüberblick)
+
+- **`src/routes/`** — SvelteKit-Routen: öffentliches Kontaktformular (`+page`), Admin-Dashboard (`admin/+page` mit serverseitiger Suche/Sortierung/Pagination), Admin-Login, API-Endpunkte unter **`api/`** (Kontaktanfrage, Empfängerbaum, Health).
+- **`src/lib/kontakt/`** — Wizard und Formularfelder für das Kontaktformular.
+- **`src/lib/admin/`** — Aufgeteilte Admin-UI (Sidebar, Kontakttabelle, Empfänger-Verwaltung, Typen, gemeinsames **`admin.css`**).
+- **`src/lib/server/`** — Prisma-Zugriff, Sitzungen, Rate-Limiting, Mailversand, Sicherheits-Helfer.
+- **`prisma/`** — Schema und Migrationen (u. a. Kontakte mit **`emailSentAt`** nach erfolgreichem Versand).
 
 ---
 
