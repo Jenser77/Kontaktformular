@@ -510,6 +510,21 @@
 			padding: 16px;
 		}
 
+		& .recipient-manager .einrichtung-list {
+			padding-left: 0;
+		}
+
+		& .abteilungen-table-wrapper {
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+			max-width: 100%;
+		}
+
+		& .add-box input[type="text"] {
+			max-width: 100%;
+			width: min(300px, 100%);
+		}
+
 		& .admin-menu-toggle {
 			display: inline-flex;
 		}
@@ -570,6 +585,11 @@
 
 		& .flex-form {
 			flex-wrap: wrap;
+		}
+
+		& .table-controls .form-filter {
+			min-width: 0;
+			flex: 1 1 100%;
 		}
 
 		& .admin-table-desktop {

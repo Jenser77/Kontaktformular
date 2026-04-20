@@ -71,3 +71,13 @@ export async function createSession(opts: CreateSessionOptions = {}): Promise<st
 export async function deleteSession(token: string): Promise<void> {
     await prisma.adminSession.deleteMany({ where: { id: token } });
 }
+
+/** Deletes all sessions for this admin except the current cookie session (used after password change). */
+export async function invalidateOtherAdminSessions(adminUserId: string, keepSessionId: string): Promise<void> {
+    await prisma.adminSession.deleteMany({
+        where: {
+            adminUserId,
+            id: { not: keepSessionId }
+        }
+    });
+}

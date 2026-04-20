@@ -48,6 +48,7 @@
 <h2>Empfänger-Struktur verwalten</h2>
 <p class="hint">Verwalten Sie hier die Mandanten, Einrichtungen und Fachabteilungen für das Kontaktformular.</p>
 
+<div class="recipient-manager">
 <ConfirmDialog
 	bind:open={confirmOpen}
 	title={confirmTitle}
@@ -232,4 +233,5 @@
 			</div>
 		</div>
 	{/each}
+</div>
 </div>

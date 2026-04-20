@@ -3,7 +3,7 @@ import { log } from '$lib/server/logger';
 import { prisma } from '$lib/server/prisma';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { deleteSession, getValidAdminSession } from '$lib/server/adminSession';
+import { deleteSession, getValidAdminSession, invalidateOtherAdminSessions } from '$lib/server/adminSession';
 import { CONTACTS_PER_PAGE, EMAIL_REGEX } from '$lib/constants';
 import bcrypt from 'bcryptjs';
 
@@ -199,6 +199,10 @@ export const actions: Actions = {
                 where: { id: user.id },
                 data: { passwordHash }
             });
+
+            if (token) {
+                await invalidateOtherAdminSessions(user.id, token);
+            }
 
             return { success: true, passwordMessage: 'Passwort erfolgreich geändert.' };
         } catch (error) {
