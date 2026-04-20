@@ -1,6 +1,9 @@
-<script>
+<script lang="ts">
 	import KontaktChrome from '$lib/kontakt/KontaktChrome.svelte';
 	import KontaktWizard from '$lib/kontakt/KontaktWizard.svelte';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>
@@ -9,5 +12,8 @@
 </svelte:head>
 
 <KontaktChrome>
-	<KontaktWizard />
+	<KontaktWizard
+		recipients={data.recipientStructure}
+		recipientsLoadFailed={data.recipientsLoadError}
+	/>
 </KontaktChrome>

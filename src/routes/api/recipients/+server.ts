@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { log } from '$lib/server/logger';
-import { prisma } from '$lib/server/prisma';
+import { getRecipientTree } from '$lib/server/recipientTree';
 import { isRateLimited } from '$lib/server/rateLimit';
 import { DEFAULT_RATE_LIMIT_MAX, DEFAULT_RATE_LIMIT_WINDOW_MS } from '$lib/constants';
 import { getClientIp } from '$lib/server/security';
@@ -22,31 +22,7 @@ export const GET: RequestHandler = async ({ request, getClientAddress }) => {
     }
 
     try {
-        const mandanten = await prisma.mandant.findMany({
-            include: {
-                einrichtungen: {
-                    include: {
-                        abteilungen: {
-                            select: { id: true, name: true } // WICHTIG: EMail wird nicht auf Client freigelegt
-                        }
-                    }
-                }
-            }
-        });
-
-        // The exact structure expected by the frontend script.js
-        const structure = mandanten.map((m) => ({
-            id: m.id,
-            name: m.name,
-            einrichtungen: m.einrichtungen.map((e) => ({
-                id: e.id,
-                name: e.name,
-                abteilungen: e.abteilungen.map((a) => ({
-                    id: a.id,
-                    name: a.name
-                }))
-            }))
-        }));
+        const structure = await getRecipientTree();
 
         return json(
             { success: true, data: structure },

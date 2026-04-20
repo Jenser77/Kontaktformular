@@ -14,8 +14,13 @@
 		validateField
 	} from '$lib/kontakt/wizard/validation';
 
-	let recipientData = $state<Mandant[]>([]);
-	let routingLoadFailed = $state(false);
+	let {
+		recipients,
+		recipientsLoadFailed = false
+	}: {
+		recipients: Mandant[];
+		recipientsLoadFailed?: boolean;
+	} = $props();
 
 	let mandantId = $state('');
 	let einrichtungId = $state('');
@@ -42,7 +47,7 @@
 	let wideLayout = $state(false);
 
 	let einrichtungen = $derived(
-		recipientData.find((m) => m.id === mandantId)?.einrichtungen ?? []
+		recipients.find((m) => m.id === mandantId)?.einrichtungen ?? []
 	);
 	let abteilungen = $derived(einrichtungen.find((e) => e.id === einrichtungId)?.abteilungen ?? []);
 
@@ -59,7 +64,7 @@
 		message
 	});
 
-	let reviewMandant = $derived(recipientData.find((m) => m.id === mandantId)?.name ?? '—');
+	let reviewMandant = $derived(recipients.find((m) => m.id === mandantId)?.name ?? '—');
 	let reviewEinrichtung = $derived(einrichtungen.find((e) => e.id === einrichtungId)?.name ?? '—');
 	let reviewAbteilung = $derived(abteilungen.find((a) => a.id === recipientId)?.name ?? '—');
 	let reviewName = $derived(`${firstName} ${lastName}`.trim() || '—');
@@ -88,20 +93,6 @@
 		};
 		syncWide();
 		mq?.addEventListener('change', syncWide);
-
-		(async () => {
-			try {
-				const response = await fetch('/api/recipients');
-				const data = await response.json();
-				if (data.success) {
-					recipientData = data.data;
-				} else {
-					routingLoadFailed = true;
-				}
-			} catch {
-				routingLoadFailed = true;
-			}
-		})();
 
 		return () => mq?.removeEventListener('change', syncWide);
 	});
@@ -385,8 +376,8 @@
 					<StepRecipient
 						{currentStep}
 						wideLayout={wideLayout}
-						{routingLoadFailed}
-						{recipientData}
+						routingLoadFailed={recipientsLoadFailed}
+						recipientData={recipients}
 						bind:mandantId
 						bind:einrichtungId
 						bind:recipientId
