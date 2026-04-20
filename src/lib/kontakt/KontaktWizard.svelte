@@ -197,7 +197,7 @@
 		return ok;
 	}
 
-	function resetAfterSuccess() {
+	function resetFieldValuesOnly() {
 		mandantId = '';
 		einrichtungId = '';
 		recipientId = '';
@@ -210,8 +210,6 @@
 		message = '';
 		privacyAccepted = false;
 		showErr = {};
-		currentStep = 1;
-		maxStepVisited = 1;
 	}
 
 	async function handleSubmit(e: SubmitEvent) {
@@ -278,11 +276,11 @@
 			const result = await response.json();
 
 			if (response.ok) {
-				resetAfterSuccess();
 				feedback = {
 					kind: 'success',
 					text: result.message || 'Ihre Nachricht wurde erfolgreich gesendet.'
 				};
+				resetFieldValuesOnly();
 			} else {
 				feedback = {
 					kind: 'error',
