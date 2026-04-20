@@ -44,14 +44,39 @@ export const load: PageServerLoad = async ({ url }) => {
     const pageRaw = Number(url.searchParams.get('page') ?? '1');
     const currentPage = Number.isFinite(pageRaw) && pageRaw > 0 ? Math.floor(pageRaw) : 1;
 
-    const totalContacts = await prisma.contact.count({ where: { deletedAt: null } });
+    const q = (url.searchParams.get('q') ?? '').trim();
+    const sortRaw = url.searchParams.get('sort') ?? 'newest';
+    const sort = sortRaw === 'oldest' || sortRaw === 'name' ? sortRaw : 'newest';
+
+    const searchFilter =
+        q.length > 0
+            ? {
+                  OR: [
+                      { firstName: { contains: q, mode: 'insensitive' as const } },
+                      { lastName: { contains: q, mode: 'insensitive' as const } },
+                      { email: { contains: q, mode: 'insensitive' as const } },
+                      { subject: { contains: q, mode: 'insensitive' as const } }
+                  ]
+              }
+            : {};
+
+    const where = { deletedAt: null as null, ...searchFilter };
+
+    const orderBy =
+        sort === 'oldest'
+            ? { createdAt: 'asc' as const }
+            : sort === 'name'
+              ? [{ lastName: 'asc' as const }, { firstName: 'asc' as const }]
+              : { createdAt: 'desc' as const };
+
+    const totalContacts = await prisma.contact.count({ where });
     const totalPages = Math.max(1, Math.ceil(totalContacts / CONTACTS_PER_PAGE));
     const safePage = Math.min(currentPage, totalPages);
 
     // 1. Fetch Contact Requests
     const rows: ContactRecord[] = await prisma.contact.findMany({
-        where: { deletedAt: null },
-        orderBy: { createdAt: 'desc' },
+        where,
+        orderBy,
         skip: (safePage - 1) * CONTACTS_PER_PAGE,
         take: CONTACTS_PER_PAGE
     });
@@ -99,6 +124,8 @@ export const load: PageServerLoad = async ({ url }) => {
         currentPage: safePage,
         totalPages,
         totalContacts,
+        contactQuery: q,
+        contactSort: sort,
         mandanten: mandanten.map((m) => ({
             ...m,
             createdAt: m.createdAt.toISOString(),

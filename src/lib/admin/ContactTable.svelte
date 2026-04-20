@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import { enhance } from "$app/forms";
 	import type { ContactView } from "./types";
 	import ContactDetailPanel from "./ContactDetailPanel.svelte";
@@ -9,66 +8,21 @@
 		totalContacts: number;
 		currentPage: number;
 		totalPages: number;
+		contactQuery: string;
+		contactSort: "newest" | "oldest" | "name";
 	}
 
-	let { contacts, totalContacts, currentPage, totalPages }: Props = $props();
+	let { contacts, totalContacts, currentPage, totalPages, contactQuery, contactSort }: Props = $props();
 
-	let contactQuery = $state("");
-	let contactSort = $state<"newest" | "oldest" | "name">("newest");
 	let selectedContact = $state<ContactView | null>(null);
 
-	onMount(() => {
-		const savedSort = localStorage.getItem("admin_contact_sort");
-		if (savedSort === "newest" || savedSort === "oldest" || savedSort === "name") {
-			contactSort = savedSort;
-		}
-		const savedQuery = localStorage.getItem("admin_contact_query");
-		if (savedQuery) contactQuery = savedQuery;
-	});
-
-	function setContactSort(sort: "newest" | "oldest" | "name") {
-		contactSort = sort;
-		localStorage.setItem("admin_contact_sort", sort);
+	function queryForPage(page: number): string {
+		const parts: string[] = [];
+		if (contactQuery) parts.push(`q=${encodeURIComponent(contactQuery)}`);
+		parts.push(`sort=${encodeURIComponent(contactSort)}`);
+		parts.push(`page=${encodeURIComponent(String(page))}`);
+		return `?${parts.join("&")}`;
 	}
-
-	function setContactQuery(value: string) {
-		contactQuery = value;
-		localStorage.setItem("admin_contact_query", value);
-	}
-
-	let visibleContacts = $derived(
-		(() => {
-			const query = contactQuery.trim().toLowerCase();
-			let list = [...contacts];
-
-			if (query) {
-				list = list.filter((contact) => {
-					const haystack = [
-						contact.firstName,
-						contact.lastName,
-						contact.email,
-						contact.subject,
-						contact.recipientLabel ?? "",
-					]
-						.join(" ")
-						.toLowerCase();
-					return haystack.includes(query);
-				});
-			}
-
-			if (contactSort === "oldest") {
-				list.sort((a, b) => +new Date(a.createdAt) - +new Date(b.createdAt));
-			} else if (contactSort === "name") {
-				list.sort((a, b) =>
-					`${a.lastName} ${a.firstName}`.localeCompare(`${b.lastName} ${b.firstName}`, "de"),
-				);
-			} else {
-				list.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
-			}
-
-			return list;
-		})(),
-	);
 
 	function formatDate(iso: string): string {
 		return new Date(iso).toLocaleDateString("de-DE", {
@@ -101,26 +55,18 @@
 </script>
 
 <h2>Kontaktanfragen</h2>
-<p class="hint">Gesamt: {totalContacts} Kontakte, angezeigt: {visibleContacts.length}</p>
+<p class="hint">Gesamt: {totalContacts} Kontakte, angezeigt: {contacts.length}</p>
 
-<div class="table-controls">
-	<input
-		type="search"
-		class="form-filter"
-		placeholder="Suche nach Name, E-Mail, Betreff …"
-		value={contactQuery}
-		oninput={(e) => setContactQuery((e.currentTarget as HTMLInputElement).value)}
-	/>
-	<select
-		class="form-filter"
-		value={contactSort}
-		onchange={(e) => setContactSort((e.currentTarget as HTMLSelectElement).value as "newest" | "oldest" | "name")}
-	>
+<form method="GET" action="/admin" class="table-controls">
+	<input type="hidden" name="page" value="1" />
+	<input type="search" class="form-filter" name="q" placeholder="Suche nach Name, E-Mail, Betreff …" value={contactQuery} />
+	<select class="form-filter" name="sort" value={contactSort}>
 		<option value="newest">Sortierung: Neueste zuerst</option>
 		<option value="oldest">Sortierung: Älteste zuerst</option>
 		<option value="name">Sortierung: Name A-Z</option>
 	</select>
-</div>
+	<button type="submit" class="btn btn-secondary btn-sm">Anwenden</button>
+</form>
 
 <table class="admin-table">
 	<thead>
@@ -133,12 +79,12 @@
 		</tr>
 	</thead>
 	<tbody>
-		{#if visibleContacts.length === 0}
+		{#if contacts.length === 0}
 			<tr>
 				<td colspan="5" class="empty-state">Keine passenden Anfragen gefunden.</td>
 			</tr>
 		{:else}
-			{#each visibleContacts as contact (contact.id)}
+			{#each contacts as contact (contact.id)}
 				<tr>
 					<td>{formatDate(contact.createdAt)}</td>
 					<td>{contact.firstName} {contact.lastName}</td>
@@ -175,7 +121,7 @@
 	<nav class="pagination" aria-label="Kontaktseiten">
 		<a
 			class="btn btn-secondary btn-sm"
-			href={currentPage > 1 ? `/admin?page=${currentPage - 1}` : "#"}
+			href={currentPage > 1 ? queryForPage(currentPage - 1) : "#"}
 			aria-disabled={currentPage <= 1}
 		>
 			Zurück
@@ -183,7 +129,7 @@
 		<span>Seite {currentPage} von {totalPages}</span>
 		<a
 			class="btn btn-secondary btn-sm"
-			href={currentPage < totalPages ? `/admin?page=${currentPage + 1}` : "#"}
+			href={currentPage < totalPages ? queryForPage(currentPage + 1) : "#"}
 			aria-disabled={currentPage >= totalPages}
 		>
 			Weiter

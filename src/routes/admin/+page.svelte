@@ -14,6 +14,8 @@
 	let currentPage = $derived(data.currentPage ?? 1);
 	let totalPages = $derived(data.totalPages ?? 1);
 	let totalContacts = $derived(data.totalContacts ?? contacts.length);
+	let contactQuery = $derived(data.contactQuery ?? "");
+	let contactSort = $derived((data.contactSort ?? "newest") as "newest" | "oldest" | "name");
 
 	let activeTab = $state<"contacts" | "recipients">("contacts");
 	let exportBusy = $state(false);
@@ -72,7 +74,14 @@
 
 			<main class="admin-main">
 				{#if activeTab === "contacts"}
-					<ContactTable {contacts} {totalContacts} {currentPage} {totalPages} />
+					<ContactTable
+						{contacts}
+						{totalContacts}
+						{currentPage}
+						{totalPages}
+						{contactQuery}
+						{contactSort}
+					/>
 				{:else}
 					<RecipientManager {mandanten} />
 				{/if}
