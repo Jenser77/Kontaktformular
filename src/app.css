@@ -35,6 +35,11 @@
     --shadow-modal: 0 22px 50px rgba(15, 23, 42, 0.28);
 }
 
+/* Calm default: no upscaling past 16px (native 4K @ 100% felt too large before) */
+html {
+    font-size: clamp(15px, 14px + 0.05vw, 16px);
+}
+
 body {
     font-family: 'Public Sans', sans-serif;
     background-color: var(--bg-light);
@@ -82,6 +87,17 @@ body {
     align-items: center;
     height: 8rem;
     padding-right: 3rem;
+}
+
+@media (min-width: 1920px) {
+    .header-content {
+        height: 6.5rem;
+        padding-right: 2rem;
+    }
+
+    .header-logo-img {
+        height: 4rem;
+    }
 }
 
 .logo-area {
@@ -428,6 +444,20 @@ body {
     }
 }
 
+@media (min-width: 1920px) {
+    .hero-content {
+        padding: 1.2rem 1rem 1.6rem;
+    }
+
+    .hero-title {
+        font-size: clamp(1.35rem, 1.55vw, 1.85rem);
+    }
+
+    .hero-text {
+        font-size: 0.875rem;
+    }
+}
+
 .hero-text {
     font-size: 0.9rem;
     color: #e2e8f0;
@@ -446,6 +476,59 @@ body {
     z-index: 20;
 }
 
+/* Contact form: grow readable container on large / ultra-wide CSS viewports */
+@media (min-width: 1024px) {
+    .main-content-new:has(.kontakt-form-adaptive) {
+        max-width: min(68rem, 100% - 2rem);
+    }
+}
+
+@media (min-width: 1440px) {
+    .main-content-new:has(.kontakt-form-adaptive) {
+        max-width: min(76rem, 100% - 2rem);
+    }
+}
+
+@media (min-width: 1920px) {
+    .main-content-new:has(.kontakt-form-adaptive) {
+        max-width: min(76rem, 100% - 2rem);
+    }
+}
+
+@media (min-width: 2560px) {
+    .main-content-new:has(.kontakt-form-adaptive) {
+        max-width: min(78rem, 100% - 2rem);
+    }
+}
+
+/* Soft backdrop so the card does not float on empty white at FHD / 4K */
+.main-content-new:has(.kontakt-form-adaptive) {
+    isolation: isolate;
+}
+
+.main-content-new:has(.kontakt-form-adaptive)::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    width: min(100%, 120rem);
+    height: min(32rem, 42vh);
+    background: radial-gradient(
+        ellipse 75% 85% at 50% 0%,
+        rgba(90, 37, 114, 0.08),
+        rgba(0, 153, 205, 0.05) 42%,
+        transparent 72%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.main-content-new:has(.kontakt-form-adaptive) .form-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
 .form-wrapper {
     background-color: #ffffff;
     border-radius: 1rem;
@@ -459,6 +542,26 @@ body {
 @media (min-width: 768px) {
     .form-wrapper {
         padding: 4rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .main-content-new:has(.kontakt-form-adaptive) .form-wrapper {
+        padding: clamp(1.5rem, 2.5vw, 3rem);
+        box-shadow:
+            0 6px 10px -2px rgba(46, 38, 114, 0.08),
+            0 24px 48px -14px rgba(90, 37, 114, 0.14);
+    }
+}
+
+@media (min-width: 1920px) {
+    .main-content-new:has(.kontakt-form-adaptive) {
+        margin-top: 1.5rem;
+        margin-bottom: 5rem;
+    }
+
+    .main-content-new:has(.kontakt-form-adaptive) .form-wrapper {
+        padding: clamp(1.15rem, 1.35vw, 1.75rem);
     }
 }
 
@@ -517,6 +620,35 @@ body {
     color: var(--text-muted);
     line-height: 1.5;
     max-width: 42rem;
+}
+
+@media (min-width: 1024px) {
+    .kontakt-form-adaptive .wizard-intro {
+        display: none;
+    }
+
+    .kontakt-form-adaptive .section-lead {
+        display: none;
+    }
+
+    .kontakt-form-adaptive .section-header {
+        align-items: center;
+        padding-bottom: 0.5rem;
+        gap: 0.75rem;
+    }
+
+    .kontakt-form-adaptive .section-icon {
+        padding: 0.35rem;
+    }
+
+    .kontakt-form-adaptive .section-icon svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .kontakt-form-adaptive .section-title {
+        font-size: 1.125rem;
+    }
 }
 
 .field-hint {
@@ -1269,27 +1401,204 @@ body {
 @media (min-width: 1024px) {
     .kontakt-form-adaptive .kontakt-adaptive-grid {
         display: grid;
-        grid-template-columns: 1fr min(22rem, 34vw);
-        gap: var(--space-6);
+        /* Form column capped for line length; aside fixed band; gap grows on wide screens */
+        grid-template-columns: minmax(0, 32rem) minmax(20rem, 26rem);
+        justify-content: center;
+        gap: clamp(1.5rem, 4vw, 4rem);
         align-items: start;
+    }
+
+    .kontakt-form-adaptive .kontakt-adaptive-main,
+    .kontakt-form-adaptive .kontakt-adaptive-aside {
+        min-width: 0;
     }
 
     .kontakt-form-adaptive .kontakt-adaptive-aside {
         position: sticky;
         top: var(--space-4);
-        max-height: calc(100vh - var(--space-8));
+        align-self: start;
+        max-height: min(calc(100vh - var(--space-8)), 44rem);
+        overflow-x: hidden;
         overflow-y: auto;
         padding-bottom: var(--space-2);
     }
 
+    /* Narrow sticky column: single-column review; 2-col fights the aside width */
+    .kontakt-form-adaptive .kontakt-adaptive-aside .review-card {
+        grid-template-columns: 1fr;
+        padding: 1.25rem;
+    }
+
+    /* Global .btn-submit uses min-width:280px — too wide for the review column */
+    .kontakt-form-adaptive .kontakt-adaptive-aside .btn-submit {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .kontakt-form-adaptive .kontakt-adaptive-aside .wizard-nav--final {
+        flex-wrap: wrap;
+    }
+
     .kontakt-form-adaptive .kontakt-adaptive-main .form-step + .form-step {
         margin-top: var(--space-5);
+    }
+
+    /* Sticky recipient line in step 3: stays visible while typing (aside may scroll off) */
+    .kontakt-form-adaptive .kontakt-recipient-reminder {
+        position: sticky;
+        /* Below sticky site header (8rem default, 6.5rem ≥1920px) + small gap */
+        top: calc(env(safe-area-inset-top, 0px) + 8.75rem);
+        z-index: 15;
+        margin: 0 0 var(--space-4);
+        padding: var(--space-3) var(--space-4);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-dark);
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: var(--shadow-sm);
+        line-height: 1.45;
+    }
+
+    .kontakt-recipient-reminder-label {
+        display: block;
+        font-size: 0.6875rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .kontakt-recipient-reminder-target {
+        font-size: 0.9375rem;
+        font-weight: 700;
+        color: var(--secondary);
+    }
+
+    .kontakt-recipient-reminder-meta {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.8125rem;
+        color: var(--text-muted);
+    }
+
+    /* Submit lives under the message column on desktop — full width, no global min-width clash */
+    .kontakt-desktop-submit {
+        margin-top: var(--space-6);
+        padding-top: var(--space-5);
+        border-top: 1px solid var(--border-dark);
+    }
+
+    .kontakt-desktop-submit .submit-section--desktop-main {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+    }
+
+    .kontakt-desktop-submit .btn-submit {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .kontakt-desktop-submit .wizard-nav--final {
+        flex-wrap: wrap;
+    }
+}
+
+@media (min-width: 1920px) {
+    .kontakt-form-adaptive .kontakt-recipient-reminder {
+        top: calc(env(safe-area-inset-top, 0px) + 7.25rem);
+    }
+}
+
+@media (min-width: 1600px) {
+    .kontakt-form-adaptive.contact-form-new {
+        gap: 2rem;
+    }
+
+    .kontakt-form-adaptive .form-section {
+        gap: 1.25rem;
+    }
+
+    .kontakt-form-adaptive .section-title {
+        font-size: 1rem;
+    }
+
+    .kontakt-form-adaptive .form-input,
+    .kontakt-form-adaptive .form-select,
+    .kontakt-form-adaptive .form-textarea {
+        font-size: 0.9375rem;
+        padding: 0.625rem 0.875rem;
+    }
+
+    .kontakt-form-adaptive .input-label {
+        font-size: 0.8125rem;
+    }
+
+    .kontakt-form-adaptive .btn-submit {
+        font-size: 1rem;
+        padding: 0.65rem 1.5rem;
+    }
+
+    .kontakt-form-adaptive .form-textarea {
+        max-height: 11rem;
+    }
+
+    .kontakt-form-adaptive .review-assistant-lead {
+        font-size: 0.9375rem;
+    }
+
+    .kontakt-form-adaptive .review-assistant-hint {
+        font-size: 0.8125rem;
+    }
+
+    .kontakt-desktop-submit {
+        margin-top: var(--space-5);
+        padding-top: var(--space-4);
+    }
+}
+
+@media (min-width: 2200px) {
+    .kontakt-form-adaptive.contact-form-new {
+        gap: 1.45rem;
+    }
+
+    .kontakt-form-adaptive .form-section {
+        gap: 1.05rem;
+    }
+
+    .kontakt-form-adaptive .kontakt-adaptive-main .form-step + .form-step {
+        margin-top: var(--space-4);
+    }
+
+    .kontakt-form-adaptive .kontakt-adaptive-grid {
+        grid-template-columns: minmax(0, 26rem) minmax(17rem, 22rem);
+        gap: clamp(1.2rem, 2.4vw, 2.5rem);
+    }
+
+    .kontakt-form-adaptive .section-title {
+        font-size: 0.9375rem;
+    }
+
+    .kontakt-form-adaptive .form-textarea {
+        max-height: 9.5rem;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .form-step .wizard-nav,
     .submit-section--wizard .wizard-nav--final {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: #fff;
+    }
+
+    .kontakt-form-adaptive .kontakt-recipient-reminder {
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
         background: #fff;
@@ -1368,9 +1677,13 @@ body {
 }
 
 @media (min-width: 768px) {
-    .review-card {
+    .review-card:not(.review-card--assistant) {
         grid-template-columns: 1fr 1fr;
         padding: 2rem;
+    }
+
+    .review-card--assistant {
+        padding: 1.5rem;
     }
 
     .review-block--full {
@@ -1378,19 +1691,57 @@ body {
     }
 }
 
+.review-card--assistant {
+    display: block;
+}
+
+.review-assistant-lead {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--text-main);
+}
+
+.review-assistant-lead strong {
+    font-weight: 800;
+    color: var(--secondary);
+}
+
+.review-assistant-meta {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.review-assistant-hint {
+    margin: 1rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+}
+
+.review-assistant-hint a {
+    color: var(--accent);
+    font-weight: 600;
+}
+
 .review-block-title {
     margin: 0 0 0.75rem;
     font-size: 0.75rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     color: var(--primary);
+    overflow-wrap: anywhere;
 }
 
 .review-dl {
     margin: 0;
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
     gap: 0.35rem 1rem;
     font-size: 0.9375rem;
     line-height: 1.45;
@@ -1405,6 +1756,9 @@ body {
 .review-dl dd {
     margin: 0;
     color: var(--text-main);
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .review-subject {

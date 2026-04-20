@@ -10,6 +10,8 @@
 		wideLayout = false,
 		subject = $bindable(),
 		message = $bindable(),
+		recipientReminderLine = '',
+		recipientReminderMeta = '',
 		showErr,
 		toggleError,
 		onBlurRequired,
@@ -19,6 +21,9 @@
 		wideLayout?: boolean;
 		subject: string;
 		message: string;
+		/** Desktop: sticky context above subject/message while the aside scrolls away */
+		recipientReminderLine?: string;
+		recipientReminderMeta?: string;
 		showErr: Record<string, boolean>;
 		toggleError: (fieldId: string, isValid: boolean) => void;
 		onBlurRequired: (
@@ -31,12 +36,12 @@
 
 <div
 	class="form-step"
-	class:is-active={currentStep === 3}
+	class:is-active={wideLayout || currentStep === 3}
 	data-step="3"
 	id="step-panel-3"
 	role="region"
 	aria-labelledby="step-title-3"
-	hidden={currentStep !== 3}
+	hidden={!wideLayout && currentStep !== 3}
 >
 	<div class="form-section">
 		<div class="section-header">
@@ -46,6 +51,15 @@
 				<p class="section-lead">Je konkreter Ihre Nachricht, desto schneller können wir helfen.</p>
 			</div>
 		</div>
+		{#if wideLayout && recipientReminderLine}
+			<div class="kontakt-recipient-reminder" role="status" aria-live="polite">
+				<span class="kontakt-recipient-reminder-label">Ihre Nachricht geht an</span>
+				<span class="kontakt-recipient-reminder-target">{recipientReminderLine}</span>
+				{#if recipientReminderMeta}
+					<span class="kontakt-recipient-reminder-meta">({recipientReminderMeta})</span>
+				{/if}
+			</div>
+		{/if}
 		<TextField
 			id="subject"
 			label="Betreff"
@@ -62,7 +76,7 @@
 			label="Nachricht"
 			required
 			placeholder="Beschreiben Sie Ihr Anliegen..."
-			rows={7}
+			rows={wideLayout ? 5 : 7}
 			bind:value={message}
 			{showErr}
 			errorMessage="Bitte geben Sie eine Nachricht ein."

@@ -48,12 +48,12 @@
 
 <div
 	class="form-step"
-	class:is-active={currentStep === 1}
+	class:is-active={wideLayout || currentStep === 1}
 	data-step="1"
 	id="step-panel-1"
 	role="region"
 	aria-labelledby="step-title-1"
-	hidden={currentStep !== 1}
+	hidden={!wideLayout && currentStep !== 1}
 >
 	<div class="form-section">
 		<div class="section-header">

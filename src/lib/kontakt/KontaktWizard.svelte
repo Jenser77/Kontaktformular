@@ -5,6 +5,7 @@
 	import StepRecipient from '$lib/kontakt/wizard/StepRecipient.svelte';
 	import StepReview from '$lib/kontakt/wizard/StepReview.svelte';
 	import WizardProgress from '$lib/kontakt/wizard/WizardProgress.svelte';
+	import WizardSubmitSection from '$lib/kontakt/wizard/WizardSubmitSection.svelte';
 	import type { Mandant } from '$lib/kontakt/wizard/types';
 	import {
 		firstInvalidInStep,
@@ -216,7 +217,7 @@
 		e.preventDefault();
 		feedback = null;
 
-		if (currentStep !== 4) {
+		if (!wideLayout && currentStep !== 4) {
 			goToStep(4);
 			return;
 		}
@@ -406,14 +407,32 @@
 						wideLayout={wideLayout}
 						bind:subject
 						bind:message
+						recipientReminderLine={wideLayout && recipientId
+							? `${reviewEinrichtung} · ${reviewAbteilung}`
+							: ''}
+						recipientReminderMeta={wideLayout && recipientId && reviewMandant !== '—'
+							? reviewMandant
+							: ''}
 						{showErr}
 						{toggleError}
 						onBlurRequired={onBlurRequired}
 						goToStep={goToStep}
 					/>
+
+					{#if wideLayout}
+						<div class="kontakt-desktop-submit">
+							<WizardSubmitSection
+								bind:privacyAccepted
+								{showErr}
+								{toggleError}
+								{submitting}
+								{feedback}
+							/>
+						</div>
+					{/if}
 				</div>
 
-				<aside class="kontakt-adaptive-aside" aria-label="Prüfen und absenden">
+				<aside class="kontakt-adaptive-aside" aria-label="Empfänger und Hinweise">
 					<StepReview
 						{currentStep}
 						wideLayout={wideLayout}
