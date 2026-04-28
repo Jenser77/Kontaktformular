@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AdminUserCreateForm from "./AdminUserCreateForm.svelte";
 	import PasswordChangeForm from "./PasswordChangeForm.svelte";
 
 	interface Props {
@@ -8,9 +9,17 @@
 		adminDisplayName: string | null;
 		exportBusy: boolean;
 		onExportCsv: () => void;
+		adminUsers: {
+			id: string;
+			username: string;
+			displayName: string | null;
+			isDisabled: boolean;
+			createdAt: string;
+		}[];
 	}
 
-	let { activeTab, onTab, totalContacts, adminDisplayName, exportBusy, onExportCsv }: Props = $props();
+	let { activeTab, onTab, totalContacts, adminDisplayName, exportBusy, onExportCsv, adminUsers }: Props =
+		$props();
 </script>
 
 <aside class="admin-sidebar">
@@ -44,6 +53,7 @@
 			<p class="sidebar-user">{adminDisplayName}</p>
 		{/if}
 		<PasswordChangeForm />
+		<AdminUserCreateForm adminUsers={adminUsers} />
 		<form method="POST" action="?/logout">
 			<button type="submit" class="btn-logout">Abmelden</button>
 		</form>

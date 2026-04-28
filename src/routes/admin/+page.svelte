@@ -107,6 +107,7 @@
 					onTab={setActiveTab}
 					{totalContacts}
 					adminDisplayName={data.adminDisplayName ?? null}
+					adminUsers={data.adminUsers ?? []}
 					{exportBusy}
 					onExportCsv={exportCsv}
 				/>

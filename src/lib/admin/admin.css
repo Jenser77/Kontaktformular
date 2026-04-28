@@ -149,6 +149,132 @@
 		color: #b91c1c;
 	}
 
+	& .admin-user-create-form {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		margin-bottom: 12px;
+	}
+
+	& .admin-user-create-title {
+		margin: 0;
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: #444;
+	}
+
+	& .admin-user-create-form input {
+		width: 100%;
+		box-sizing: border-box;
+		padding: 8px;
+		border: 1px solid #ccc;
+		border-radius: var(--radius-sm);
+		font-size: 0.8rem;
+	}
+
+	& .admin-user-create-btn {
+		width: 100%;
+		background: #3c1361;
+		color: #fff;
+		padding: 8px 12px;
+		border: 0;
+		border-radius: var(--radius-sm);
+		font-size: 0.8rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	& .admin-user-create-btn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	& .admin-user-create-feedback {
+		margin: 0;
+		font-size: 0.78rem;
+		line-height: 1.25;
+	}
+
+	& .admin-user-create-feedback.success {
+		color: #166534;
+	}
+
+	& .admin-user-create-feedback.error {
+		color: #b91c1c;
+	}
+
+	& .admin-user-list {
+		margin-bottom: 12px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	& .admin-user-list-items {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	& .admin-user-list-item {
+		border: 1px solid #d8d8d8;
+		border-radius: var(--radius-sm);
+		padding: 8px;
+		background: #fff;
+	}
+
+	& .admin-user-list-info {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		margin-bottom: 6px;
+	}
+
+	& .admin-user-list-username {
+		font-size: 0.82rem;
+		font-weight: 700;
+		color: #333;
+		word-break: break-word;
+	}
+
+	& .admin-user-list-status {
+		font-size: 0.72rem;
+		font-weight: 700;
+		padding: 2px 6px;
+		border-radius: 999px;
+		background: #e5e7eb;
+		color: #374151;
+	}
+
+	& .admin-user-list-status.success {
+		background: #dcfce7;
+		color: #166534;
+	}
+
+	& .admin-user-list-status.error {
+		background: #fee2e2;
+		color: #991b1b;
+	}
+
+	& .admin-user-list-actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 6px;
+	}
+
+	& .admin-user-list-actions form {
+		display: block;
+	}
+
+	& .admin-user-list-actions .admin-user-create-btn {
+		font-size: 0.76rem;
+		padding: 7px 8px;
+	}
+
 	& .btn-logout {
 		width: 100%;
 		background: none;
