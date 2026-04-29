@@ -24,7 +24,12 @@ export default defineConfig({
 		}
 	],
 	webServer: {
-		command: `env DATABASE_URL="${process.env.DATABASE_URL ?? defaultDb}" ALLOWED_ORIGIN="${process.env.ALLOWED_ORIGIN ?? baseURL}" RATE_LIMIT_DISABLED=true bun run dev -- --host 127.0.0.1 --port ${e2ePort} --strictPort`,
+		command: `bun run dev -- --host 127.0.0.1 --port ${e2ePort} --strictPort`,
+		env: {
+			DATABASE_URL: process.env.DATABASE_URL ?? defaultDb,
+			ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN ?? baseURL,
+			RATE_LIMIT_DISABLED: 'true'
+		},
 		url: baseURL,
 		reuseExistingServer: !process.env.CI,
 		timeout: 120_000,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import KontaktChrome from '$lib/kontakt/KontaktChrome.svelte';
+	import KontaktShell from '$lib/kontakt/chrome/KontaktShell.svelte';
 	import KontaktWizard from '$lib/kontakt/KontaktWizard.svelte';
 	import type { PageData } from './$types';
 
@@ -11,9 +11,9 @@
 	<meta name="description" content="Kontaktieren Sie die Diakoniestiftung in Sachsen — Anfragen an Fachabteilungen und Einrichtungen." />
 </svelte:head>
 
-<KontaktChrome>
+<KontaktShell>
 	<KontaktWizard
 		recipients={data.recipientStructure}
 		recipientsLoadFailed={data.recipientsLoadError}
 	/>
-</KontaktChrome>
+</KontaktShell>
