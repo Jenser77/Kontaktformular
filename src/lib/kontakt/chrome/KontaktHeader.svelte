@@ -1,24 +1,4 @@
 <header class="kontakt-header">
-	<nav class="utility-bar" aria-label="Metanavigation">
-		<div class="utility-inner">
-			<ul class="utility-list">
-				<li>
-					<a href="https://www.diakoniestiftung-sachsen.de/" class="utility-link">Zur Hauptseite</a>
-				</li>
-				<li>
-					<a href="https://www.diakoniestiftung-sachsen.de/info/impressum" class="utility-link"
-						>Impressum</a
-					>
-				</li>
-				<li>
-					<a href="https://www.diakoniestiftung-sachsen.de/info/datenschutz" class="utility-link"
-						>Datenschutz</a
-					>
-				</li>
-			</ul>
-		</div>
-	</nav>
-
 	<div class="brand-bar">
 		<div class="brand-inner">
 			<a
@@ -36,16 +16,10 @@
 				/>
 			</a>
 
-			<div class="brand-title-wrap">
-				<p class="brand-kicker">Diakoniestiftung in Sachsen</p>
-				<h1 class="brand-title">Kontakt</h1>
-			</div>
-
 			<a
-				href="https://www.diakoniestiftung-sachsen.de/info/kontakt"
-				class="brand-cta"
-				aria-label="Kontaktbereich der Hauptseite"
-				>Kontaktbereich</a
+				class="brand-backlink"
+				href="https://www.diakoniestiftung-sachsen.de/"
+				>Zur Hauptseite</a
 			>
 		</div>
 	</div>
@@ -61,77 +35,25 @@
 		box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
 	}
 
-	/* Sichtbarer Markeur gegenüber alter CMS-Topnavigation (Akzentstreifen) */
 	.kontakt-header::before {
 		content: '';
 		display: block;
-		height: 3px;
+		height: 2px;
 		background: linear-gradient(90deg, var(--primary, #5a2572) 0%, var(--accent, #0099cd) 100%);
 	}
 
-	.utility-bar {
-		border-bottom: 1px solid #eef2f6;
-		background: #f9fbfd;
+	.brand-bar {
+		padding: 0.85rem 0;
 	}
 
-	.utility-inner,
 	.brand-inner {
 		width: min(1120px, calc(100% - 2.5rem));
 		margin: 0 auto;
-	}
-
-	.utility-list {
-		list-style: none;
-		margin: 0;
-		padding: 0;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.35rem 0.85rem;
-		min-height: 2.25rem;
-		font-size: 0.82rem;
-		color: #4a5a6a;
-	}
-
-	.utility-list li {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.65rem;
-	}
-
-	.utility-list li + li::before {
-		content: '·';
-		font-weight: 700;
-		color: #b8c4d0;
-		line-height: 1;
-	}
-
-	.utility-link {
-		color: inherit;
-		text-decoration: none;
-	}
-
-	.utility-link:hover {
-		text-decoration: underline;
-	}
-
-	.utility-link:focus-visible,
-	.brand-link:focus-visible,
-	.brand-cta:focus-visible {
-		outline: 2px solid var(--accent, #0099cd);
-		outline-offset: 3px;
-		border-radius: 0.3rem;
-	}
-
-	.brand-bar {
-		padding: 1rem 0;
-	}
-
-	.brand-inner {
-		display: grid;
-		grid-template-columns: minmax(0, 220px) minmax(0, 1fr) auto;
-		align-items: center;
-		gap: 1rem;
+		justify-content: space-between;
+		gap: 0.75rem 1rem;
 	}
 
 	.brand-link {
@@ -140,57 +62,39 @@
 
 	.brand-logo {
 		display: block;
-		width: 168px;
+		width: 152px;
 		height: auto;
 	}
 
-	.brand-kicker {
-		margin: 0;
-		font-size: 0.8rem;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: #6a7784;
-	}
-
-	.brand-title {
-		margin: 0.2rem 0 0;
-		font-size: clamp(1.45rem, 2.1vw, 1.95rem);
-		line-height: 1.2;
-		color: #12273d;
-	}
-
-	.brand-cta {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0.68rem 1rem;
-		border-radius: 999px;
-		border: 1px solid #d2dde8;
-		background: #f6f9fc;
-		color: #1d3855;
-		font-size: 0.9rem;
+	.brand-backlink {
+		font-size: 0.88rem;
 		font-weight: 600;
+		color: #1f4f82;
 		text-decoration: none;
 		white-space: nowrap;
 	}
 
-	.brand-cta:hover {
-		background: #edf4fa;
+	.brand-backlink:hover {
+		text-decoration: underline;
+		color: var(--accent, #0099cd);
+	}
+
+	.brand-link:focus-visible,
+	.brand-backlink:focus-visible {
+		outline: 2px solid var(--accent, #0099cd);
+		outline-offset: 3px;
+		border-radius: 0.3rem;
 	}
 
 	@media (max-width: 820px) {
-		.utility-inner,
 		.brand-inner {
 			width: min(1120px, calc(100% - 1.25rem));
+			flex-direction: column;
+			align-items: flex-start;
 		}
 
-		.brand-inner {
-			grid-template-columns: 1fr;
-			align-items: start;
-		}
-
-		.brand-cta {
-			justify-self: start;
+		.brand-backlink {
+			white-space: normal;
 		}
 	}
 </style>

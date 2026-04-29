@@ -1,19 +1,26 @@
 <script lang="ts">
 	let {
-		badge = 'Kontakt',
-		title = 'Lassen Sie uns ins Gespräch kommen',
+		badge = '',
+		title = 'Kontakt',
+		lead = 'Lassen Sie uns ins Gespräch kommen',
 		text = 'Haben Sie Fragen zu unseren Einrichtungen oder Karrieremöglichkeiten? Unser Team ist gerne für Sie da und berät Sie persönlich.'
 	}: {
 		badge?: string;
 		title?: string;
+		lead?: string;
 		text?: string;
 	} = $props();
 </script>
 
 <section class="kontakt-hero" aria-labelledby="kontakt-hero-title">
 	<div class="hero-inner">
-		<p class="hero-badge">{badge}</p>
-		<h2 class="hero-title" id="kontakt-hero-title">{title}</h2>
+		{#if badge}
+			<p class="hero-badge">{badge}</p>
+		{/if}
+		<h1 class="hero-title" id="kontakt-hero-title">{title}</h1>
+		{#if lead}
+			<p class="hero-lead">{lead}</p>
+		{/if}
 		<p class="hero-text">{text}</p>
 	</div>
 </section>
@@ -47,7 +54,7 @@
 	}
 
 	.hero-title {
-		margin: 0.75rem 0 0;
+		margin: 0.5rem 0 0;
 		max-width: min(42rem, 100%);
 		font-size: clamp(1.75rem, 3.6vw, 2.75rem);
 		line-height: 1.16;
@@ -55,8 +62,21 @@
 		letter-spacing: -0.02em;
 	}
 
+	.hero-badge + .hero-title {
+		margin-top: 0.75rem;
+	}
+
+	.hero-lead {
+		margin: 0.55rem 0 0;
+		max-width: min(42rem, 100%);
+		font-size: clamp(1.05rem, 2vw, 1.25rem);
+		font-weight: 600;
+		line-height: 1.35;
+		color: #334155;
+	}
+
 	.hero-text {
-		margin: 0.95rem 0 0;
+		margin: 0.85rem 0 0;
 		max-width: 58ch;
 		font-size: clamp(1rem, 1.5vw, 1.08rem);
 		line-height: 1.62;

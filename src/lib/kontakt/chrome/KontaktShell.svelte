@@ -8,11 +8,13 @@
 		children,
 		heroBadge,
 		heroTitle,
+		heroLead,
 		heroText
 	}: {
 		children: Snippet;
 		heroBadge?: string;
 		heroTitle?: string;
+		heroLead?: string;
 		heroText?: string;
 	} = $props();
 </script>
@@ -21,7 +23,7 @@
 	<a href="#kontakt-main" class="skip-to-main">Zum Hauptinhalt springen</a>
 
 	<KontaktHeader />
-	<KontaktHero badge={heroBadge} title={heroTitle} text={heroText} />
+	<KontaktHero badge={heroBadge} title={heroTitle} lead={heroLead} text={heroText} />
 
 	<div class="kontakt-shell-content">
 		{@render children()}

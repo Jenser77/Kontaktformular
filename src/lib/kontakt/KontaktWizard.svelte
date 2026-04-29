@@ -342,9 +342,7 @@
 			onsubmit={handleSubmit}
 		>
 			<div class="wizard-intro">
-				<p class="wizard-intro-text">
-					In vier kurzen Schritten — Ihre Anfrage erreicht genau die richtige Fachabteilung.
-				</p>
+				<p class="wizard-intro-text">Vier Schritte zur richtigen Fachabteilung.</p>
 			</div>
 
 			<div class="honeypot-trap" aria-hidden="true">

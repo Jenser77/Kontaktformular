@@ -8,16 +8,13 @@
 			</address>
 		</div>
 
-		<nav aria-label="Rechtliche und Service-Links">
+		<nav aria-label="Rechtliche Links">
 			<ul class="footer-links">
 				<li>
 					<a href="https://www.diakoniestiftung-sachsen.de/info/impressum">Impressum</a>
 				</li>
 				<li>
 					<a href="https://www.diakoniestiftung-sachsen.de/info/datenschutz">Datenschutz</a>
-				</li>
-				<li>
-					<a href="https://www.diakoniestiftung-sachsen.de/info/kontakt">Kontakt</a>
 				</li>
 			</ul>
 		</nav>
