@@ -1,11 +1,6 @@
 ﻿<script lang="ts">
-	let {
-		recipients = [],
-		recipientsLoadFailed = false
-	}: {
-		recipients?: unknown[];
-		recipientsLoadFailed?: boolean;
-	} = $props();
+	const _props = $props();
+	void _props;
 </script>
 
 <svelte:head>

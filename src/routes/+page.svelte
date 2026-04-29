@@ -1,8 +1,5 @@
 <script lang="ts">
 	import StitchFrontendPreview from '$lib/kontakt/StitchFrontendPreview.svelte';
-	import type { PageData } from './$types';
-
-	let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>
@@ -13,7 +10,4 @@
 	/>
 </svelte:head>
 
-<StitchFrontendPreview
-	recipients={data.recipientStructure}
-	recipientsLoadFailed={data.recipientsLoadError}
-/>
+<StitchFrontendPreview />
