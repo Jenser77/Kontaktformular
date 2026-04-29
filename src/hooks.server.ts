@@ -33,6 +33,13 @@ export const handle: Handle = async ({ event, resolve }) => {
     // --- 2. Resolve the request ---
     const response = await resolve(event);
 
+    // HTML-Dokumente nicht länger cachen: verhindert, dass nach Deploy noch alte Chunk-Referenzen im Browser hängen
+    const contentType = response.headers.get('content-type') ?? '';
+    if (contentType.includes('text/html')) {
+        response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        response.headers.set('Pragma', 'no-cache');
+    }
+
     // --- 2b. Cache: immutable for Vite-hashed assets; short TTL for unhashed /static files ---
     const pathname = event.url.pathname;
     if (pathname.startsWith('/_app/immutable/')) {

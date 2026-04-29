@@ -61,6 +61,14 @@
 		box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
 	}
 
+	/* Sichtbarer Markeur gegenüber alter CMS-Topnavigation (Akzentstreifen) */
+	.kontakt-header::before {
+		content: '';
+		display: block;
+		height: 3px;
+		background: linear-gradient(90deg, var(--primary, #5a2572) 0%, var(--accent, #0099cd) 100%);
+	}
+
 	.utility-bar {
 		border-bottom: 1px solid #eef2f6;
 		background: #f9fbfd;

@@ -17,7 +17,7 @@
 	} = $props();
 </script>
 
-<div class="kontakt-shell">
+<div class="kontakt-shell" data-kontakt-chrome="editorial-clean">
 	<a href="#kontakt-main" class="skip-to-main">Zum Hauptinhalt springen</a>
 
 	<KontaktHeader />
